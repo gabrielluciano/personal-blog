@@ -9,8 +9,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -42,12 +44,15 @@ public class Post {
     private String imageUrl;
     @Column(nullable = false)
     private Boolean published;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
-    private LocalDate publishedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime publishedAt;
 
     @ManyToOne(optional = false)
-    private User user;
+    private User author;
 
     @ManyToOne(optional = false)
     private Category category;
@@ -56,6 +61,19 @@ public class Post {
     private Set<Tag> tags = new HashSet<>();
 
     public Post() {
+    }
+
+    public Post(String title, String subtitle, String content, String metaTitle, String metaDescription, String slug, String imageUrl) {
+        this.title = title;
+        this.subtitle = subtitle;
+        this.content = content;
+        this.metaTitle = metaTitle;
+        this.metaDescription = metaDescription;
+        this.slug = slug;
+        this.imageUrl = imageUrl;
+        published = false;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -130,36 +148,36 @@ public class Post {
         this.published = published;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public LocalDate getPublishedAt() {
+    public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
 
-    public void setPublishedAt(LocalDate publishedAt) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
         this.publishedAt = publishedAt;
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public Category getCategory() {
@@ -179,8 +197,10 @@ public class Post {
     }
 
     public void addTag(Tag tag) {
-        this.tags.add(tag);
-        tag.addPost(this);
+        if (!tags.contains(tag)) {
+            this.tags.add(tag);
+            tag.addPost(this);
+        }
     }
 
     @Override

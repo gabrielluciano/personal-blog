@@ -38,6 +38,12 @@ public class Tag {
     public Tag() {
     }
 
+    public Tag(String name, String slug, String description) {
+        this.name = name;
+        this.slug = slug;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }
@@ -79,8 +85,10 @@ public class Tag {
     }
 
     public void addPost(Post post) {
-        this.posts.add(post);
-        post.addTag(this);
+        if (!posts.contains(post)) {
+            this.posts.add(post);
+            post.addTag(this);
+        }
     }
 
     @Override
