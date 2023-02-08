@@ -1,12 +1,16 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.PostRequestDTO;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.services.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,5 +39,10 @@ public class PostController {
             @RequestParam(defaultValue = "10", name = "limit") Integer size) {
 
         return service.findPostsPaginated(page, size);
+    }
+
+    @PostMapping
+    public Post createPost(@RequestBody PostRequestDTO post) {
+        return service.createPost(post);
     }
 }
