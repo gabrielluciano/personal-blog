@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.MultiplePostsDTO;
 import com.gabrielluciano.blog.dto.PostRequestDTO;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.services.PostService;
@@ -37,11 +38,19 @@ public class PostController {
     }
 
     @GetMapping
-    public Page<Post> getPostsPaginated(
+    public Page<MultiplePostsDTO> getPostsPaginated(
             @RequestParam(defaultValue = "0", name = "offset") Integer page,
             @RequestParam(defaultValue = "10", name = "limit") Integer size) {
 
         return service.findPostsPaginated(page, size);
+    }
+
+    @GetMapping("/published")
+    public Page<MultiplePostsDTO> getPublishedPostsPaginated(
+            @RequestParam(defaultValue = "0", name = "offset") Integer page,
+            @RequestParam(defaultValue = "10", name = "limit") Integer size) {
+
+        return service.findPublishedPostsPaginated(page, size);
     }
 
     @PostMapping

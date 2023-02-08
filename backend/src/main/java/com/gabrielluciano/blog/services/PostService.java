@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.dto.MultiplePostsDTO;
 import com.gabrielluciano.blog.dto.PostRequestDTO;
 import com.gabrielluciano.blog.exceptions.PaginationException;
 import com.gabrielluciano.blog.exceptions.PostNotFoundException;
@@ -49,10 +50,21 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(slug));
     }
 
-    public Page<Post> findPostsPaginated(Integer page, Integer size) {
+    public Page<MultiplePostsDTO> findPostsPaginated(Integer page, Integer size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
-            return postRepository.findAll(pageable);
+            return postRepository.findAllByOrderByPublishedAtDesc(pageable)
+                    .map(post -> new MultiplePostsDTO(post));
+        } catch (IllegalArgumentException ex) {
+            throw new PaginationException(page, size);
+        }
+    }
+
+    public Page<MultiplePostsDTO> findPublishedPostsPaginated(Integer page, Integer size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            return postRepository.findAllByPublishedTrueOrderByPublishedAtDesc(pageable)
+                    .map(post -> new MultiplePostsDTO(post));
         } catch (IllegalArgumentException ex) {
             throw new PaginationException(page, size);
         }
