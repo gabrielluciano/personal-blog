@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class Tag {
     private String description;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 
     public Tag() {
