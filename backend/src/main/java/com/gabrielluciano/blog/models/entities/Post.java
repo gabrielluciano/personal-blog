@@ -140,7 +140,7 @@ public class Post {
         this.imageUrl = imageUrl;
     }
 
-    public Boolean getPublished() {
+    public Boolean isPublished() {
         return published;
     }
 

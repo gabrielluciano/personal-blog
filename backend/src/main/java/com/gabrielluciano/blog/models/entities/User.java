@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,7 @@ public class User {
     @Column(nullable = false)
     private String email;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     private Boolean admin = false;
     private Boolean writer;
@@ -82,8 +84,12 @@ public class User {
         this.admin = admin;
     }
 
-    public Boolean getWriter() {
+    public Boolean isWriter() {
         return writer;
+    }
+
+    public Boolean isNotWriter() {
+        return !isWriter();
     }
 
     public void setWriter(Boolean writer) {
