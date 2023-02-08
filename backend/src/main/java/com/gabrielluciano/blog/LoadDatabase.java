@@ -25,6 +25,8 @@ public class LoadDatabase {
         return args -> {
             User user1 = new User("João", "joao@email.com", "123");
             User user2 = new User("Maria", "maria@email.com", "123");
+            User user3 = new User("Not Author User", "notauthor@email.com", "123");
+            user3.setWriter(false);
 
             Category category1 = new Category("News", "news", "Some news");
             Category category2 = new Category("Tutorial", "tutorial", "Some tutorials");
@@ -61,6 +63,7 @@ public class LoadDatabase {
 
             userRepository.save(user1);
             userRepository.save(user2);
+            userRepository.save(user3);
 
             categoryRepository.save(category1);
             categoryRepository.save(category2);

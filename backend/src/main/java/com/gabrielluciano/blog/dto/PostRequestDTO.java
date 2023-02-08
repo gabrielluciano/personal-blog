@@ -11,7 +11,6 @@ public class PostRequestDTO {
     private String metaDescription;
     private String slug;
     private String imageUrl;
-    private Boolean published;
     private Long authorId;
     private Long categoryId;
     private Long[] tagsIds;
@@ -32,9 +31,6 @@ public class PostRequestDTO {
         post.setMetaDescription(metaDescription);
         post.setSlug(slug);
         post.setImageUrl(imageUrl);
-        if (published != null) {
-            post.setPublished(published);
-        }
     }
 
     public String getTitle() {
@@ -91,14 +87,6 @@ public class PostRequestDTO {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public Boolean isPublished() {
-        return published;
-    }
-
-    public void setPublished(Boolean published) {
-        this.published = published;
     }
 
     public Long getAuthorId() {

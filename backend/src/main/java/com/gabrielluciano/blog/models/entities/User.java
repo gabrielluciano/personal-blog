@@ -88,6 +88,7 @@ public class User {
         return writer;
     }
 
+    @JsonIgnore
     public Boolean isNotWriter() {
         return !isWriter();
     }

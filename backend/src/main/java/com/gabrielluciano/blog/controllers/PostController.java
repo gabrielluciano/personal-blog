@@ -4,7 +4,9 @@ import com.gabrielluciano.blog.dto.PostRequestDTO;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.services.PostService;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,5 +52,20 @@ public class PostController {
     @PutMapping("/{id}")
     public Post updatePost(@RequestBody PostRequestDTO post, @PathVariable Long id) {
         return service.updatePost(post, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePost(@PathVariable Long id) {
+        service.deletePostById(id);
+    }
+
+    @PatchMapping("/{id}/publish")
+    public boolean publishPost(@PathVariable Long id) {
+        return service.publishPost(id);
+    }
+
+    @PatchMapping("/{id}/unpublish")
+    public boolean unpublishPost(@PathVariable Long id) {
+        return service.unpublishPost(id);
     }
 }

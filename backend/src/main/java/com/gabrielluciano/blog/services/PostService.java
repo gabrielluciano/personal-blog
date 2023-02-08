@@ -80,11 +80,7 @@ public class PostService {
     public Post updatePost(PostRequestDTO postRequestDTO, Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
-
         postRequestDTO.fillPost(post);
-        if (post.isPublished()) {
-            post.setPublishedAt(LocalDateTime.now());
-        }
 
         Category category = categoryService.findCategoryById(postRequestDTO.getCategoryId());
         post.setCategory(category);
@@ -92,6 +88,33 @@ public class PostService {
         updatePostTags(post, postRequestDTO.getTagsIds());
 
         return postRepository.save(post);
+    }
+
+    public void deletePostById(Long id) {
+        Post post = findPostById(id);
+        postRepository.deleteById(post.getId());
+    }
+
+    public boolean publishPost(Long id) {
+        Post post = findPostById(id);
+        if (!post.isPublished()) {
+            post.setPublished(true);
+            post.setPublishedAt(LocalDateTime.now());
+            postRepository.save(post);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean unpublishPost(Long id) {
+        Post post = findPostById(id);
+        if (post.isPublished()) {
+            post.setPublished(false);
+            post.setPublishedAt(null);
+            postRepository.save(post);
+            return true;
+        }
+        return false;
     }
 
     private void updatePostTags(Post post, Long[] tagsIds) {
