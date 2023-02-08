@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,18 +38,11 @@ public class PostController {
 
     @GetMapping
     public Page<MultiplePostsDTO> getPostsPaginated(
+            @RequestParam(required = false) Boolean published,
             @RequestParam(defaultValue = "0", name = "offset") Integer page,
             @RequestParam(defaultValue = "10", name = "limit") Integer size) {
 
-        return service.findPostsPaginated(page, size);
-    }
-
-    @GetMapping("/published")
-    public Page<MultiplePostsDTO> getPublishedPostsPaginated(
-            @RequestParam(defaultValue = "0", name = "offset") Integer page,
-            @RequestParam(defaultValue = "10", name = "limit") Integer size) {
-
-        return service.findPublishedPostsPaginated(page, size);
+        return service.findPostsPaginated(page, size, published);
     }
 
     @PostMapping

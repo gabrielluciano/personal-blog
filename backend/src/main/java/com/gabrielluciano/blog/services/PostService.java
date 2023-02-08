@@ -50,21 +50,16 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(slug));
     }
 
-    public Page<MultiplePostsDTO> findPostsPaginated(Integer page, Integer size) {
+    public Page<MultiplePostsDTO> findPostsPaginated(Integer page, Integer size, Boolean published) {
         try {
             Pageable pageable = PageRequest.of(page, size);
-            return postRepository.findAllByOrderByPublishedAtDesc(pageable)
-                    .map(post -> new MultiplePostsDTO(post));
-        } catch (IllegalArgumentException ex) {
-            throw new PaginationException(page, size);
-        }
-    }
-
-    public Page<MultiplePostsDTO> findPublishedPostsPaginated(Integer page, Integer size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            return postRepository.findAllByPublishedTrueOrderByPublishedAtDesc(pageable)
-                    .map(post -> new MultiplePostsDTO(post));
+            if (published == null) {
+                return postRepository.findAllByOrderByUpdatedAtDesc(pageable)
+                        .map(post -> new MultiplePostsDTO(post));
+            } else {
+                return postRepository.findAllByPublishedOrderByUpdatedAtDesc(published, pageable)
+                        .map(post -> new MultiplePostsDTO(post));
+            }
         } catch (IllegalArgumentException ex) {
             throw new PaginationException(page, size);
         }
@@ -131,7 +126,7 @@ public class PostService {
 
     private void updatePostTags(Post post, Long[] tagsIds) {
         post.getTags().clear();
-        for(Long tagId : tagsIds) {
+        for (Long tagId : tagsIds) {
             Optional<Tag> tag = tagRepository.findById(tagId);
             if (tag.isPresent()) {
                 post.addTag(tag.get());
