@@ -45,6 +45,14 @@ public class PostController {
         return service.findPostsPaginated(page, size, published);
     }
 
+    @GetMapping("/category/{categoryId}")
+    public Page<MultiplePostsDTO> getPublishedPostsByCategoryPaginated(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0", name = "offset") Integer page,
+            @RequestParam(defaultValue = "10", name = "limit") Integer size) {
+        return service.findPublishedPostsByCategoryPaginated(page, size, categoryId);
+    }
+
     @PostMapping
     public Post createPost(@RequestBody PostRequestDTO post) {
         return service.createPost(post);

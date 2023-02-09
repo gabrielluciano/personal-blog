@@ -57,9 +57,20 @@ public class PostService {
                 return postRepository.findAllByOrderByUpdatedAtDesc(pageable)
                         .map(post -> new MultiplePostsDTO(post));
             } else {
-                return postRepository.findAllByPublishedOrderByUpdatedAtDesc(published, pageable)
+                return postRepository.findAllByPublishedOrderByPublishedAtDesc(published, pageable)
                         .map(post -> new MultiplePostsDTO(post));
             }
+        } catch (IllegalArgumentException ex) {
+            throw new PaginationException(page, size);
+        }
+    }
+
+    public Page<MultiplePostsDTO> findPublishedPostsByCategoryPaginated(Integer page, Integer size, Long categoryId) {
+        try {
+            Category category = categoryService.findCategoryById(categoryId);
+            Pageable pageable = PageRequest.of(page, size);
+            return postRepository.findAllByCategoryAndPublishedIsTrueOrderByPublishedAtDesc(category, pageable)
+                    .map(post -> new MultiplePostsDTO(post));
         } catch (IllegalArgumentException ex) {
             throw new PaginationException(page, size);
         }
