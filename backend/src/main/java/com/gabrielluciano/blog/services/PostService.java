@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 @Service
@@ -115,7 +116,7 @@ public class PostService {
         Post post = findPostById(id);
         if (!post.isPublished()) {
             post.setPublished(true);
-            post.setPublishedAt(LocalDateTime.now());
+            post.setPublishedAt(LocalDateTime.now(ZoneOffset.UTC));
             postRepository.save(post);
             return true;
         }
