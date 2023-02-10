@@ -24,7 +24,7 @@ import java.util.Set;
         sequenceName = Tag.SEQUENCE_NAME
 )
 public class Tag {
-
+    // TODO Find a way to add unique constrains to name and slug attributes not considering deleted tags
     public static final String SEQUENCE_NAME = "SEQUENCE_TAG";
 
     @Id
