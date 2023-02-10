@@ -9,7 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -32,7 +35,9 @@ public class Tag {
     @Column(nullable = false, length = 50)
     private String slug;
     private String description;
-
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonIgnore
+    private LocalDateTime deletedAt;
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
@@ -78,6 +83,14 @@ public class Tag {
         this.description = description;
     }
 
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
@@ -101,12 +114,13 @@ public class Tag {
         return Objects.equals(id, tag.id)
                 && Objects.equals(name, tag.name)
                 && Objects.equals(slug, tag.slug)
-                && Objects.equals(description, tag.description);
+                && Objects.equals(description, tag.description)
+                && Objects.equals(deletedAt, tag.deletedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, slug, description);
+        return Objects.hash(id, name, slug, description, deletedAt);
     }
 
     @Override
@@ -116,6 +130,7 @@ public class Tag {
                 ", name='" + name + '\'' +
                 ", slug='" + slug + '\'' +
                 ", description='" + description + '\'' +
+                ", deletedAt='" + deletedAt + '\'' +
                 '}';
     }
 }
