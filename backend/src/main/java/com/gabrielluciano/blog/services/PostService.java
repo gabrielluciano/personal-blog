@@ -96,15 +96,13 @@ public class PostService {
     }
 
     public Post updatePost(PostRequestDTO postRequestDTO, Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+        Post post = findPostById(id);
         postRequestDTO.fillPost(post);
 
         Category category = categoryService.findCategoryById(postRequestDTO.getCategoryId());
         post.setCategory(category);
 
         updatePostTags(post, postRequestDTO.getTagsIds());
-
         return postRepository.save(post);
     }
 

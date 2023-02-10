@@ -30,8 +30,7 @@ public class CategoryService {
     }
 
     public Category updateCategory(Category category, Long id) {
-        Category categoryFromDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(id));
+        Category categoryFromDb = findCategoryById(id);
 
         categoryFromDb.setName(category.getName());
         categoryFromDb.setDescription(category.getDescription());
@@ -41,8 +40,7 @@ public class CategoryService {
     }
 
     public void deleteCategoryById(Long id) {
-        Category categoryFromDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(id));
+        Category categoryFromDb = findCategoryById(id);
 
         try {
             categoryRepository.deleteById(id);
