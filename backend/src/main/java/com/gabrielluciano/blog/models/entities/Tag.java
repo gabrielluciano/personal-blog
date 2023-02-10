@@ -11,6 +11,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,8 +25,10 @@ import java.util.Set;
         name = Tag.SEQUENCE_NAME,
         sequenceName = Tag.SEQUENCE_NAME
 )
+@SQLDelete(sql = "UPDATE tags SET deleted_at = NOW() where id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Tag {
-    // TODO Find a way to add unique constrains to name and slug attributes not considering deleted tags
+
     public static final String SEQUENCE_NAME = "SEQUENCE_TAG";
 
     @Id
