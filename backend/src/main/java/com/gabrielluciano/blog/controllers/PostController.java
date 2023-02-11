@@ -26,12 +26,12 @@ public class PostController {
         this.service = service;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public Post getPostById(@PathVariable Long id) {
         return service.findPostById(id);
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/slug/{slug}")
     public Post getPostBySlug(@PathVariable String slug) {
         return service.findPostBySlug(slug);
     }
@@ -45,7 +45,7 @@ public class PostController {
         return service.findPostsPaginated(page, size, published);
     }
 
-    @GetMapping("/category/{categoryId}")
+    @GetMapping("/categories/{categoryId}/posts")
     public Page<MultiplePostsDTO> getPublishedPostsByCategoryPaginated(
             @PathVariable Long categoryId,
             @RequestParam(defaultValue = "0", name = "offset") Integer page,
