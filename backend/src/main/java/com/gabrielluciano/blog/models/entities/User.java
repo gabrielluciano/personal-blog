@@ -1,15 +1,24 @@
 package com.gabrielluciano.blog.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gabrielluciano.blog.models.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -17,7 +26,7 @@ import java.util.Objects;
         name = User.SEQUENCE_NAME,
         sequenceName = User.SEQUENCE_NAME
 )
-public class User {
+public class User implements UserDetails {
 
     public static final String SEQUENCE_NAME = "SEQUENCE_USER";
 
@@ -31,8 +40,8 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
-    private Boolean admin = false;
-    private Boolean writer;
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -41,7 +50,40 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        writer = true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public Long getId() {
@@ -68,33 +110,24 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public Boolean getAdmin() {
-        return admin;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
-    public Boolean isWriter() {
-        return writer;
+    public void addRole(Role... roles) {
+        Arrays.stream(roles).forEach(role -> this.roles.add(role));
     }
 
-    @JsonIgnore
-    public Boolean isNotWriter() {
-        return !isWriter();
-    }
-
-    public void setWriter(Boolean writer) {
-        this.writer = writer;
+    public boolean hasRole(Role role) {
+        return roles.contains(role);
     }
 
     @Override
@@ -106,13 +139,12 @@ public class User {
                 && Objects.equals(name, user.name)
                 && Objects.equals(email, user.email)
                 && Objects.equals(password, user.password)
-                && Objects.equals(admin, user.admin)
-                && Objects.equals(writer, user.writer);
+                && Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password, admin, writer);
+        return Objects.hash(id, name, email, password, roles);
     }
 
     @Override
@@ -122,8 +154,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", admin=" + admin +
-                ", writer=" + writer +
+                ", roles=" + roles +
                 '}';
     }
 }

@@ -6,6 +6,7 @@ import com.gabrielluciano.blog.exceptions.PaginationException;
 import com.gabrielluciano.blog.exceptions.PostNotFoundException;
 import com.gabrielluciano.blog.exceptions.UserIsNotWriterException;
 import com.gabrielluciano.blog.exceptions.UserNotFoundException;
+import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.models.entities.Tag;
@@ -83,7 +84,7 @@ public class PostService {
         User user = userRepository.findById(postRequestDTO.getAuthorId())
                 .orElseThrow(() -> new UserNotFoundException(postRequestDTO.getAuthorId()));
 
-        if (user.isNotWriter()) {
+        if (user.hasRole(Role.WRITER)) {
             throw new UserIsNotWriterException(user.getId());
         }
 
