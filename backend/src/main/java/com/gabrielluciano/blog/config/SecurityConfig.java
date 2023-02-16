@@ -8,7 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -22,7 +24,8 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(userRepository);
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
     @Bean
@@ -48,7 +51,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
-        http.httpBasic();
+
+        http.addFilterAfter(new JwtAuthFilter(), LogoutFilter.class);
+
         return http.build();
     }
 
