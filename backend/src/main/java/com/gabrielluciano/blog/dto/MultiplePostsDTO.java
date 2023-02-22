@@ -37,7 +37,7 @@ public class MultiplePostsDTO {
         this.metaDescription = post.getMetaDescription();
         this.slug = post.getSlug();
         this.imageUrl = post.getImageUrl();
-        this.published = post.isPublished();
+        this.published = post.getPublished();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
         this.publishedAt = post.getPublishedAt();

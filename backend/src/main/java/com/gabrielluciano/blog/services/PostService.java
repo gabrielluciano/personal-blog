@@ -114,7 +114,7 @@ public class PostService {
 
     public boolean publishPost(Long id) {
         Post post = findPostById(id);
-        if (!post.isPublished()) {
+        if (!post.getPublished()) {
             post.setPublished(true);
             post.setPublishedAt(LocalDateTime.now(ZoneOffset.UTC));
             postRepository.save(post);
@@ -125,7 +125,7 @@ public class PostService {
 
     public boolean unpublishPost(Long id) {
         Post post = findPostById(id);
-        if (post.isPublished()) {
+        if (post.getPublished()) {
             post.setPublished(false);
             post.setPublishedAt(null);
             postRepository.save(post);

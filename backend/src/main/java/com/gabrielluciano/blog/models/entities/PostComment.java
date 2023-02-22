@@ -11,9 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "post_comments")
@@ -21,7 +23,10 @@ import java.util.Objects;
         name = PostComment.SEQUENCE_NAME,
         sequenceName = PostComment.SEQUENCE_NAME
 )
-public class PostComment {
+@Getter
+@Setter
+@NoArgsConstructor
+public class PostComment extends AbstractPersistentObject {
 
     public static final String SEQUENCE_NAME = "SEQUENCE_POSTCOMMENT";
 
@@ -41,82 +46,6 @@ public class PostComment {
 
     @ManyToOne(optional = false)
     private User user;
-
-    public PostComment() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public PostCommentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PostCommentStatus status) {
-        this.status = status;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PostComment that = (PostComment) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(content, that.content)
-                && Objects.equals(createdAt, that.createdAt)
-                && Objects.equals(updatedAt, that.updatedAt)
-                && status == that.status;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, content, createdAt, updatedAt, status);
-    }
 
     @Override
     public String toString() {

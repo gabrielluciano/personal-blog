@@ -11,12 +11,14 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -27,7 +29,10 @@ import java.util.Set;
 )
 @SQLDelete(sql = "UPDATE tags SET deleted_at = NOW() where id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class Tag {
+@Getter
+@Setter
+@NoArgsConstructor
+public class Tag extends AbstractPersistentObject {
 
     public static final String SEQUENCE_NAME = "SEQUENCE_TAG";
 
@@ -46,61 +51,10 @@ public class Tag {
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 
-    public Tag() {
-    }
-
     public Tag(String name, String slug, String description) {
         this.name = name;
         this.slug = slug;
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
     }
 
     public void addPost(Post post) {
@@ -108,23 +62,6 @@ public class Tag {
             this.posts.add(post);
             post.addTag(this);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return Objects.equals(id, tag.id)
-                && Objects.equals(name, tag.name)
-                && Objects.equals(slug, tag.slug)
-                && Objects.equals(description, tag.description)
-                && Objects.equals(deletedAt, tag.deletedAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, slug, description, deletedAt);
     }
 
     @Override
