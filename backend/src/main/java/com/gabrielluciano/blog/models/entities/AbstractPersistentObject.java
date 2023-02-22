@@ -11,7 +11,7 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class AbstractPersistentObject implements PersistentObject {
 
-    @Column(length = 32)
+    @Column(length = 32, updatable = false)
     @JsonIgnore
     private String UUID = UUIDGenerator.createUUID();
 
