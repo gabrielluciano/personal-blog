@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class UserIsNotWriterAdvice {
+public class UserIsNotAuthorAdvice {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(UserIsNotWriterException.class)
-    public String userIsNotWriterHandler(UserIsNotWriterException ex) {
+    @ExceptionHandler(UserIsNotAuthorException.class)
+    public String userIsNotWriterHandler(UserIsNotAuthorException ex) {
         return ex.getMessage();
     }
 

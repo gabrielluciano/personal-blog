@@ -1,6 +1,7 @@
 package com.gabrielluciano.blog.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gabrielluciano.blog.models.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +12,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -35,19 +39,12 @@ public class User extends AbstractPersistentObject {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
-    private Boolean admin = false;
-    private Boolean writer;
+    private Set<Role> roles;
 
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        writer = true;
-    }
-
-    @JsonIgnore
-    public Boolean isNotWriter() {
-        return !getWriter();
     }
 
     @Override
@@ -57,8 +54,7 @@ public class User extends AbstractPersistentObject {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", admin=" + admin +
-                ", writer=" + writer +
+                ", roles='" + roles + '\'' +
                 '}';
     }
 }
