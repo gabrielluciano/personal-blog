@@ -37,8 +37,9 @@ public class AuthService {
                 .matches(loginRequestDTO.getPassword(), user.getPassword());
 
         if (passwordMatches) {
-            JwtPayload payload = new JwtPayload(user.getId(), user.getEmail(), user.getRoles());
-            String token = JwtUtil.createToken(user, apiSecret);
+            JwtUtil ju = new JwtUtil(apiSecret);
+            JwtPayload payload = ju.getPayload(user);
+            String token = ju.createToken(user);
             return new LoginResponseDTO(token, payload);
         }
 

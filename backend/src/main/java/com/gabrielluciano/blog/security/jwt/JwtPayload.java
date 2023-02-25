@@ -15,5 +15,6 @@ public class JwtPayload {
     private Long id;
     private String email;
     private Set<Role> roles;
-
+    private long iat;
+    private long exp;
 }
