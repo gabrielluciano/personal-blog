@@ -8,7 +8,6 @@ import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
 import com.gabrielluciano.blog.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +17,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    @Value("${api.secret}")
-    private String apiSecret;
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public LoginResponseDTO authenticate(LoginRequestDTO loginRequestDTO) {
 
@@ -37,9 +35,8 @@ public class AuthService {
                 .matches(loginRequestDTO.getPassword(), user.getPassword());
 
         if (passwordMatches) {
-            JwtUtil ju = new JwtUtil(apiSecret);
-            JwtPayload payload = ju.getPayload(user);
-            String token = ju.createToken(user);
+            JwtPayload payload = jwtUtil.getPayload(user);
+            String token = jwtUtil.createToken(user);
             return new LoginResponseDTO(token, payload);
         }
 
