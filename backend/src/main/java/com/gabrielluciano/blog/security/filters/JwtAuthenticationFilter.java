@@ -20,7 +20,7 @@ import java.text.ParseException;
 
 @Component
 @AllArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AppAuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;

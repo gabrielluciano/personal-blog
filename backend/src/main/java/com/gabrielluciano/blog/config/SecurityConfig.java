@@ -1,7 +1,7 @@
 package com.gabrielluciano.blog.config;
 
-import com.gabrielluciano.blog.security.BearerAuthenticationEntryPoint;
-import com.gabrielluciano.blog.security.filters.JwtAuthFilter;
+import com.gabrielluciano.blog.security.entrypoints.JwtAuthenticationEntryPoint;
+import com.gabrielluciano.blog.security.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,9 +28,9 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .exceptionHandling(hs -> hs
-                        .authenticationEntryPoint(new BearerAuthenticationEntryPoint())
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 )
-                .addFilterAt(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/signin").permitAll()
                         .anyRequest().authenticated())

@@ -1,6 +1,6 @@
 package com.gabrielluciano.blog.security.managers;
 
-import com.gabrielluciano.blog.security.providers.JwtAuthProvider;
+import com.gabrielluciano.blog.security.providers.JwtAuthenticationProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class AppAuthenticationManager implements AuthenticationManager {
 
-    private final JwtAuthProvider provider;
+    private final JwtAuthenticationProvider provider;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
