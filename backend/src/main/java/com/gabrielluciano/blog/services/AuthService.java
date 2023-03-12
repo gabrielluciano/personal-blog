@@ -1,8 +1,8 @@
 package com.gabrielluciano.blog.services;
 
-import com.gabrielluciano.blog.dto.LoginRequestDTO;
-import com.gabrielluciano.blog.dto.LoginResponseDTO;
-import com.gabrielluciano.blog.exceptions.InvalidEmailOrPasswordException;
+import com.gabrielluciano.blog.dto.LoginRequest;
+import com.gabrielluciano.blog.dto.LoginResponse;
+import com.gabrielluciano.blog.error.exceptions.InvalidCredentialsException;
 import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
@@ -21,25 +21,25 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public LoginResponseDTO authenticate(LoginRequestDTO loginRequestDTO) {
+    public LoginResponse authenticate(LoginRequest loginRequest) {
 
-        String email = loginRequestDTO.getEmail();
+        String email = loginRequest.getEmail();
         Optional<User> optionalUser = repository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            throw new InvalidEmailOrPasswordException();
+            throw new InvalidCredentialsException();
         }
 
         User user = optionalUser.get();
         boolean passwordMatches = passwordEncoder
-                .matches(loginRequestDTO.getPassword(), user.getPassword());
+                .matches(loginRequest.getPassword(), user.getPassword());
 
         if (passwordMatches) {
             JwtPayload payload = jwtUtil.getPayload(user);
             String token = jwtUtil.createToken(user);
-            return new LoginResponseDTO(token, payload);
+            return new LoginResponse(token, payload);
         }
 
-        throw new InvalidEmailOrPasswordException();
+        throw new InvalidCredentialsException();
     }
 }

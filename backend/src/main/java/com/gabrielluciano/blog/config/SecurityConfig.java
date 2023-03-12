@@ -32,7 +32,7 @@ public class SecurityConfig {
                 )
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signin").permitAll()
+                        .requestMatchers("/api/v1/signin").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
