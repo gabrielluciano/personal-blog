@@ -7,6 +7,7 @@ import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
 import com.gabrielluciano.blog.security.jwt.JwtUtil;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AuthService {
 
     private final UserRepository repository;

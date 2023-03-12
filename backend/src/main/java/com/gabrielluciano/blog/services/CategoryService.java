@@ -3,18 +3,16 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.repositories.CategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id)

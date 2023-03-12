@@ -1,120 +1,91 @@
 package com.gabrielluciano.blog.services;
 
-import com.gabrielluciano.blog.dto.MultiplePostsDTO;
-import com.gabrielluciano.blog.dto.PostRequestDTO;
-import com.gabrielluciano.blog.exceptions.PaginationException;
-import com.gabrielluciano.blog.exceptions.PostNotFoundException;
-import com.gabrielluciano.blog.exceptions.UserIsNotAuthorException;
-import com.gabrielluciano.blog.exceptions.UserNotFoundException;
-import com.gabrielluciano.blog.models.Role;
+import com.gabrielluciano.blog.dto.CreateAndUpdatePostRequest;
+import com.gabrielluciano.blog.dto.MultiPostResponse;
+import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
+import com.gabrielluciano.blog.error.exceptions.UserNotAllowedToModifyPostException;
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.models.entities.Post;
-import com.gabrielluciano.blog.models.entities.Tag;
 import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.PostRepository;
 import com.gabrielluciano.blog.repositories.TagRepository;
-import com.gabrielluciano.blog.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
+import java.util.Arrays;
 
 @Service
+@AllArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final CategoryService categoryService;
+    private final TagService tagService;
     private final TagRepository tagRepository;
-
-    public PostService(
-            PostRepository postRepository,
-            UserRepository userRepository,
-            CategoryService categoryService,
-            TagRepository tagRepository) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.categoryService = categoryService;
-        this.tagRepository = tagRepository;
-    }
 
     public Post findPostById(Long id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+                .orElseThrow(() -> new ResourceNotFoundException(Post.class, id));
     }
 
     public Post findPostBySlug(String slug) {
         return postRepository.findBySlug(slug)
-                .orElseThrow(() -> new PostNotFoundException(slug));
+                .orElseThrow(() -> new ResourceNotFoundException(Post.class, slug));
     }
 
-    public Page<MultiplePostsDTO> findPostsPaginated(Integer page, Integer size, Boolean published) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            if (published == null) {
-                return postRepository.findAllByOrderByUpdatedAtDesc(pageable)
-                        .map(post -> new MultiplePostsDTO(post));
-            } else {
-                return postRepository.findAllByPublishedOrderByPublishedAtDesc(published, pageable)
-                        .map(post -> new MultiplePostsDTO(post));
-            }
-        } catch (IllegalArgumentException ex) {
-            throw new PaginationException(page, size);
+    public Page<MultiPostResponse> findPostsPaginated(Boolean published, Pageable pageable) {
+        if (published == null) {
+            return postRepository.findAllByOrderByUpdatedAtDesc(pageable)
+                    .map(MultiPostResponse::new);
+        } else {
+            return postRepository.findAllByPublishedOrderByPublishedAtDesc(published, pageable)
+                    .map(MultiPostResponse::new);
         }
     }
 
-    public Page<MultiplePostsDTO> findPublishedPostsByCategoryPaginated(Integer page, Integer size, Long categoryId) {
-        try {
-            Category category = categoryService.findCategoryById(categoryId);
-            Pageable pageable = PageRequest.of(page, size);
-            return postRepository.findAllByCategoryAndPublishedIsTrueOrderByPublishedAtDesc(category, pageable)
-                    .map(post -> new MultiplePostsDTO(post));
-        } catch (IllegalArgumentException ex) {
-            throw new PaginationException(page, size);
-        }
+    public Page<MultiPostResponse> findPublishedPostsByCategoryPaginated(Long categoryId, Pageable pageable) {
+        Category category = categoryService.findCategoryById(categoryId);
+        return postRepository.findAllByCategoryAndPublishedIsTrueOrderByPublishedAtDesc(category, pageable)
+                .map(post -> new MultiPostResponse(post));
     }
 
-    public Post createPost(PostRequestDTO postRequestDTO) {
-        Post newPost = postRequestDTO.toNewPost();
+    public Post createPost(CreateAndUpdatePostRequest createPostRequest, User user) {
+        Category category = categoryService.findCategoryById(createPostRequest.getCategoryId());
 
-        User user = userRepository.findById(postRequestDTO.getAuthorId())
-                .orElseThrow(() -> new UserNotFoundException(postRequestDTO.getAuthorId()));
-
-        if (user.getRoles().contains(Role.AUTHOR)) {
-            throw new UserIsNotAuthorException(user.getId());
-        }
-
-        Category category = categoryService.findCategoryById(postRequestDTO.getCategoryId());
-
-        newPost.setAuthor(user);
-        newPost.setCategory(category);
-        updatePostTags(newPost, postRequestDTO.getTagsIds());
-
-        return postRepository.save(newPost);
-    }
-
-    public Post updatePost(PostRequestDTO postRequestDTO, Long id) {
-        Post post = findPostById(id);
-        postRequestDTO.fillPost(post);
-
-        Category category = categoryService.findCategoryById(postRequestDTO.getCategoryId());
+        Post post = createPostRequest.toNewPost();
+        post.setAuthor(user);
         post.setCategory(category);
+        updatePostTags(post, createPostRequest.getTagsIds());
 
-        updatePostTags(post, postRequestDTO.getTagsIds());
         return postRepository.save(post);
     }
 
-    public void deletePostById(Long id) {
+    public Post updatePost(CreateAndUpdatePostRequest updatePostRequest, Long id, User user) {
         Post post = findPostById(id);
+
+        verifyIfUserIsAllowedToModifyPost(user, post);
+
+        Category category = categoryService.findCategoryById(updatePostRequest.getCategoryId());
+        updatePostRequest.updatePostContent(post);
+        post.setCategory(category);
+        updatePostTags(post, updatePostRequest.getTagsIds());
+
+        return postRepository.save(post);
+    }
+
+    public void deletePostById(Long id, User user) {
+        Post post = findPostById(id);
+        verifyIfUserIsAllowedToModifyPost(user, post);
         postRepository.deleteById(post.getId());
     }
 
-    public boolean publishPost(Long id) {
+    public boolean publishPost(Long id, User user) {
         Post post = findPostById(id);
+        verifyIfUserIsAllowedToModifyPost(user, post);
         if (!post.getPublished()) {
             post.setPublished(true);
             post.setPublishedAt(LocalDateTime.now(ZoneOffset.UTC));
@@ -124,8 +95,9 @@ public class PostService {
         return false;
     }
 
-    public boolean unpublishPost(Long id) {
+    public boolean unpublishPost(Long id, User user) {
         Post post = findPostById(id);
+        verifyIfUserIsAllowedToModifyPost(user, post);
         if (post.getPublished()) {
             post.setPublished(false);
             post.setPublishedAt(null);
@@ -137,11 +109,13 @@ public class PostService {
 
     private void updatePostTags(Post post, Long[] tagsIds) {
         post.getTags().clear();
-        for (Long tagId : tagsIds) {
-            Optional<Tag> tag = tagRepository.findById(tagId);
-            if (tag.isPresent()) {
-                post.addTag(tag.get());
-            }
+        Arrays.stream(tagsIds).forEach(tagId -> tagService.findOptionalTagById(tagId)
+                .ifPresent(post::addTag));
+    }
+
+    private void verifyIfUserIsAllowedToModifyPost(User user, Post post) {
+        if (user.isNotAdmin() && !post.isUserAuthorOfThisPost(user)) {
+            throw new UserNotAllowedToModifyPostException(user.getId());
         }
     }
 }

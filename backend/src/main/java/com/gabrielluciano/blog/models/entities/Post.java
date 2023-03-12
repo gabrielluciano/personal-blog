@@ -79,12 +79,15 @@ public class Post extends AbstractPersistentObject {
         updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
+    public boolean isUserAuthorOfThisPost(User user) {
+        return user.equals(author);
+    }
+
     public void addTag(Tag tag) {
         if (!tags.contains(tag)) {
             this.tags.add(tag);
             tag.addPost(this);
         }
-        this.equals(this);
     }
 
     @Override

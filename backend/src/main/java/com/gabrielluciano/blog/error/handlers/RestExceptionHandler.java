@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.error.handlers;
 
 import com.gabrielluciano.blog.error.exceptions.InvalidCredentialsException;
 import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
+import com.gabrielluciano.blog.error.exceptions.UserNotAllowedToModifyPostException;
 import com.gabrielluciano.blog.error.models.ErrorDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +43,18 @@ public class RestExceptionHandler {
                                                                           HttpServletRequest request) {
         ErrorDetails errorDetails = new ErrorDetails()
                 .withTitle("Invalid Credentials")
+                .withStatus(HttpStatus.UNAUTHORIZED.value())
+                .withMessage(ex.getMessage())
+                .withPath(request.getRequestURI());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserNotAllowedToModifyPostException.class)
+    public ResponseEntity<ErrorDetails> handleUserNotAllowedToModifyPostException(UserNotAllowedToModifyPostException ex,
+                                                                                  HttpServletRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails()
+                .withTitle("User Not Allowed to Modify Post")
                 .withStatus(HttpStatus.UNAUTHORIZED.value())
                 .withMessage(ex.getMessage())
                 .withPath(request.getRequestURI());

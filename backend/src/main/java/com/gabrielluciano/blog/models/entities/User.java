@@ -50,6 +50,16 @@ public class User extends AbstractPersistentObject {
         this.password = password;
     }
 
+    @JsonIgnore
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
+    }
+
+    @JsonIgnore
+    public boolean isNotAdmin() {
+        return !isAdmin();
+    }
+
     @Override
     public String toString() {
         return "User{" +

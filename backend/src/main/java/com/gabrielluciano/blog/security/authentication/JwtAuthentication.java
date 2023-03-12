@@ -1,6 +1,8 @@
 package com.gabrielluciano.blog.security.authentication;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.gabrielluciano.blog.models.entities.User;
+import com.gabrielluciano.blog.security.models.SecurityUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.Authentication;
@@ -15,7 +17,7 @@ public class JwtAuthentication implements Authentication {
     @Getter
     private final DecodedJWT decodedJWT;
     private boolean authenticated;
-    private UserDetails userDetails;
+    private SecurityUser userDetails;
 
     @Override
     public boolean isAuthenticated() {
@@ -44,7 +46,7 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return userDetails;
     }
 
     @Override

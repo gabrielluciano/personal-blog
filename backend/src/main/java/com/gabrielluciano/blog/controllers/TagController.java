@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.models.entities.Tag;
 import com.gabrielluciano.blog.services.TagService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,18 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1")
 public class TagController {
 
     private final TagService service;
-
-    public TagController(TagService service) {
-        this.service = service;
-    }
 
     @GetMapping("tags/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable Long id) {

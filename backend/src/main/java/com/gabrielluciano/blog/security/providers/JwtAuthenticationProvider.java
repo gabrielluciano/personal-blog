@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.security.providers;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.gabrielluciano.blog.security.authentication.JwtAuthentication;
+import com.gabrielluciano.blog.security.models.SecurityUser;
 import com.gabrielluciano.blog.security.services.AppUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -22,7 +23,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         DecodedJWT token = jwtAuthentication.getDecodedJWT();
         UserDetails ud = userDetailsService.loadUserByUsername(token.getClaim("email").asString());
 
-        return new JwtAuthentication(null, true, ud);
+        return new JwtAuthentication(null, true, (SecurityUser) ud);
     }
 
     @Override

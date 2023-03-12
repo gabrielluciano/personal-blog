@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.services.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,14 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1")
 public class CategoryController {
 
     private final CategoryService service;
-
-    public CategoryController(CategoryService service) {
-        this.service = service;
-    }
 
     @GetMapping("categories/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {

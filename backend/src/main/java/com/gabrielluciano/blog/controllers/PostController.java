@@ -1,10 +1,16 @@
 package com.gabrielluciano.blog.controllers;
 
-import com.gabrielluciano.blog.dto.MultiplePostsDTO;
-import com.gabrielluciano.blog.dto.PostRequestDTO;
+import com.gabrielluciano.blog.dto.MultiPostResponse;
+import com.gabrielluciano.blog.dto.CreateAndUpdatePostRequest;
 import com.gabrielluciano.blog.models.entities.Post;
+import com.gabrielluciano.blog.security.models.SecurityUser;
 import com.gabrielluciano.blog.services.PostService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,64 +23,66 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/posts")
+@AllArgsConstructor
+@RequestMapping("/api/v1")
 public class PostController {
 
     private final PostService service;
 
-    public PostController(PostService service) {
-        this.service = service;
+    @GetMapping("posts/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        return new ResponseEntity<>(service.findPostById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public Post getPostById(@PathVariable Long id) {
-        return service.findPostById(id);
+    @GetMapping("posts/slug/{slug}")
+    public ResponseEntity<Post> getPostBySlug(@PathVariable String slug) {
+        return new ResponseEntity<>(service.findPostBySlug(slug), HttpStatus.OK);
     }
 
-    @GetMapping("/slug/{slug}")
-    public Post getPostBySlug(@PathVariable String slug) {
-        return service.findPostBySlug(slug);
-    }
-
-    @GetMapping
-    public Page<MultiplePostsDTO> getPostsPaginated(
+    @GetMapping("posts")
+    public ResponseEntity<Page<MultiPostResponse>> getPostsPaginated(
             @RequestParam(required = false) Boolean published,
-            @RequestParam(defaultValue = "0", name = "offset") Integer page,
-            @RequestParam(defaultValue = "10", name = "limit") Integer size) {
-
-        return service.findPostsPaginated(page, size, published);
+            Pageable pageable) {
+        return new ResponseEntity<>(service.findPostsPaginated(published, pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/categories/{categoryId}/posts")
-    public Page<MultiplePostsDTO> getPublishedPostsByCategoryPaginated(
+    @GetMapping("categories/{categoryId}/posts")
+    public ResponseEntity<Page<MultiPostResponse>> getPublishedPostsByCategoryPaginated(
             @PathVariable Long categoryId,
-            @RequestParam(defaultValue = "0", name = "offset") Integer page,
-            @RequestParam(defaultValue = "10", name = "limit") Integer size) {
-        return service.findPublishedPostsByCategoryPaginated(page, size, categoryId);
+            Pageable pageable) {
+        return new ResponseEntity<>(service.findPublishedPostsByCategoryPaginated(categoryId, pageable),
+                HttpStatus.OK);
     }
 
-    @PostMapping
-    public Post createPost(@RequestBody PostRequestDTO post) {
-        return service.createPost(post);
+    @PostMapping("author/posts")
+    public ResponseEntity<Post> createPost(@RequestBody CreateAndUpdatePostRequest post,
+                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        return new ResponseEntity<>(service.createPost(post, securityUser.getUser()), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public Post updatePost(@RequestBody PostRequestDTO post, @PathVariable Long id) {
-        return service.updatePost(post, id);
+    @PutMapping("author/posts/{id}")
+    public ResponseEntity<Post> updatePost(@RequestBody CreateAndUpdatePostRequest post,
+                                           @PathVariable Long id,
+                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        return new ResponseEntity<>(service.updatePost(post, id, securityUser.getUser()), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
-        service.deletePostById(id);
+    @DeleteMapping("author/posts/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id,
+                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        service.deletePostById(id, securityUser.getUser());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}/publish")
-    public boolean publishPost(@PathVariable Long id) {
-        return service.publishPost(id);
+    @PatchMapping("author/posts/{id}/publish")
+    public ResponseEntity<Boolean> publishPost(@PathVariable Long id,
+                                               @AuthenticationPrincipal SecurityUser securityUser) {
+        return new ResponseEntity<>(service.publishPost(id, securityUser.getUser()), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/unpublish")
-    public boolean unpublishPost(@PathVariable Long id) {
-        return service.unpublishPost(id);
+    @PatchMapping("author/posts/{id}/unpublish")
+    public ResponseEntity<Boolean> unpublishPost(@PathVariable Long id,
+                                                 @AuthenticationPrincipal SecurityUser securityUser) {
+        return new ResponseEntity<>(service.unpublishPost(id, securityUser.getUser()), HttpStatus.OK);
     }
 }
