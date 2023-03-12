@@ -1,7 +1,7 @@
 package com.gabrielluciano.blog.security.services;
 
 import com.gabrielluciano.blog.repositories.UserRepository;
-import com.gabrielluciano.blog.security.SecurityUser;
+import com.gabrielluciano.blog.security.models.SecurityUser;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

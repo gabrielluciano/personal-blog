@@ -1,4 +1,4 @@
-package com.gabrielluciano.blog.security;
+package com.gabrielluciano.blog.security.models;
 
 import com.gabrielluciano.blog.models.Role;
 import lombok.AllArgsConstructor;

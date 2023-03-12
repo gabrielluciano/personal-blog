@@ -1,6 +1,7 @@
-package com.gabrielluciano.blog.security;
+package com.gabrielluciano.blog.security.models;
 
 import com.gabrielluciano.blog.models.entities.User;
+import com.gabrielluciano.blog.security.models.SecurityRole;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
