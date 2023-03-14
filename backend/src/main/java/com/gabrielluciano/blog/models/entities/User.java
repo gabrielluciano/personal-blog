@@ -41,6 +41,7 @@ public class User extends AbstractPersistentObject {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 

@@ -18,9 +18,6 @@ public class CreateAndUpdatePostRequest {
     private Long categoryId;
     private Long[] tagsIds;
 
-    public CreateAndUpdatePostRequest() {
-    }
-
     public Post toNewPost() {
         Post post = new Post(title, subtitle, content, metaTitle, metaDescription, slug, imageUrl);
         return post;
