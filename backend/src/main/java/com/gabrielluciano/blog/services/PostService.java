@@ -3,7 +3,7 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.CreateAndUpdatePostRequest;
 import com.gabrielluciano.blog.dto.MultiPostResponse;
 import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
-import com.gabrielluciano.blog.error.exceptions.UserNotAllowedToModifyPostException;
+import com.gabrielluciano.blog.error.exceptions.UserNotAllowedToModifyResourceException;
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.models.entities.User;
@@ -115,7 +115,7 @@ public class PostService {
 
     private void verifyIfUserIsAllowedToModifyPost(User user, Post post) {
         if (user.isNotAdmin() && !post.isUserAuthorOfThisPost(user)) {
-            throw new UserNotAllowedToModifyPostException(user.getId());
+            throw new UserNotAllowedToModifyResourceException(user.getId());
         }
     }
 }
