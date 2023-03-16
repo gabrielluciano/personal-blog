@@ -56,11 +56,11 @@ public class RestExceptionHandler {
                                                                                       HttpServletRequest request) {
         ErrorDetails errorDetails = new ErrorDetails()
                 .withTitle("User Not Allowed to Modify Resource")
-                .withStatus(HttpStatus.UNAUTHORIZED.value())
+                .withStatus(HttpStatus.FORBIDDEN.value())
                 .withMessage(ex.getMessage())
                 .withPath(request.getRequestURI());
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(InvalidPostCommentStatusException.class)
