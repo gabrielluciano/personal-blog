@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.config;
 
+import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.security.entrypoints.JwtAuthenticationEntryPoint;
 import com.gabrielluciano.blog.security.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -32,9 +34,10 @@ public class SecurityConfig {
                 )
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/signin").permitAll()
-                        .requestMatchers("/api/v1/signup").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/v1/user/**").hasRole(Role.USER.name())
+                        .requestMatchers("/api/v1/author/**").hasRole(Role.AUTHOR.name())
+                        .requestMatchers("/api/v1/admin/**").hasRole(Role.ADMIN.name())
+                        .anyRequest().permitAll())
                 .build();
     }
 }
