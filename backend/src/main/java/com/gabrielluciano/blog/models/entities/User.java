@@ -36,7 +36,7 @@ public class User extends AbstractPersistentObject {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     @JsonIgnore
