@@ -2,13 +2,13 @@ package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.LoginRequest;
 import com.gabrielluciano.blog.dto.LoginResponse;
+import com.gabrielluciano.blog.dto.SignupRequest;
 import com.gabrielluciano.blog.error.exceptions.InvalidCredentialsException;
 import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
 import com.gabrielluciano.blog.security.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class AuthService {
+public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
@@ -42,5 +42,11 @@ public class AuthService {
         }
 
         throw new InvalidCredentialsException();
+    }
+
+    public User createUser(SignupRequest signupRequest) {
+        User user = signupRequest.toNewUser();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return repository.save(user);
     }
 }
