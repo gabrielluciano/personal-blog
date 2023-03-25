@@ -34,4 +34,5 @@ build/
 
 ### Project Files ###
 application.properties
+application.yml
 LoadDatabase.java
