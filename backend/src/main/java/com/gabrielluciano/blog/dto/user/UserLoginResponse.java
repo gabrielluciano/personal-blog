@@ -1,4 +1,4 @@
-package com.gabrielluciano.blog.dto;
+package com.gabrielluciano.blog.dto.user;
 
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginResponse {
+public class UserLoginResponse {
 
     private String token;
 

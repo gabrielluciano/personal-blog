@@ -1,9 +1,10 @@
 package com.gabrielluciano.blog.controllers;
 
-import com.gabrielluciano.blog.dto.LoginRequest;
-import com.gabrielluciano.blog.dto.LoginResponse;
-import com.gabrielluciano.blog.dto.SignupRequest;
-import com.gabrielluciano.blog.models.entities.User;
+import com.gabrielluciano.blog.dto.user.UserCreateRequest;
+import com.gabrielluciano.blog.dto.user.UserCreateResponse;
+import com.gabrielluciano.blog.dto.user.UserLoginRequest;
+import com.gabrielluciano.blog.dto.user.UserLoginResponse;
+import com.gabrielluciano.blog.mappers.UserMapper;
 import com.gabrielluciano.blog.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
 
-    @PostMapping("/signin")
-    public ResponseEntity<LoginResponse> signin(@RequestBody LoginRequest loginRequest) {
-        return new ResponseEntity<>(service.authenticate(loginRequest), HttpStatus.OK);
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> signin(@RequestBody UserLoginRequest userLoginRequest) {
+        return ResponseEntity.ok(userService.login(userLoginRequest));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignupRequest signupRequest) {
-        return new ResponseEntity<>(service.createUser(signupRequest), HttpStatus.CREATED);
+    public ResponseEntity<UserCreateResponse> signup(@RequestBody UserCreateRequest userCreateRequest) {
+        UserCreateResponse userCreateResponse = UserMapper.INSTANCE
+                .toUserCreateResponse(userService.create(userCreateRequest));
+        return new ResponseEntity<>(userCreateResponse, HttpStatus.CREATED);
     }
 
 }

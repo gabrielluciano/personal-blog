@@ -1,9 +1,11 @@
 package com.gabrielluciano.blog.services;
 
-import com.gabrielluciano.blog.dto.LoginRequest;
-import com.gabrielluciano.blog.dto.LoginResponse;
-import com.gabrielluciano.blog.dto.SignupRequest;
+import com.gabrielluciano.blog.dto.user.UserCreateRequest;
+import com.gabrielluciano.blog.dto.user.UserLoginRequest;
+import com.gabrielluciano.blog.dto.user.UserLoginResponse;
 import com.gabrielluciano.blog.error.exceptions.InvalidCredentialsException;
+import com.gabrielluciano.blog.mappers.UserMapper;
+import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JwtPayload;
@@ -12,41 +14,39 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @AllArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public LoginResponse authenticate(LoginRequest loginRequest) {
+    public UserLoginResponse login(UserLoginRequest userLoginRequest) {
 
-        String email = loginRequest.getEmail();
-        Optional<User> optionalUser = repository.findByEmail(email);
+        String email = userLoginRequest.getEmail();
 
-        if (optionalUser.isEmpty()) {
-            throw new InvalidCredentialsException();
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(InvalidCredentialsException::new);
 
-        User user = optionalUser.get();
-        boolean passwordMatches = passwordEncoder
-                .matches(loginRequest.getPassword(), user.getPassword());
+        throwInvalidCredentialsExceptionIfPasswordsDoNotMatch(userLoginRequest.getPassword(), user.getPassword());
 
-        if (passwordMatches) {
-            JwtPayload payload = jwtUtil.getPayload(user);
-            String token = jwtUtil.createToken(user);
-            return new LoginResponse(token, payload);
-        }
-
-        throw new InvalidCredentialsException();
+        JwtPayload payload = jwtUtil.getPayload(user);
+        String token = jwtUtil.createToken(user);
+        return new UserLoginResponse(token, payload);
     }
 
-    public User createUser(SignupRequest signupRequest) {
-        User user = signupRequest.toNewUser();
+    public User create(UserCreateRequest userCreateRequest) {
+        User user = UserMapper.INSTANCE.toUser(userCreateRequest);
+        user.getRoles().add(Role.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
+        return userRepository.save(user);
+    }
+
+    private void throwInvalidCredentialsExceptionIfPasswordsDoNotMatch(String actual, String expected) {
+        boolean match = passwordEncoder.matches(actual, expected);
+        if (!match) {
+            throw new InvalidCredentialsException();
+        }
     }
 }
