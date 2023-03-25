@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -31,7 +30,6 @@ import java.util.Set;
 @Where(clause = "deleted_at IS NULL")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Tag extends AbstractPersistentObject {
 
     public static final String SEQUENCE_NAME = "SEQUENCE_TAG";
@@ -50,12 +48,6 @@ public class Tag extends AbstractPersistentObject {
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
-
-    public Tag(String name, String slug, String description) {
-        this.name = name;
-        this.slug = slug;
-        this.description = description;
-    }
 
     public void addPost(Post post) {
         if (!posts.contains(post)) {
