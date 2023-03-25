@@ -40,6 +40,7 @@ public class TagService {
     public void update(TagUpdateRequest tagUpdateRequest) {
         Tag tag = findByIdOrThrowException(tagUpdateRequest.getId());
         TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
+        tagRepository.save(tag);
     }
 
     public void deleteById(Long id) {

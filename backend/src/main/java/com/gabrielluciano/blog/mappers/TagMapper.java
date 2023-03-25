@@ -5,11 +5,10 @@ import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.models.entities.Tag;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper
 public interface TagMapper {
 
     TagMapper INSTANCE = Mappers.getMapper(TagMapper.class);
