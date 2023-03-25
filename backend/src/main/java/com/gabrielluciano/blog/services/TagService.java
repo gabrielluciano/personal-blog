@@ -1,6 +1,9 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
+import com.gabrielluciano.blog.mappers.TagMapper;
 import com.gabrielluciano.blog.models.entities.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import lombok.AllArgsConstructor;
@@ -16,33 +19,31 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
-    public Optional<Tag> findOptionalTagById(Long id) {
+    public Optional<Tag> findOptionalById(Long id) {
         return tagRepository.findById(id);
     }
 
-    public Tag findTagById(Long id) {
-        return findOptionalTagById(id)
+    public Tag findByIdOrThrowException(Long id) {
+        return findOptionalById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
 
-    public Page<Tag> findTagsPaginated(Pageable pageable) {
+    public Page<Tag> list(Pageable pageable) {
         return tagRepository.findAll(pageable);
     }
 
-    public Tag createTag(Tag tag) {
+    public Tag create(TagCreateRequest tagCreateRequest) {
+        Tag tag = TagMapper.INSTANCE.toTag(tagCreateRequest);
         return tagRepository.save(tag);
     }
 
-    public Tag updateTag(Tag tag, Long id) {
-        Tag tagFromDb = findTagById(id);
-        tagFromDb.setName(tag.getName());
-        tagFromDb.setDescription(tag.getDescription());
-        tagFromDb.setSlug(tag.getSlug());
-        return tagRepository.save(tagFromDb);
+    public void update(TagUpdateRequest tagUpdateRequest) {
+        Tag tag = findByIdOrThrowException(tagUpdateRequest.getId());
+        TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
     }
 
-    public void deleteTagById(Long id) {
-        Tag tagFromDb = findTagById(id);
+    public void deleteById(Long id) {
+        findByIdOrThrowException(id);
         tagRepository.deleteById(id);
     }
 }

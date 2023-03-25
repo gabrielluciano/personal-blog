@@ -8,7 +8,6 @@ import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.models.entities.Post;
 import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.repositories.PostRepository;
-import com.gabrielluciano.blog.repositories.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryService categoryService;
     private final TagService tagService;
-    private final TagRepository tagRepository;
 
     public Post findPostById(Long id) {
         return postRepository.findById(id)
@@ -109,7 +107,7 @@ public class PostService {
 
     private void updatePostTags(Post post, Long[] tagsIds) {
         post.getTags().clear();
-        Arrays.stream(tagsIds).forEach(tagId -> tagService.findOptionalTagById(tagId)
+        Arrays.stream(tagsIds).forEach(tagId -> tagService.findOptionalById(tagId)
                 .ifPresent(post::addTag));
     }
 

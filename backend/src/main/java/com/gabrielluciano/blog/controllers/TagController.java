@@ -1,5 +1,9 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
+import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
+import com.gabrielluciano.blog.mappers.TagMapper;
 import com.gabrielluciano.blog.models.entities.Tag;
 import com.gabrielluciano.blog.services.TagService;
 import lombok.AllArgsConstructor;
@@ -21,31 +25,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class TagController {
 
-    private final TagService service;
+    private final TagService tagService;
 
     @GetMapping("tags/{id}")
-    public ResponseEntity<Tag> getTagById(@PathVariable Long id) {
-        return new ResponseEntity<>(service.findTagById(id), HttpStatus.OK);
+    public ResponseEntity<TagResponse> findById(@PathVariable Long id) {
+        TagResponse tagResponse = TagMapper.INSTANCE
+                .toTagResponse(tagService.findByIdOrThrowException(id));
+        return ResponseEntity.ok(tagResponse);
     }
 
     @GetMapping("tags")
-    public ResponseEntity<Page<Tag>> getTagsPaginated(Pageable pageable) {
-        return new ResponseEntity<>(service.findTagsPaginated(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<TagResponse>> list(Pageable pageable) {
+        Page<TagResponse> page = tagService.list(pageable)
+                .map(TagMapper.INSTANCE::toTagResponse);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("admin/tags")
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) {
-        return new ResponseEntity<>(service.createTag(tag), HttpStatus.CREATED);
+    public ResponseEntity<TagResponse> create(@RequestBody TagCreateRequest tagCreateRequest) {
+        TagResponse tagResponse = TagMapper.INSTANCE.toTagResponse(tagService.create(tagCreateRequest));
+        return new ResponseEntity<>(tagResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("admin/tags/{id}")
-    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag, @PathVariable Long id) {
-        return new ResponseEntity<>(service.updateTag(tag, id), HttpStatus.OK);
+    @PutMapping("admin/tags")
+    public ResponseEntity<Tag> update(@RequestBody TagUpdateRequest tagUpdateRequest) {
+        tagService.update(tagUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("admin/tags/{id}")
-    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
-        service.deleteTagById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        tagService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
