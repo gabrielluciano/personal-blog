@@ -1,6 +1,9 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.dto.category.CategoryCreateRequest;
+import com.gabrielluciano.blog.dto.category.CategoryUpdateRequest;
 import com.gabrielluciano.blog.error.exceptions.ResourceNotFoundException;
+import com.gabrielluciano.blog.mappers.CategoryMapper;
 import com.gabrielluciano.blog.models.entities.Category;
 import com.gabrielluciano.blog.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
@@ -14,29 +17,28 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Category findCategoryById(Long id) {
+    public Category findByIdOrThrowError(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Category.class, id));
     }
 
-    public List<Category> findCategories() {
+    public List<Category> listAll() {
         return categoryRepository.findAll();
     }
 
-    public Category createCategory(Category category) {
+    public Category create(CategoryCreateRequest categoryCreateRequest) {
+        Category category = CategoryMapper.INSTANCE.toCategory(categoryCreateRequest);
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(Category category, Long id) {
-        Category categoryFromDb = findCategoryById(id);
-        categoryFromDb.setName(category.getName());
-        categoryFromDb.setDescription(category.getDescription());
-        categoryFromDb.setSlug(category.getSlug());
-        return categoryRepository.save(categoryFromDb);
+    public void update(CategoryUpdateRequest categoryUpdateRequest) {
+        Category category = findByIdOrThrowError(categoryUpdateRequest.getId());
+        CategoryMapper.INSTANCE.updateCategoryFromCategoryUpdateRequest(categoryUpdateRequest, category);
+        categoryRepository.save(category);
     }
 
-    public void deleteCategoryById(Long id) {
-        Category categoryFromDb = findCategoryById(id);
+    public void deleteById(Long id) {
+        findByIdOrThrowError(id);
         categoryRepository.deleteById(id);
     }
 }

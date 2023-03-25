@@ -46,13 +46,13 @@ public class PostService {
     }
 
     public Page<MultiPostResponse> findPublishedPostsByCategoryPaginated(Long categoryId, Pageable pageable) {
-        Category category = categoryService.findCategoryById(categoryId);
+        Category category = categoryService.findByIdOrThrowError(categoryId);
         return postRepository.findAllByCategoryAndPublishedIsTrueOrderByPublishedAtDesc(category, pageable)
                 .map(post -> new MultiPostResponse(post));
     }
 
     public Post createPost(CreateAndUpdatePostRequest createPostRequest, User user) {
-        Category category = categoryService.findCategoryById(createPostRequest.getCategoryId());
+        Category category = categoryService.findByIdOrThrowError(createPostRequest.getCategoryId());
 
         Post post = createPostRequest.toNewPost();
         post.setAuthor(user);
@@ -67,7 +67,7 @@ public class PostService {
 
         verifyIfUserIsAllowedToModifyPost(user, post);
 
-        Category category = categoryService.findCategoryById(updatePostRequest.getCategoryId());
+        Category category = categoryService.findByIdOrThrowError(updatePostRequest.getCategoryId());
         updatePostRequest.updatePostContent(post);
         post.setCategory(category);
         updatePostTags(post, updatePostRequest.getTagsIds());

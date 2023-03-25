@@ -1,6 +1,9 @@
 package com.gabrielluciano.blog.controllers;
 
-import com.gabrielluciano.blog.models.entities.Category;
+import com.gabrielluciano.blog.dto.category.CategoryCreateRequest;
+import com.gabrielluciano.blog.dto.category.CategoryResponse;
+import com.gabrielluciano.blog.dto.category.CategoryUpdateRequest;
+import com.gabrielluciano.blog.mappers.CategoryMapper;
 import com.gabrielluciano.blog.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,37 +18,47 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1")
 public class CategoryController {
 
-    private final CategoryService service;
+    private final CategoryService categoryService;
 
     @GetMapping("categories/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        return new ResponseEntity<>(service.findCategoryById(id), HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> findById(@PathVariable Long id) {
+        CategoryResponse categoryResponse = CategoryMapper.INSTANCE
+                .toCategoryResponse(categoryService.findByIdOrThrowError(id));
+        return ResponseEntity.ok(categoryResponse);
     }
 
     @GetMapping("categories")
-    public ResponseEntity<List<Category>> getCategories() {
-        return new ResponseEntity<>(service.findCategories(), HttpStatus.OK);
+    public ResponseEntity<List<CategoryResponse>> listAll() {
+        List<CategoryResponse> categoryResponsesList = categoryService.listAll()
+                .stream()
+                .map(CategoryMapper.INSTANCE::toCategoryResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(categoryResponsesList);
     }
 
     @PostMapping("admin/categories")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(service.createCategory(category), HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> create(@RequestBody CategoryCreateRequest categoryCreateRequest) {
+        CategoryResponse categoryResponse = CategoryMapper.INSTANCE
+                .toCategoryResponse(categoryService.create(categoryCreateRequest));
+        return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("admin/categories/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable Long id) {
-        return new ResponseEntity<>(service.updateCategory(category, id), HttpStatus.OK);
+    @PutMapping("admin/categories")
+    public ResponseEntity<Void> update(@RequestBody CategoryUpdateRequest categoryUpdateRequest) {
+        categoryService.update(categoryUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("admin/categories/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        service.deleteCategoryById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        categoryService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
