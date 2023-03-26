@@ -30,7 +30,7 @@ public class CategoryController {
     @GetMapping("categories/{id}")
     public ResponseEntity<CategoryResponse> findById(@PathVariable Long id) {
         CategoryResponse categoryResponse = CategoryMapper.INSTANCE
-                .toCategoryResponse(categoryService.findByIdOrThrowError(id));
+                .toCategoryResponse(categoryService.findByIdOrThrowException(id));
         return ResponseEntity.ok(categoryResponse);
     }
 
@@ -39,7 +39,7 @@ public class CategoryController {
         List<CategoryResponse> categoryResponsesList = categoryService.listAll()
                 .stream()
                 .map(CategoryMapper.INSTANCE::toCategoryResponse)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(categoryResponsesList);
     }
 

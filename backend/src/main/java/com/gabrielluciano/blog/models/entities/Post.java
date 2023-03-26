@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.models.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,21 +63,8 @@ public class Post extends AbstractPersistentObject {
     @ManyToOne(optional = false)
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Tag> tags = new HashSet<>();
-
-    public Post(String title, String subtitle, String content, String metaTitle, String metaDescription, String slug, String imageUrl) {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.content = content;
-        this.metaTitle = metaTitle;
-        this.metaDescription = metaDescription;
-        this.slug = slug;
-        this.imageUrl = imageUrl;
-        published = false;
-        createdAt = LocalDateTime.now(ZoneOffset.UTC);
-        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
-    }
 
     public boolean isUserAuthorOfThisPost(User user) {
         return user.equals(author);

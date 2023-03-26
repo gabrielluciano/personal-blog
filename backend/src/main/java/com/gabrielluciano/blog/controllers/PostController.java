@@ -1,8 +1,10 @@
 package com.gabrielluciano.blog.controllers;
 
-import com.gabrielluciano.blog.dto.MultiPostResponse;
-import com.gabrielluciano.blog.dto.CreateAndUpdatePostRequest;
-import com.gabrielluciano.blog.models.entities.Post;
+import com.gabrielluciano.blog.dto.post.PostCreateRequest;
+import com.gabrielluciano.blog.dto.post.PostPagedResponse;
+import com.gabrielluciano.blog.dto.post.PostSingleResponse;
+import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
+import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.security.models.SecurityUser;
 import com.gabrielluciano.blog.services.PostService;
 import lombok.AllArgsConstructor;
@@ -27,62 +29,91 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class PostController {
 
-    private final PostService service;
+    private final PostService postService;
 
     @GetMapping("posts/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
-        return new ResponseEntity<>(service.findPostById(id), HttpStatus.OK);
+    public ResponseEntity<PostSingleResponse> findPublishedPostById(@PathVariable Long id) {
+        PostSingleResponse postSingleResponse = PostMapper.INSTANCE
+                .toSinglePostResponse(postService.findPublishedPostByIdOrThrowException(id));
+        return ResponseEntity.ok(postSingleResponse);
     }
 
-    @GetMapping("posts/slug/{slug}")
-    public ResponseEntity<Post> getPostBySlug(@PathVariable String slug) {
-        return new ResponseEntity<>(service.findPostBySlug(slug), HttpStatus.OK);
+    @GetMapping("posts/find")
+    public ResponseEntity<PostSingleResponse> findPublishedPostBySlug(@RequestParam String slug) {
+        PostSingleResponse postSingleResponse = PostMapper.INSTANCE
+                .toSinglePostResponse(postService.findPublishedPostBySlugOrThrowException(slug));
+        return ResponseEntity.ok(postSingleResponse);
     }
 
     @GetMapping("posts")
-    public ResponseEntity<Page<MultiPostResponse>> getPostsPaginated(
-            @RequestParam(required = false) Boolean published,
-            Pageable pageable) {
-        return new ResponseEntity<>(service.findPostsPaginated(published, pageable), HttpStatus.OK);
+    public ResponseEntity<Page<PostPagedResponse>> listPublishedPosts(Pageable pageable) {
+        Page<PostPagedResponse> page = postService.listPublishedPosts(pageable)
+                .map(PostMapper.INSTANCE::toPagedPostResponse);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("categories/{categoryId}/posts")
-    public ResponseEntity<Page<MultiPostResponse>> getPublishedPostsByCategoryPaginated(
-            @PathVariable Long categoryId,
-            Pageable pageable) {
-        return new ResponseEntity<>(service.findPublishedPostsByCategoryPaginated(categoryId, pageable),
-                HttpStatus.OK);
+    public ResponseEntity<Page<PostPagedResponse>> listPublishedPostsByCategory(
+            @PathVariable Long categoryId, Pageable pageable) {
+
+        Page<PostPagedResponse> page = postService.listPublishedPostsByCategory(categoryId, pageable)
+                .map(PostMapper.INSTANCE::toPagedPostResponse);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("admin/posts/{id}")
+    public ResponseEntity<PostSingleResponse> findById(@PathVariable Long id) {
+        PostSingleResponse postSingleResponse = PostMapper.INSTANCE
+                .toSinglePostResponse(postService.findByIdOrThrowException(id));
+        return ResponseEntity.ok(postSingleResponse);
+    }
+
+    @GetMapping("admin/posts")
+    public ResponseEntity<Page<PostPagedResponse>> list(Pageable pageable) {
+        Page<PostPagedResponse> page = postService.list(pageable)
+                .map(PostMapper.INSTANCE::toPagedPostResponse);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("author/posts")
-    public ResponseEntity<Post> createPost(@RequestBody CreateAndUpdatePostRequest post,
-                                           @AuthenticationPrincipal SecurityUser securityUser) {
-        return new ResponseEntity<>(service.createPost(post, securityUser.getUser()), HttpStatus.CREATED);
+    public ResponseEntity<PostSingleResponse> create(@RequestBody PostCreateRequest postCreateRequest,
+                                                     @AuthenticationPrincipal SecurityUser securityUser) {
+        PostSingleResponse postSingleResponse = PostMapper.INSTANCE
+                .toSinglePostResponse(postService.create(postCreateRequest, securityUser.getUser()));
+        return new ResponseEntity<>(postSingleResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("author/posts/{id}")
-    public ResponseEntity<Post> updatePost(@RequestBody CreateAndUpdatePostRequest post,
-                                           @PathVariable Long id,
-                                           @AuthenticationPrincipal SecurityUser securityUser) {
-        return new ResponseEntity<>(service.updatePost(post, id, securityUser.getUser()), HttpStatus.OK);
+    @PutMapping("author/posts")
+    public ResponseEntity<Void> update(@RequestBody PostUpdateRequest postUpdateRequest,
+                                       @AuthenticationPrincipal SecurityUser securityUser) {
+        postService.update(postUpdateRequest, securityUser.getUser());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("author/posts/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id,
+    public ResponseEntity<Void> deleteById(@PathVariable Long id,
                                            @AuthenticationPrincipal SecurityUser securityUser) {
-        service.deletePostById(id, securityUser.getUser());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        postService.deleteById(id, securityUser.getUser());
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("author/posts/{id}/publish")
-    public ResponseEntity<Boolean> publishPost(@PathVariable Long id,
-                                               @AuthenticationPrincipal SecurityUser securityUser) {
-        return new ResponseEntity<>(service.publishPost(id, securityUser.getUser()), HttpStatus.OK);
+    public ResponseEntity<Boolean> publish(@PathVariable Long id,
+                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        return ResponseEntity.ok(postService.publishById(id, securityUser.getUser()));
     }
 
     @PatchMapping("author/posts/{id}/unpublish")
-    public ResponseEntity<Boolean> unpublishPost(@PathVariable Long id,
-                                                 @AuthenticationPrincipal SecurityUser securityUser) {
-        return new ResponseEntity<>(service.unpublishPost(id, securityUser.getUser()), HttpStatus.OK);
+    public ResponseEntity<Boolean> unpublish(@PathVariable Long id,
+                                             @AuthenticationPrincipal SecurityUser securityUser) {
+        return ResponseEntity.ok(postService.unpublishById(id, securityUser.getUser()));
+    }
+
+    @PatchMapping("author/posts/{id}/tags")
+    public ResponseEntity<Void> updateTags(@PathVariable(name = "id") Long postId,
+                                           @RequestBody Long[] tagIds,
+                                           @AuthenticationPrincipal SecurityUser securityUser) {
+        postService.updateTags(postId, tagIds, securityUser.getUser());
+        return ResponseEntity.noContent().build();
     }
 }

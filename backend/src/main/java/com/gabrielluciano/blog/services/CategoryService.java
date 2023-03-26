@@ -17,7 +17,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Category findByIdOrThrowError(Long id) {
+    public Category findByIdOrThrowException(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Category.class, id));
     }
@@ -32,13 +32,13 @@ public class CategoryService {
     }
 
     public void update(CategoryUpdateRequest categoryUpdateRequest) {
-        Category category = findByIdOrThrowError(categoryUpdateRequest.getId());
+        Category category = findByIdOrThrowException(categoryUpdateRequest.getId());
         CategoryMapper.INSTANCE.updateCategoryFromCategoryUpdateRequest(categoryUpdateRequest, category);
         categoryRepository.save(category);
     }
 
     public void deleteById(Long id) {
-        findByIdOrThrowError(id);
+        findByIdOrThrowException(id);
         categoryRepository.deleteById(id);
     }
 }

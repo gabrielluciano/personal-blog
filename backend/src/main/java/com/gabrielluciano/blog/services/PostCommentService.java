@@ -26,7 +26,7 @@ public class PostCommentService {
     private PostService postService;
 
     public Page<PostCommentResponse> findPostCommentsOfPublishedPost(Long postId, Pageable pageable) {
-        Post post = postService.findPostById(postId);
+        Post post = postService.findByIdOrThrowException(postId);
 
         if (post.getPublished()) {
             return postCommentRepository.findAllByPostAndStatusOrderByCreatedAtDesc(post,
@@ -44,7 +44,7 @@ public class PostCommentService {
 
     public PostCommentResponse createPostComment(CreateAndUpdatePostCommentRequest postCommentRequest,
                                                  Long postId, User user) {
-        Post post = postService.findPostById(postId);
+        Post post = postService.findByIdOrThrowException(postId);
         PostComment postComment = postCommentRequest.toNewPostComment();
         postComment.setPost(post);
         postComment.setUser(user);

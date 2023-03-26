@@ -10,12 +10,13 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<Post> findBySlug(String slug);
+    Optional<Post> findByIdAndPublishedIsTrue(Long id);
 
-    Page<Post> findAllByOrderByUpdatedAtDesc(Pageable pageable);
+    Optional<Post> findBySlugIgnoringCaseAndPublishedIsTrue(String slug);
 
-    Page<Post> findAllByPublishedOrderByPublishedAtDesc(Boolean published, Pageable pageable);
+    Page<Post> findAllByOrderByPublishedAtDesc(Pageable pageable);
+
+    Page<Post> findAllByPublishedIsTrueOrderByPublishedAtDesc(Pageable pageable);
 
     Page<Post> findAllByCategoryAndPublishedIsTrueOrderByPublishedAtDesc(Category category, Pageable pageable);
-
 }
