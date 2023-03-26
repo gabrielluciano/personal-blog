@@ -11,12 +11,10 @@ import com.gabrielluciano.blog.models.entities.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -41,7 +39,7 @@ public class JwtUtil {
                 .withClaim("email", user.getEmail())
                 .withClaim("roles", user.getRoles().stream()
                         .map(Role::name)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .sign(algorithm);
     }
 
@@ -50,15 +48,14 @@ public class JwtUtil {
         JWTVerifier verifier = JWT.require(algorithm)
                 .build();
 
-        DecodedJWT decodedJWT = verifier.verify(token);
-        return decodedJWT;
+        return verifier.verify(token);
     }
 
     public JwtPayload getPayload(User user) {
         return new JwtPayload(user.getId(), user.getEmail(), user.getRoles(), iat, exp);
     }
 
-    public boolean isTokenExpired(DecodedJWT decodedJWT) throws ParseException {
+    public boolean isTokenExpired(DecodedJWT decodedJWT) {
         return decodedJWT.getExpiresAt()
                 .before(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
     }

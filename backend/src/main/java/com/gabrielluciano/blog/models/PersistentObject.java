@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public interface PersistentObject {
 
     @JsonIgnore
-    String getUUID();
+    String getUuid();
 
-    void setUUID(String UUID);
+    void setUuid(String uuid);
 
 }

@@ -62,7 +62,6 @@ public class PostCommentController {
 
     @PatchMapping("admin/posts/comments/{id}/status/{status}")
     public ResponseEntity<Void> updatePostCommentStatus(@PathVariable Long id, @PathVariable String status) {
-        System.out.println(id + status);
         service.updatePostCommentStatus(id, status);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

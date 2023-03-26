@@ -28,7 +28,7 @@ public class PostCommentService {
     public Page<PostCommentResponse> findPostCommentsOfPublishedPost(Long postId, Pageable pageable) {
         Post post = postService.findByIdOrThrowException(postId);
 
-        if (post.getPublished()) {
+        if (post.getPublished().equals(true)) {
             return postCommentRepository.findAllByPostAndStatusOrderByCreatedAtDesc(post,
                     PostCommentStatus.APPROVED, pageable).map(PostCommentResponse::new);
         }

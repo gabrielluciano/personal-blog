@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @Component
 @AllArgsConstructor
@@ -58,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isTokenExpired(DecodedJWT decodedJWT) throws ParseException {
+    private boolean isTokenExpired(DecodedJWT decodedJWT) {
         return jwtUtil.isTokenExpired(decodedJWT);
     }
 }

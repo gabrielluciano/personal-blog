@@ -1,13 +1,11 @@
 package com.gabrielluciano.blog.security.authentication;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gabrielluciano.blog.models.entities.User;
 import com.gabrielluciano.blog.security.models.SecurityUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
@@ -15,7 +13,7 @@ import java.util.Collection;
 public class JwtAuthentication implements Authentication {
 
     @Getter
-    private final DecodedJWT decodedJWT;
+    private final transient DecodedJWT decodedJWT;
     private boolean authenticated;
     private SecurityUser userDetails;
 

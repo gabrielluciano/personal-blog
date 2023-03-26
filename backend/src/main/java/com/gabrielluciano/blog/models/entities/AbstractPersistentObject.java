@@ -13,16 +13,16 @@ public abstract class AbstractPersistentObject implements PersistentObject {
 
     @Column(length = 32, updatable = false)
     @JsonIgnore
-    private String UUID = UUIDGenerator.createUUID();
+    private String uuid = UUIDGenerator.createUUID();
 
     @Override
-    public String getUUID() {
-        return UUID;
+    public String getUuid() {
+        return uuid;
     }
 
     @Override
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override
@@ -30,18 +30,18 @@ public abstract class AbstractPersistentObject implements PersistentObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractPersistentObject that = (AbstractPersistentObject) o;
-        return UUID.equals(that.UUID);
+        return uuid.equals(that.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(UUID);
+        return Objects.hash(uuid);
     }
 
     @Override
     public String toString() {
         return "AbstractPersistentObject{" +
-                "UUID='" + UUID + '\'' +
+                "UUID='" + uuid + '\'' +
                 '}';
     }
 }
