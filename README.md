@@ -1,6 +1,6 @@
 # Personal Blog
 
-This is the Project from my Personl Blog, that will be available soon.
+This is my personal blog project. The blog will be available soon.
 
 ## Endpoints
 
