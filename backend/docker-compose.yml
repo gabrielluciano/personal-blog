@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:latest
     container_name: personalblog
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespw
