@@ -1,4 +1,6 @@
-# Personal Blog Backend
+# Personal Blog
+
+This is the Project from my Personl Blog, that will be available soon.
 
 ## Endpoints
 
@@ -145,6 +147,18 @@ PUT /tags/{id}
         204 (NO_CONTENT) - Tag updated with success
         404 (NOT_FOUND) - The tag was not found
         400 (BAD_REQUEST) - In case of not valid request body
+        401 (UNAUTHORIZED) - When authentication is not valid or isn't present
+        403 (FORBBIDEN) - User is not an admin
+```
+
+```
+DELETE /tags/{id}
+
+    Deletes an existing tag (Security: ADMIN)
+
+    Return status:
+        204 (NO_CONTENT) - Tag deleted with success
+        404 (NOT_FOUND) - The tag was not found
         401 (UNAUTHORIZED) - When authentication is not valid or isn't present
         403 (FORBBIDEN) - User is not an admin
 ```
