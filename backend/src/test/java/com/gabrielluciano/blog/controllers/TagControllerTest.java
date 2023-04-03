@@ -1,8 +1,10 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.services.TagService;
+import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,9 @@ class TagControllerTest {
                 .thenReturn(tagPage);
 
         BDDMockito.when(tagService.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(TagCreator.createValidTag());
+
+        BDDMockito.when(tagService.save(ArgumentMatchers.any(TagCreateRequest.class)))
                 .thenReturn(TagCreator.createValidTag());
     }
 
@@ -83,7 +88,7 @@ class TagControllerTest {
     @Test
     void findById_ReturnsThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
-        
+
         BDDMockito.when(tagService.findById(ArgumentMatchers.anyLong()))
                 .thenThrow(new ResourceNotFoundException(Tag.class, tagId));
 
@@ -91,4 +96,23 @@ class TagControllerTest {
                 .isThrownBy(() -> tagController.findById(tagId))
                 .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
+
+    @Test
+    void save_ReturnsCreatedTagAndStatus201_WhenSuccessful() {
+        TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
+
+        ResponseEntity<Tag> responseEntity = tagController.save(tagCreateRequest);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId()).isNotNull();
+
+        assertThat(responseEntity.getBody().getName()).isEqualTo(tagCreateRequest.getName());
+    }
+
+
 }
