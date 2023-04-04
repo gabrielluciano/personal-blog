@@ -15,4 +15,6 @@ public interface TagService {
     Tag save(TagCreateRequest tagCreateRequest);
 
     void update(TagUpdateRequest tagUpdateRequest);
+
+    void deleteById(long id);
 }

@@ -48,6 +48,12 @@ class TagControllerTest {
 
         BDDMockito.when(tagService.save(ArgumentMatchers.any(TagCreateRequest.class)))
                 .thenReturn(TagCreator.createValidTag());
+
+        BDDMockito.doNothing().when(tagService)
+                .update(ArgumentMatchers.any(TagUpdateRequest.class));
+
+        BDDMockito.doNothing().when(tagService)
+                .deleteById(ArgumentMatchers.anyLong());
     }
 
     @Test
@@ -68,6 +74,24 @@ class TagControllerTest {
                 .hasSize(1);
 
         assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstTag);
+    }
+
+    @Test
+    void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
+        BDDMockito.when(tagService.list(ArgumentMatchers.any()))
+                .thenReturn(Page.empty());
+
+        ResponseEntity<Page<Tag>> responseEntity = tagController.list(PageRequest.of(0, 10));
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -120,7 +144,7 @@ class TagControllerTest {
     void update_ReturnsStatus204NoContent_WhenSuccessful() {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
-        ResponseEntity<Void> responseEntity = tagController.update(tagUpdateRequest, 1);
+        ResponseEntity<Void> responseEntity = tagController.update(tagUpdateRequest, 1L);
 
         assertThat(responseEntity).isNotNull();
 
@@ -140,6 +164,29 @@ class TagControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> tagController.update(tagUpdateRequest, tagId))
+                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+    }
+
+    @Test
+    void deleteById_ReturnsStatus204NoContent_WhenSuccessful() {
+        ResponseEntity<Void> responseEntity = tagController.deleteById(1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    void deleteById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Tag.class, tagId))
+                .when(tagService).deleteById(ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> tagController.deleteById(tagId))
                 .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
 }
