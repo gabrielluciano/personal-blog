@@ -1,11 +1,13 @@
 package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.services.TagService;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -98,7 +100,7 @@ class TagControllerTest {
     }
 
     @Test
-    void save_ReturnsCreatedTagAndStatus201_WhenSuccessful() {
+    void save_ReturnsCreatedTagAndStatus201Created_WhenSuccessful() {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
         ResponseEntity<Tag> responseEntity = tagController.save(tagCreateRequest);
@@ -114,5 +116,30 @@ class TagControllerTest {
         assertThat(responseEntity.getBody().getName()).isEqualTo(tagCreateRequest.getName());
     }
 
+    @Test
+    void update_ReturnsStatus204NoContent_WhenSuccessful() {
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
+        ResponseEntity<Void> responseEntity = tagController.update(tagUpdateRequest, 1);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    void update_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Tag.class, tagId))
+                .when(tagService).update(ArgumentMatchers.any());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> tagController.update(tagUpdateRequest, tagId))
+                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+    }
 }
