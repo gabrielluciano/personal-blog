@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag findById(long id) {
-        return null;
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreator;
@@ -17,8 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(SpringExtension.class)
 class TagServiceImplTest {
@@ -35,6 +38,9 @@ class TagServiceImplTest {
 
         BDDMockito.when(tagRepository.findAll(ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(tagPage);
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(TagCreator.createValidTag()));
     }
 
     @Test
@@ -65,5 +71,28 @@ class TagServiceImplTest {
         assertThat(page.getContent())
                 .isNotNull()
                 .isEmpty();
+    }
+
+    @Test
+    void findById_ReturnsTag_WhenSuccessful() {
+        Tag expectedTag = TagCreator.createValidTag();
+
+        Tag tag = tagService.findById(expectedTag.getId());
+
+        assertThat(tag)
+                .isNotNull()
+                .isEqualTo(expectedTag);
+    }
+
+    @Test
+    void findById_ThrowsResourceNotFoundException_WhenNotTagIsFound() {
+        long tagId = 1;
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> tagService.findById(tagId))
+                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
 }
