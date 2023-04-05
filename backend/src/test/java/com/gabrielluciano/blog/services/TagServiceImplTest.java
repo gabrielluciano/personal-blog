@@ -5,6 +5,7 @@ import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -44,6 +45,7 @@ class TagServiceImplTest {
     }
 
     @Test
+    @DisplayName("list returns page of tags when successful")
     void list_ReturnsPageOfTags_WhenSuccessful() {
         Tag expectedFirstTag = TagCreator.createValidTag();
 
@@ -60,6 +62,7 @@ class TagServiceImplTest {
     }
 
     @Test
+    @DisplayName("list returns empty page of tags when no tag is found")
     void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
                 .thenReturn(Page.empty());
@@ -74,6 +77,7 @@ class TagServiceImplTest {
     }
 
     @Test
+    @DisplayName("findById returns tag when successful")
     void findById_ReturnsTag_WhenSuccessful() {
         Tag expectedTag = TagCreator.createValidTag();
 
@@ -85,6 +89,7 @@ class TagServiceImplTest {
     }
 
     @Test
+    @DisplayName("findById throws ResourceNotFoundException when tag is not found")
     void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 

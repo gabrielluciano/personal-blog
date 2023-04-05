@@ -9,6 +9,7 @@ import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
 import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -57,6 +58,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("list returns page of tags when successful")
     void list_ReturnsPageOfTags_WhenSuccessful() {
         Tag expectedFirstTag = TagCreator.createValidTag();
 
@@ -77,6 +79,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("list returns empty page of tags when no tag is found")
     void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
                 .thenReturn(Page.empty());
@@ -95,6 +98,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("findById returns tag when successful")
     void findById_ReturnsTag_WhenSuccessful() {
         Tag expectedTag = TagCreator.createValidTag();
 
@@ -112,6 +116,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("findById throws ResourceNotFoundException when tag is not found")
     void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
@@ -124,6 +129,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("save returns created tag and status 201 Created when successful")
     void save_ReturnsCreatedTagAndStatus201Created_WhenSuccessful() {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
@@ -141,6 +147,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("update returns status 204 No Content when successful")
     void update_ReturnsStatus204NoContent_WhenSuccessful() {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
@@ -154,6 +161,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("update throws ResourceNotFoundException when tag is not found")
     void update_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
@@ -168,6 +176,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("deleteById returns status 204 No Content when successful")
     void deleteById_ReturnsStatus204NoContent_WhenSuccessful() {
         ResponseEntity<Void> responseEntity = tagController.deleteById(1L);
 
@@ -179,6 +188,7 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("deleteById throws ResourceNotFoundException when tag is not found")
     void deleteById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
