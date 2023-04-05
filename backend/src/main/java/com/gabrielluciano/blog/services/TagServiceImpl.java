@@ -3,6 +3,7 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
+import com.gabrielluciano.blog.mappers.TagMapper;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag save(TagCreateRequest tagCreateRequest) {
-        return null;
+        Tag tag = TagMapper.INSTANCE.tagCreateRequestToTag(tagCreateRequest);
+        return tagRepository.save(tag);
     }
 
     @Override

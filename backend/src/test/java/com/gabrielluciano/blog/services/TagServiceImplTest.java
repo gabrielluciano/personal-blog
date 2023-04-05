@@ -1,8 +1,10 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +44,9 @@ class TagServiceImplTest {
 
         BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(TagCreator.createValidTag()));
+
+        BDDMockito.when(tagRepository.save(ArgumentMatchers.any(Tag.class)))
+                .thenReturn(TagCreator.createValidTag());
     }
 
     @Test
@@ -99,5 +104,19 @@ class TagServiceImplTest {
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> tagService.findById(tagId))
                 .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+    }
+
+    @Test
+    @DisplayName("save returns created tag when successful")
+    void save_ReturnsCreatedTag_WhenSuccessful() {
+        TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
+
+        Tag createdTag = tagService.save(tagCreateRequest);
+
+        assertThat(createdTag).isNotNull();
+
+        assertThat(createdTag.getId()).isNotNull();
+
+        assertThat(createdTag.getName()).isEqualTo(tagCreateRequest.getName());
     }
 }
