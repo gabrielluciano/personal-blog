@@ -112,7 +112,7 @@ class TagControllerTest {
     }
 
     @Test
-    void findById_ReturnsThrowsResourceNotFoundException_WhenTagIsNotFound() {
+    void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
         BDDMockito.when(tagService.findById(ArgumentMatchers.anyLong()))

@@ -85,7 +85,7 @@ class TagServiceImplTest {
     }
 
     @Test
-    void findById_ThrowsResourceNotFoundException_WhenNotTagIsFound() {
+    void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
         BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
