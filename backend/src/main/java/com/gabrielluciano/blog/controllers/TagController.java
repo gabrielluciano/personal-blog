@@ -30,7 +30,7 @@ public class TagController {
 
     @GetMapping("{id}")
     public ResponseEntity<Tag> findById(@PathVariable long id) {
-        return ResponseEntity.ok(tagService.findById(id));
+        return ResponseEntity.ok(tagService.findByIdOrThrowResourceNotFoundException(id));
     }
 
     @PostMapping
@@ -40,7 +40,7 @@ public class TagController {
 
     @PutMapping("{id}")
     public ResponseEntity<Void> update(@RequestBody TagUpdateRequest tagUpdateRequest, @PathVariable long id) {
-        tagService.update(tagUpdateRequest);
+        tagService.update(tagUpdateRequest, id);
         return ResponseEntity.noContent().build();
     }
 

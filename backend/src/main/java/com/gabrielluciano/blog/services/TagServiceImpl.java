@@ -23,7 +23,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Tag findById(long id) {
+    public Tag findByIdOrThrowResourceNotFoundException(long id) {
         return tagRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
@@ -35,12 +35,15 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void update(TagUpdateRequest tagUpdateRequest) {
-
+    public void update(TagUpdateRequest tagUpdateRequest, long id) {
+        Tag tag = findByIdOrThrowResourceNotFoundException(id);
+        TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
+        tagRepository.save(tag);
     }
 
     @Override
     public void deleteById(long id) {
-
+        findByIdOrThrowResourceNotFoundException(id);
+        tagRepository.deleteById(id);
     }
 }

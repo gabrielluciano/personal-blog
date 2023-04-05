@@ -1,11 +1,13 @@
 package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class TagServiceImplTest {
@@ -47,6 +48,9 @@ class TagServiceImplTest {
 
         BDDMockito.when(tagRepository.save(ArgumentMatchers.any(Tag.class)))
                 .thenReturn(TagCreator.createValidTag());
+
+        BDDMockito.doNothing().when(tagRepository)
+                .deleteById(ArgumentMatchers.anyLong());
     }
 
     @Test
@@ -82,11 +86,11 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("findById returns tag when successful")
-    void findById_ReturnsTag_WhenSuccessful() {
+    @DisplayName("findByIdOrThrowResourceNotFoundException returns tag when successful")
+    void findByIdOrThrowResourceNotFoundException_ReturnsTag_WhenSuccessful() {
         Tag expectedTag = TagCreator.createValidTag();
 
-        Tag tag = tagService.findById(expectedTag.getId());
+        Tag tag = tagService.findByIdOrThrowResourceNotFoundException(expectedTag.getId());
 
         assertThat(tag)
                 .isNotNull()
@@ -94,15 +98,15 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("findById throws ResourceNotFoundException when tag is not found")
-    void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+    @DisplayName("findByIdOrThrowResourceNotFoundException throws ResourceNotFoundException when tag is not found")
+    void findByIdOrThrowResourceNotFoundException_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
         BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> tagService.findById(tagId))
+                .isThrownBy(() -> tagService.findByIdOrThrowResourceNotFoundException(tagId))
                 .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
 
@@ -118,5 +122,47 @@ class TagServiceImplTest {
         assertThat(createdTag.getId()).isNotNull();
 
         assertThat(createdTag.getName()).isEqualTo(tagCreateRequest.getName());
+    }
+
+    @Test
+    @DisplayName("update updates tag when successful")
+    void update_UpdatesTag_WhenSuccessful() {
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        assertThatNoException().isThrownBy(() -> tagService.update(tagUpdateRequest, 1L));
+    }
+
+    @Test
+    @DisplayName("update throws ResourceNotFoundException when tag is not found")
+    void update_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> tagService.update(tagUpdateRequest, tagId))
+                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+    }
+
+    @Test
+    @DisplayName("deleteById deletes tag when successful")
+    void deleteById_DeletesTag_WhenSuccessful() {
+        assertThatNoException().isThrownBy(() -> tagService.deleteById(1L));
+    }
+
+    @Test
+    @DisplayName("deleteById throws ResourceNotFoundException when tag is not found")
+    void deleteById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> tagService.deleteById(tagId))
+                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
 }
