@@ -52,4 +52,39 @@ class TagControllerIT {
         assertThat(responseEntity.getBody().getContent().get(0).getId())
                 .isEqualTo(expectedTag.getId());
     }
+
+    @Test
+    @DisplayName("list returns empty page of tags when no tag is found")
+    void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
+        ResponseEntity<RestPageImpl<Tag>> responseEntity = restTemplate.exchange("/tags", HttpMethod.GET,
+                null, new ParameterizedTypeReference<>() {});
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("findById returns tag when successful")
+    void findById_ReturnsTag_WhenSuccessful() {
+        Tag expectedTag = tagRepository.save(TagCreator.createTagToBeSaved());
+
+        ResponseEntity<Tag> responseEntity = restTemplate.getForEntity("/tags/{id}", Tag.class, expectedTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getName()).isEqualTo(expectedTag.getName());
+
+        assertThat(responseEntity.getBody().getId()).isEqualTo(expectedTag.getId());
+    }
 }
