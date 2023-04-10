@@ -5,7 +5,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: UTC
-        ddl-auto: update
+    hibernate:
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/personalblog
     username: postgres
