@@ -1,6 +1,7 @@
 package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.TagMapper;
@@ -18,32 +19,38 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
 
     @Override
-    public Page<Tag> list(Pageable pageable) {
-        return tagRepository.findAll(pageable);
+    public Page<TagResponse> list(Pageable pageable) {
+        return tagRepository.findAll(pageable)
+                .map(TagMapper.INSTANCE::tagToTagResponse);
     }
 
     @Override
-    public Tag findByIdOrThrowResourceNotFoundException(long id) {
-        return tagRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
+    public TagResponse findByIdOrThrowResourceNotFoundException(long id) {
+        Tag tag = findTagByIdOrThrowResourceNotFoundException(id);
+        return TagMapper.INSTANCE.tagToTagResponse(tag);
     }
 
     @Override
-    public Tag save(TagCreateRequest tagCreateRequest) {
+    public TagResponse save(TagCreateRequest tagCreateRequest) {
         Tag tag = TagMapper.INSTANCE.tagCreateRequestToTag(tagCreateRequest);
-        return tagRepository.save(tag);
+        return TagMapper.INSTANCE.tagToTagResponse(tagRepository.save(tag));
     }
 
     @Override
     public void update(TagUpdateRequest tagUpdateRequest, long id) {
-        Tag tag = findByIdOrThrowResourceNotFoundException(id);
+        Tag tag = findTagByIdOrThrowResourceNotFoundException(id);
         TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
         tagRepository.save(tag);
     }
 
     @Override
     public void deleteById(long id) {
-        findByIdOrThrowResourceNotFoundException(id);
+        findTagByIdOrThrowResourceNotFoundException(id);
         tagRepository.deleteById(id);
+    }
+
+    private Tag findTagByIdOrThrowResourceNotFoundException(long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
 }

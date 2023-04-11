@@ -1,8 +1,8 @@
 package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
-import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.services.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,17 +26,17 @@ public class TagController {
     private final TagService tagService;
 
     @GetMapping
-    public ResponseEntity<Page<Tag>> list(Pageable pageable) {
+    public ResponseEntity<Page<TagResponse>> list(Pageable pageable) {
         return ResponseEntity.ok(tagService.list(pageable));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Tag> findById(@PathVariable long id) {
+    public ResponseEntity<TagResponse> findById(@PathVariable long id) {
         return ResponseEntity.ok(tagService.findByIdOrThrowResourceNotFoundException(id));
     }
 
     @PostMapping
-    public ResponseEntity<Tag> save(@RequestBody TagCreateRequest tagCreateRequest) {
+    public ResponseEntity<TagResponse> save(@RequestBody TagCreateRequest tagCreateRequest) {
         return new ResponseEntity<>(tagService.save(tagCreateRequest), HttpStatus.CREATED);
     }
 

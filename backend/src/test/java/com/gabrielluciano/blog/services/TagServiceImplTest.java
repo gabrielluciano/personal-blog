@@ -1,12 +1,14 @@
 package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagResponseCreator;
 import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,11 +56,11 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("list returns page of tags when successful")
-    void list_ReturnsPageOfTags_WhenSuccessful() {
-        Tag expectedFirstTag = TagCreator.createValidTag();
+    @DisplayName("list returns page of tag responses when successful")
+    void list_ReturnsPageOfTagResponses_WhenSuccessful() {
+        TagResponse expectedFirstTagResponse = TagResponseCreator.createValidTagResponse();
 
-        Page<Tag> page = tagService.list(PageRequest.of(0, 10));
+        Page<TagResponse> page = tagService.list(PageRequest.of(0, 10));
 
         assertThat(page).isNotNull();
 
@@ -67,16 +69,16 @@ class TagServiceImplTest {
                 .isNotEmpty()
                 .hasSize(1);
 
-        assertThat(page.getContent().get(0)).isEqualTo(expectedFirstTag);
+        assertThat(page.getContent().get(0)).isEqualTo(expectedFirstTagResponse);
     }
 
     @Test
-    @DisplayName("list returns empty page of tags when no tag is found")
-    void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
-        BDDMockito.when(tagService.list(ArgumentMatchers.any()))
+    @DisplayName("list returns empty page of tag responses when no tag is found")
+    void list_ReturnsEmptyPageOfTagResponses_WhenNoTagIsFound() {
+        BDDMockito.when(tagRepository.findAll(ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(Page.empty());
 
-        Page<Tag> page = tagService.list(PageRequest.of(0, 10));
+        Page<TagResponse> page = tagService.list(PageRequest.of(0, 10));
 
         assertThat(page).isNotNull();
 
@@ -86,15 +88,15 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("findByIdOrThrowResourceNotFoundException returns tag when successful")
-    void findByIdOrThrowResourceNotFoundException_ReturnsTag_WhenSuccessful() {
-        Tag expectedTag = TagCreator.createValidTag();
+    @DisplayName("findByIdOrThrowResourceNotFoundException returns tag response when successful")
+    void findByIdOrThrowResourceNotFoundException_ReturnsTagResponse_WhenSuccessful() {
+        TagResponse expectedTagResponse = TagResponseCreator.createValidTagResponse();
 
-        Tag tag = tagService.findByIdOrThrowResourceNotFoundException(expectedTag.getId());
+        TagResponse tagResponse = tagService.findByIdOrThrowResourceNotFoundException(expectedTagResponse.getId());
 
-        assertThat(tag)
+        assertThat(tagResponse)
                 .isNotNull()
-                .isEqualTo(expectedTag);
+                .isEqualTo(expectedTagResponse);
     }
 
     @Test
@@ -111,17 +113,17 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("save returns created tag when successful")
-    void save_ReturnsCreatedTag_WhenSuccessful() {
+    @DisplayName("save returns created tag response when successful")
+    void save_ReturnsCreatedTagResponse_WhenSuccessful() {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
-        Tag createdTag = tagService.save(tagCreateRequest);
+        TagResponse createdTagResponse = tagService.save(tagCreateRequest);
 
-        assertThat(createdTag).isNotNull();
+        assertThat(createdTagResponse).isNotNull();
 
-        assertThat(createdTag.getId()).isNotNull();
+        assertThat(createdTagResponse.getId()).isNotNull();
 
-        assertThat(createdTag.getName()).isEqualTo(tagCreateRequest.getName());
+        assertThat(createdTagResponse.getName()).isEqualTo(tagCreateRequest.getName());
     }
 
     @Test

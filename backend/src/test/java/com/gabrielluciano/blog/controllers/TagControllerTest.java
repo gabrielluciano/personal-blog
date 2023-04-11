@@ -1,12 +1,13 @@
 package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.services.TagService;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
-import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagResponseCreator;
 import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,16 +40,16 @@ class TagControllerTest {
 
     @BeforeEach
     void setUp() {
-        Page<Tag> tagPage = new PageImpl<>(List.of(TagCreator.createValidTag()));
+        Page<TagResponse> tagResponsePage = new PageImpl<>(List.of(TagResponseCreator.createValidTagResponse()));
 
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
-                .thenReturn(tagPage);
+                .thenReturn(tagResponsePage);
 
         BDDMockito.when(tagService.findByIdOrThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
-                .thenReturn(TagCreator.createValidTag());
+                .thenReturn(TagResponseCreator.createValidTagResponse());
 
         BDDMockito.when(tagService.save(ArgumentMatchers.any(TagCreateRequest.class)))
-                .thenReturn(TagCreator.createValidTag());
+                .thenReturn(TagResponseCreator.createValidTagResponse());
 
         BDDMockito.doNothing().when(tagService)
                 .update(ArgumentMatchers.any(TagUpdateRequest.class), ArgumentMatchers.anyLong());
@@ -58,11 +59,11 @@ class TagControllerTest {
     }
 
     @Test
-    @DisplayName("list returns page of tags when successful")
-    void list_ReturnsPageOfTags_WhenSuccessful() {
-        Tag expectedFirstTag = TagCreator.createValidTag();
+    @DisplayName("list returns page of tag responses when successful")
+    void list_ReturnsPageOfTagResponses_WhenSuccessful() {
+        TagResponse expectedFirstTagResponse = TagResponseCreator.createValidTagResponse();
 
-        ResponseEntity<Page<Tag>> responseEntity = tagController.list(PageRequest.of(0, 10));
+        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(PageRequest.of(0, 10));
 
         assertThat(responseEntity).isNotNull();
 
@@ -75,16 +76,16 @@ class TagControllerTest {
                 .isNotEmpty()
                 .hasSize(1);
 
-        assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstTag);
+        assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstTagResponse);
     }
 
     @Test
-    @DisplayName("list returns empty page of tags when no tag is found")
-    void list_ReturnsEmptyPageOfTags_WhenNoTagIsFound() {
+    @DisplayName("list returns empty page of tag responses when no tag is found")
+    void list_ReturnsEmptyPageOfTagResponses_WhenNoTagIsFound() {
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
                 .thenReturn(Page.empty());
 
-        ResponseEntity<Page<Tag>> responseEntity = tagController.list(PageRequest.of(0, 10));
+        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(PageRequest.of(0, 10));
 
         assertThat(responseEntity).isNotNull();
 
@@ -98,11 +99,11 @@ class TagControllerTest {
     }
 
     @Test
-    @DisplayName("findById returns tag when successful")
-    void findById_ReturnsTag_WhenSuccessful() {
-        Tag expectedTag = TagCreator.createValidTag();
+    @DisplayName("findById returns tag response when successful")
+    void findById_ReturnsTagResponse_WhenSuccessful() {
+        TagResponse expectedTagResponse = TagResponseCreator.createValidTagResponse();
 
-        ResponseEntity<Tag> responseEntity = tagController.findById(1L);
+        ResponseEntity<TagResponse> responseEntity = tagController.findById(1L);
 
         assertThat(responseEntity).isNotNull();
 
@@ -110,9 +111,9 @@ class TagControllerTest {
 
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .isEqualTo(expectedTag);
+                .isEqualTo(expectedTagResponse);
 
-        assertThat(responseEntity.getBody().getName()).isEqualTo(expectedTag.getName());
+        assertThat(responseEntity.getBody().getName()).isEqualTo(expectedTagResponse.getName());
     }
 
     @Test
@@ -129,11 +130,11 @@ class TagControllerTest {
     }
 
     @Test
-    @DisplayName("save returns created tag and status 201 Created when successful")
-    void save_ReturnsCreatedTagAndStatus201Created_WhenSuccessful() {
+    @DisplayName("save returns created tag response and status 201 Created when successful")
+    void save_ReturnsCreatedTagResponseAndStatus201Created_WhenSuccessful() {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
-        ResponseEntity<Tag> responseEntity = tagController.save(tagCreateRequest);
+        ResponseEntity<TagResponse> responseEntity = tagController.save(tagCreateRequest);
 
         assertThat(responseEntity).isNotNull();
 
