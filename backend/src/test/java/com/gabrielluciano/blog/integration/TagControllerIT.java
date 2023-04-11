@@ -1,6 +1,7 @@
 package com.gabrielluciano.blog.integration;
 
 import com.gabrielluciano.blog.dto.tag.TagResponse;
+import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreator;
@@ -94,5 +95,44 @@ class TagControllerIT {
 
         assertThat(responseEntity.getBody().getName())
                 .isEqualTo(savedTag.getName());
+    }
+
+    @Test
+    @DisplayName("findById returns error details and status 404 Not Found when tag is not found")
+    void findById_ReturnsErrorDetailsAndStatus404NotFound_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/tags/{id}", ErrorDetails.class, tagId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
+    }
+
+    @Test
+    @DisplayName("findById returns error details and status 400 Bad Request when id is not valid")
+    void findById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/tags/invalidID", ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/invalidID");
     }
 }
