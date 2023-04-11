@@ -22,7 +22,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDetails> ResourceNotFoundExceptionHandler(ResourceNotFoundException ex,
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex,
                                                                          HttpServletRequest request) {
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .title("Could not find resource")
@@ -49,6 +49,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .path(servletWebRequest.getRequest().getRequestURI())
                 .build();
 
-        return new ResponseEntity<>(errorDetails, statusCode);
+        return new ResponseEntity<>(errorDetails, headers, statusCode);
     }
 }
