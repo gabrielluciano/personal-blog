@@ -45,7 +45,7 @@ class TagControllerTest {
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
                 .thenReturn(tagResponsePage);
 
-        BDDMockito.when(tagService.findByIdOrThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
+        BDDMockito.when(tagService.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(TagResponseCreator.createValidTagResponse());
 
         BDDMockito.when(tagService.save(ArgumentMatchers.any(TagCreateRequest.class)))
@@ -121,7 +121,7 @@ class TagControllerTest {
     void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
-        BDDMockito.when(tagService.findByIdOrThrowResourceNotFoundException(ArgumentMatchers.anyLong()))
+        BDDMockito.when(tagService.findById(ArgumentMatchers.anyLong()))
                 .thenThrow(new ResourceNotFoundException(Tag.class, tagId));
 
         assertThatExceptionOfType(ResourceNotFoundException.class)

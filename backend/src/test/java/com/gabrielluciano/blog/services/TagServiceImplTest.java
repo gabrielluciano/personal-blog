@@ -92,7 +92,7 @@ class TagServiceImplTest {
     void findByIdOrThrowResourceNotFoundException_ReturnsTagResponse_WhenSuccessful() {
         TagResponse expectedTagResponse = TagResponseCreator.createValidTagResponse();
 
-        TagResponse tagResponse = tagService.findByIdOrThrowResourceNotFoundException(expectedTagResponse.getId());
+        TagResponse tagResponse = tagService.findById(expectedTagResponse.getId());
 
         assertThat(tagResponse)
                 .isNotNull()
@@ -108,7 +108,7 @@ class TagServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> tagService.findByIdOrThrowResourceNotFoundException(tagId))
+                .isThrownBy(() -> tagService.findById(tagId))
                 .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
     }
 

@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -30,8 +29,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public TagResponse findByIdOrThrowResourceNotFoundException(long id) {
-        Tag tag = findTagByIdOrThrowResourceNotFoundException(id);
+    public TagResponse findById(long id) {
+        Tag tag = findByIdOrThrowResourceNotFoundException(id);
         return TagMapper.INSTANCE.tagToTagResponse(tag);
     }
 
@@ -44,7 +43,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void update(TagUpdateRequest tagUpdateRequest, long id) {
-        Tag tag = findTagByIdOrThrowResourceNotFoundException(id);
+        Tag tag = findByIdOrThrowResourceNotFoundException(id);
         throwConstraintViolationExceptionIfNameOrSlugAlreadyExists(tagUpdateRequest.getName(),
                 tagUpdateRequest.getSlug(), id);
         TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
@@ -53,11 +52,11 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void deleteById(long id) {
-        findTagByIdOrThrowResourceNotFoundException(id);
+        findByIdOrThrowResourceNotFoundException(id);
         tagRepository.deleteById(id);
     }
 
-    private Tag findTagByIdOrThrowResourceNotFoundException(long id) {
+    private Tag findByIdOrThrowResourceNotFoundException(long id) {
         return tagRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
@@ -68,12 +67,11 @@ public class TagServiceImpl implements TagService {
     }
 
     private void throwConstraintViolationExceptionIfNameOrSlugAlreadyExists(String name, String slug, long idToUpdate) {
-        Optional<Tag> tagOptional = tagRepository.findFirstByNameIgnoreCaseOrSlugIgnoreCase(name, slug);
-
-        if (tagOptional.isPresent()) {
-            if (tagOptional.get().getId().equals(idToUpdate)) return;
-            prepareConstraintViolationExceptionAndThrow(tagOptional.get(), name, slug);
-        }
+        tagRepository.findFirstByNameIgnoreCaseOrSlugIgnoreCase(name, slug)
+                .ifPresent(tag -> {
+                    if (tag.getId().equals(idToUpdate)) return;
+                    prepareConstraintViolationExceptionAndThrow(tag, name, slug);
+                });
     }
 
     private void prepareConstraintViolationExceptionAndThrow(Tag savedTag, String name, String slug) {

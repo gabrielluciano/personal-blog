@@ -11,7 +11,7 @@ public interface TagService {
 
     Page<TagResponse> list(Pageable pageable);
 
-    TagResponse findByIdOrThrowResourceNotFoundException(long id) throws ResourceNotFoundException;
+    TagResponse findById(long id) throws ResourceNotFoundException;
 
     TagResponse save(TagCreateRequest tagCreateRequest);
 

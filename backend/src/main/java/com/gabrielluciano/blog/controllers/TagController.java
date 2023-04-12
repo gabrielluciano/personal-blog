@@ -33,7 +33,7 @@ public class TagController {
 
     @GetMapping("{id}")
     public ResponseEntity<TagResponse> findById(@PathVariable long id) {
-        return ResponseEntity.ok(tagService.findByIdOrThrowResourceNotFoundException(id));
+        return ResponseEntity.ok(tagService.findById(id));
     }
 
     @PostMapping
