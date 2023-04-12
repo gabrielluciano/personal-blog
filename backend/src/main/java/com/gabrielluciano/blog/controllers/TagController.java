@@ -42,7 +42,7 @@ public class TagController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> update(@RequestBody TagUpdateRequest tagUpdateRequest, @PathVariable long id) {
+    public ResponseEntity<Void> update(@RequestBody @Valid TagUpdateRequest tagUpdateRequest, @PathVariable long id) {
         tagService.update(tagUpdateRequest, id);
         return ResponseEntity.noContent().build();
     }

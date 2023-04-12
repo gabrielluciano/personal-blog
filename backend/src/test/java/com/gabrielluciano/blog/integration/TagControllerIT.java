@@ -269,4 +269,23 @@ class TagControllerIT {
         assertThat(responseEntity.getBody().getMessage())
                 .isEqualTo("Could not find resource of type Tag with id: " + tagId);
     }
+
+    @Test
+    @DisplayName("update returns validation error details and status 400 Bad Request when request body is invalid")
+    void update_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyIsInvalid() {
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createInvalidTagUpdateRequest();
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
+                new HttpEntity<>(tagUpdateRequest), ValidationErrorDetails.class, 1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).contains("name", "slug");
+    }
 }

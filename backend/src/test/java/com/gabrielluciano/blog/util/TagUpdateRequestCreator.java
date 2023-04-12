@@ -17,4 +17,8 @@ public class TagUpdateRequestCreator {
                 .description(tag.getDescription())
                 .build();
     }
+
+    public static TagUpdateRequest createInvalidTagUpdateRequest() {
+        return TagUpdateRequest.builder().build();
+    }
 }
