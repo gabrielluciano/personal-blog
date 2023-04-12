@@ -339,4 +339,24 @@ class TagControllerIT {
 
         assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
     }
+
+    @Test
+    @DisplayName("update returns error details and status 400 Bad Request when id is not valid")
+    void update_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        tagRepository.save(TagCreator.createNewsTagToBeSaved());
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/invalidID", HttpMethod.PUT,
+                new HttpEntity<>(tagUpdateRequest), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/invalidID");
+    }
 }
