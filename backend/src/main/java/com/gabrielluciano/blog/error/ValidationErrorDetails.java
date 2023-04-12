@@ -6,18 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorDetails {
+public class ValidationErrorDetails extends ErrorDetails {
 
-    private String title;
-    private String message;
-    private int status;
-    private LocalDateTime timestamp;
-    private String path;
+    private String fields;
+    private String fieldsMessages;
 }

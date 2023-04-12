@@ -1,11 +1,15 @@
 package com.gabrielluciano.blog.integration;
 
+import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.error.ErrorDetails;
+import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
 import com.gabrielluciano.blog.wrappers.RestPageImpl;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Log4j2
 class TagControllerIT {
 
     @Autowired
@@ -134,5 +139,44 @@ class TagControllerIT {
                 .isInstanceOf(ErrorDetails.class);
 
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/invalidID");
+    }
+
+    @Test
+    @DisplayName("save returns created tag response and status 201 Created when successful")
+    void save_ReturnsCreatedTagResponseAndStatus201Created_WhenSuccessful() {
+        TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
+
+        ResponseEntity<TagResponse> responseEntity = restTemplate
+                .postForEntity("/tags", tagCreateRequest, TagResponse.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId()).isNotNull();
+
+        assertThat(responseEntity.getBody().getName()).isEqualTo(tagCreateRequest.getName());
+    }
+
+    @Test
+    @DisplayName("save returns validation error details and status 400 Bad Request when request body is invalid")
+    void save_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyIsInvalid() {
+        TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createInvalidTagCreateRequest();
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate
+                .postForEntity("/tags", tagCreateRequest, ValidationErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).contains("name", "slug");
+        log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
     }
 }
