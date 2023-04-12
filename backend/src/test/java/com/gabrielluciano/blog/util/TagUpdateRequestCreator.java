@@ -18,6 +18,14 @@ public class TagUpdateRequestCreator {
                 .build();
     }
 
+    public static TagUpdateRequest createValidTagUpdateRequest(String name) {
+        return TagUpdateRequest.builder()
+                .name(name)
+                .slug(name.toLowerCase())
+                .description("Some description")
+                .build();
+    }
+
     public static TagUpdateRequest createInvalidTagUpdateRequest() {
         return TagUpdateRequest.builder().build();
     }

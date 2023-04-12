@@ -45,6 +45,8 @@ public class TagServiceImpl implements TagService {
     @Override
     public void update(TagUpdateRequest tagUpdateRequest, long id) {
         Tag tag = findTagByIdOrThrowResourceNotFoundException(id);
+        throwConstraintViolationExceptionIfNameOrSlugAlreadyExists(tagUpdateRequest.getName(),
+                tagUpdateRequest.getSlug(), id);
         TagMapper.INSTANCE.updateTagFromTagUpdateRequest(tagUpdateRequest, tag);
         tagRepository.save(tag);
     }
@@ -61,19 +63,29 @@ public class TagServiceImpl implements TagService {
     }
 
     private void throwConstraintViolationExceptionIfNameOrSlugAlreadyExists(String name, String slug) {
+        tagRepository.findFirstByNameIgnoreCaseOrSlugIgnoreCase(name, slug)
+                .ifPresent(tag -> prepareConstraintViolationExceptionAndThrow(tag, name, slug));
+    }
+
+    private void throwConstraintViolationExceptionIfNameOrSlugAlreadyExists(String name, String slug, long idToUpdate) {
         Optional<Tag> tagOptional = tagRepository.findFirstByNameIgnoreCaseOrSlugIgnoreCase(name, slug);
 
         if (tagOptional.isPresent()) {
-            boolean isNameViolation = tagOptional.get().getName().equalsIgnoreCase(name);
-            boolean isSlugViolation = tagOptional.get().getSlug().equalsIgnoreCase(slug);
-            Set<String> violations = new HashSet<>();
-
-            if (isNameViolation) violations.add("name: " + name);
-            if (isSlugViolation) violations.add("slug: " + slug);
-
-            String message = "The following attributes already exists in database: " + String.join(", ", violations);
-
-            throw new ConstraintViolationException(message);
+            if (tagOptional.get().getId().equals(idToUpdate)) return;
+            prepareConstraintViolationExceptionAndThrow(tagOptional.get(), name, slug);
         }
+    }
+
+    private void prepareConstraintViolationExceptionAndThrow(Tag savedTag, String name, String slug) {
+        boolean isNameViolation = savedTag.getName().equalsIgnoreCase(name);
+        boolean isSlugViolation = savedTag.getSlug().equalsIgnoreCase(slug);
+        Set<String> violations = new HashSet<>();
+
+        if (isNameViolation) violations.add("name: " + name);
+        if (isSlugViolation) violations.add("slug: " + slug);
+
+        String message = "The following attributes already exists in database: " + String.join(", ", violations);
+
+        throw new ConstraintViolationException(message);
     }
 }

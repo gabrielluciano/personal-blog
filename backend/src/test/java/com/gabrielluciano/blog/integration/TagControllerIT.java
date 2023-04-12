@@ -44,7 +44,7 @@ class TagControllerIT {
     @Test
     @DisplayName("list returns page of tag responses when successful")
     void list_ReturnsPageOfTagResponses_WhenSuccessful() {
-        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved());
+        Tag savedTag = tagRepository.save(TagCreator.createNewsTagToBeSaved());
 
         ResponseEntity<RestPageImpl<TagResponse>> responseEntity = restTemplate.exchange("/tags", HttpMethod.GET,
                 null, new ParameterizedTypeReference<>() {});
@@ -89,7 +89,7 @@ class TagControllerIT {
     @Test
     @DisplayName("findById returns tag response when successful")
     void findById_ReturnsTagResponse_WhenSuccessful() {
-        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved());
+        Tag savedTag = tagRepository.save(TagCreator.createNewsTagToBeSaved());
 
         ResponseEntity<TagResponse> responseEntity = restTemplate
                 .getForEntity("/tags/{id}", TagResponse.class, savedTag.getId());
@@ -211,7 +211,7 @@ class TagControllerIT {
     @Test
     @DisplayName("save returns error details with constraint violation exception and status 400 Bad Request when request name or slug already exists in the database")
     void save_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenNameOrSlugAlreadyExistsInTheDatabase() {
-        tagRepository.save(TagCreator.createTagToBeSaved());
+        tagRepository.save(TagCreator.createNewsTagToBeSaved());
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate
@@ -233,7 +233,7 @@ class TagControllerIT {
     @Test
     @DisplayName("update returns status 204 No Content when successful")
     void update_ReturnsStatus204NoContent_WhenSuccessful() {
-        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved());
+        Tag savedTag = tagRepository.save(TagCreator.createNewsTagToBeSaved());
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
@@ -287,5 +287,52 @@ class TagControllerIT {
                 .isInstanceOf(ValidationErrorDetails.class);
 
         assertThat(responseEntity.getBody().getFields()).contains("name", "slug");
+    }
+
+    @Test
+    @DisplayName("update returns error details with JSON parse error and status 400 Bad Request when request body is an invalid JSON")
+    void update_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
+        String invalidJSON = "{ \"name\": \"news\"' }";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, headers);
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
+                httpEntity, ErrorDetails.class, 1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
+    }
+
+    @Test
+    @DisplayName("update returns error details with constraint violation exception and status 400 Bad Request when request name or slug already exists in the database")
+    void update_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenNameOrSlugAlreadyExistsInTheDatabase() {
+        tagRepository.save(TagCreator.createTagToBeSaved("News"));
+        Tag guidesTag = tagRepository.save(TagCreator.createTagToBeSaved("Guides"));
+
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest("News");
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
+                new HttpEntity<>(tagUpdateRequest), ErrorDetails.class, guidesTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
     }
 }
