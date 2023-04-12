@@ -2,12 +2,14 @@ package com.gabrielluciano.blog.integration;
 
 import com.gabrielluciano.blog.dto.tag.TagCreateRequest;
 import com.gabrielluciano.blog.dto.tag.TagResponse;
+import com.gabrielluciano.blog.dto.tag.TagUpdateRequest;
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagUpdateRequestCreator;
 import com.gabrielluciano.blog.wrappers.RestPageImpl;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -226,5 +228,45 @@ class TagControllerIT {
                 .isInstanceOf(ErrorDetails.class);
 
         assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
+    }
+
+    @Test
+    @DisplayName("update returns status 204 No Content when successful")
+    void update_ReturnsStatus204NoContent_WhenSuccessful() {
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved());
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
+                new HttpEntity<>(tagUpdateRequest), Void.class, savedTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("update returns error details and status 404 Not Found when tag is not found")
+    void update_ReturnsErrorDetailsAndStatus404NotFound_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
+                new HttpEntity<>(tagUpdateRequest), ErrorDetails.class, tagId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
     }
 }
