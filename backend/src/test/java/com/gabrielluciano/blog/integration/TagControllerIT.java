@@ -359,4 +359,63 @@ class TagControllerIT {
 
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/invalidID");
     }
+
+    @Test
+    @DisplayName("deleteById returns status 204 No Content when successful")
+    void deleteById_ReturnsStatus204NoContent_WhenSuccessful() {
+        Tag savedTag = tagRepository.save(TagCreator.createNewsTagToBeSaved());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.DELETE,
+                null, Void.class, savedTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        ResponseEntity<ErrorDetails> findByIdResponseEntity = restTemplate.getForEntity("/tags/{id}",
+                ErrorDetails.class, savedTag.getId());
+
+        assertThat(findByIdResponseEntity).isNotNull();
+
+        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("deleteById returns error details and status 404 Not Found when tag is not found")
+    void deleteById_ReturnsErrorDetailsAndStatus404NotFound_WhenTagIsNotFound() {
+        long tagId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.DELETE,
+                null, ErrorDetails.class, tagId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
+    }
+
+    @Test
+    @DisplayName("deleteById returns error details and status 400 Bad Request when id is not valid")
+    void deleteById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/invalidID", HttpMethod.DELETE,
+                null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/invalidID");
+    }
 }
