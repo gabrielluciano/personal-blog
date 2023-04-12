@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,7 +31,9 @@ public class Tag extends AbstractPersistentObject {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
     private Long id;
+    @Column(unique = true)
     private String name;
+    @Column(unique = true)
     private String slug;
     private String description;
 
