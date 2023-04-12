@@ -17,8 +17,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -178,5 +181,28 @@ class TagControllerIT {
 
         assertThat(responseEntity.getBody().getFields()).contains("name", "slug");
         log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
+    }
+
+    @Test
+    @DisplayName("save returns error details with JSON parse error and status 400 Bad Request when request body is an invalid JSON")
+    void save_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
+        String invalidJSON = "{ \"name\": \"news\"' }";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, headers);
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
+                httpEntity, new ParameterizedTypeReference<>() {});
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
     }
 }
