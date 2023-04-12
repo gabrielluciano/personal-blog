@@ -205,4 +205,26 @@ class TagControllerIT {
 
         assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
     }
+
+    @Test
+    @DisplayName("save returns error details with constraint violation exception and status 400 Bad Request when request name or slug already exists in the database")
+    void save_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenNameOrSlugAlreadyExistsInTheDatabase() {
+        tagRepository.save(TagCreator.createTagToBeSaved());
+        TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .postForEntity("/tags", tagCreateRequest, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
+    }
 }

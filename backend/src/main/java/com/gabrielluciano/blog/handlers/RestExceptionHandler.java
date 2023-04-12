@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.handlers;
 
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
+import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorDetails> handleConstraintViolationException(ConstraintViolationException ex,
+                                                                           HttpServletRequest request) {
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .title("Constraint Violation Exception")
+                .message(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @Override
