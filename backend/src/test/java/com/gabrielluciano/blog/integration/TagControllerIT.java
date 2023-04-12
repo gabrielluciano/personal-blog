@@ -186,7 +186,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("save returns error details with JSON parse error and status 400 Bad Request when request body is an invalid JSON")
+    @DisplayName("save returns error details with JSON parse error and status 400 Bad Request when request body is " +
+            "an invalid JSON")
     void save_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
@@ -195,7 +196,7 @@ class TagControllerIT {
         HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, headers);
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
-                httpEntity, new ParameterizedTypeReference<>() {});
+                httpEntity, ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -209,7 +210,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("save returns error details with constraint violation exception and status 400 Bad Request when request name or slug already exists in the database")
+    @DisplayName("save returns error details with constraint violation exception and status 400 Bad Request when " +
+            "request name or slug already exists in the database")
     void save_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenNameOrSlugAlreadyExistsInTheDatabase() {
         tagRepository.save(TagCreator.createNewsTagToBeSaved());
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
@@ -290,7 +292,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("update returns error details with JSON parse error and status 400 Bad Request when request body is an invalid JSON")
+    @DisplayName("update returns error details with JSON parse error and status 400 Bad Request when request body " +
+            "is an invalid JSON")
     void update_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
@@ -313,7 +316,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("update returns error details with constraint violation exception and status 400 Bad Request when request name or slug already exists in the database")
+    @DisplayName("update returns error details with constraint violation exception and status 400 Bad Request when " +
+            "request name or slug already exists in the database")
     void update_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenNameOrSlugAlreadyExistsInTheDatabase() {
         tagRepository.save(TagCreator.createTagToBeSaved("News"));
         Tag guidesTag = tagRepository.save(TagCreator.createTagToBeSaved("Guides"));
