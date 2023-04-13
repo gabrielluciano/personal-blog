@@ -7,9 +7,9 @@ This is my personal blog project. The blog will be available soon.
 ### Post
 
 ```
-GET /posts[?name][?slug][?tag]
+GET /posts[?name][?slug][?tag][?drafts]
 
-    Returns a page of posts (Security: UNAUTHENTICATED)
+    Returns a page of posts (Security: UNAUTHENTICATED/ADMIN)
 
     Return status: 
         200 (OK)
@@ -18,6 +18,7 @@ GET /posts[?name][?slug][?tag]
         name - Matches all posts that have the value on its name
         slug - Matches all posts that have the value on its slug
         tag - Filter posts of a specific tag
+        drafts - If true returns not published posts (requires admin role). Defaults to false
     
     Note: Spring Boot Pageable query parameters are also allowed (check spring docs)
 ```
