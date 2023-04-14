@@ -1,9 +1,11 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.services.PostService;
+import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostResponseCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,9 @@ class PostControllerTest {
 
         BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(PostResponseCreator.createPublishedPostResponse());
+
+        BDDMockito.when(postService.save(ArgumentMatchers.any(PostCreateRequest.class)))
+                .thenReturn(PostResponseCreator.createUnpublishedPostResponse());
     }
 
     @Test
@@ -97,8 +102,6 @@ class PostControllerTest {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(responseEntity.getBody()).isNotNull();
-
         assertThat(responseEntity.getBody())
                 .isNotNull()
                 .isEqualTo(expectedPostResponse);
@@ -115,5 +118,31 @@ class PostControllerTest {
         Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.findById(postId))
                 .withMessageContaining("Could not find resource of type Post with id: " + postId);
+    }
+
+    @Test
+    @DisplayName("save returns created post response and status 201 Created when successful")
+    void save_ReturnsCreatedPostResponseAndStatus201Created_WhenSuccessful() {
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
+
+        ResponseEntity<PostResponse> responseEntity = postController.save(postCreateRequest);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getTitle()).isEqualTo(postCreateRequest.getTitle());
+
+        assertThat(responseEntity.getBody().getContent()).isEqualTo(postCreateRequest.getContent());
+
+        assertThat(responseEntity.getBody().getPublished()).isFalse();
+
+        assertThat(responseEntity.getBody().getCreatedAt()).isNotNull();
+
+        assertThat(responseEntity.getBody().getUpdatedAt()).isNotNull();
+
+        assertThat(responseEntity.getBody().getPublishedAt()).isNull();
     }
 }

@@ -13,4 +13,8 @@ public class PostResponseCreator {
     public static PostResponse createPublishedPostResponse() {
         return PostMapper.INSTANCE.postToPostResponse(PostCreator.createPublishedPost());
     }
+
+    public static PostResponse createUnpublishedPostResponse() {
+        return PostMapper.INSTANCE.postToPostResponse(PostCreator.createUnpublishedPost());
+    }
 }

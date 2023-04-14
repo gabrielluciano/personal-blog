@@ -1,10 +1,12 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +22,9 @@ public class PostController {
 
     public ResponseEntity<PostResponse> findById(long id) {
         return ResponseEntity.ok(postService.findById(id));
+    }
+
+    public ResponseEntity<PostResponse> save(PostCreateRequest postCreateRequest) {
+        return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
     }
 }

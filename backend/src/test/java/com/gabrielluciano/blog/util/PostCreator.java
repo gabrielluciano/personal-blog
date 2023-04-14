@@ -9,7 +9,7 @@ public class PostCreator {
 
     private static final LocalDateTime date = LocalDateTime.now(ZoneOffset.UTC);
 
-    private static final Post publishedPost = Post.builder()
+    private static final Post post = Post.builder()
             .id(1L)
             .title("Some Post")
             .subtitle("Some Post with awesome content")
@@ -28,6 +28,18 @@ public class PostCreator {
     }
 
     public static Post createPublishedPost() {
-        return publishedPost;
+        post.setPublished(true);
+        post.setCreatedAt(date);
+        post.setUpdatedAt(date);
+        post.setPublishedAt(date);
+        return post;
+    }
+
+    public static Post createUnpublishedPost() {
+        post.setPublished(false);
+        post.setCreatedAt(date);
+        post.setUpdatedAt(date);
+        post.setPublishedAt(null);
+        return post;
     }
 }
