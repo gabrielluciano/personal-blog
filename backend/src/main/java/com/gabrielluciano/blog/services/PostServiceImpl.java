@@ -34,4 +34,14 @@ public class PostServiceImpl implements PostService {
     public void deleteById(long id) {
 
     }
+
+    @Override
+    public void addTag(long postId, long tagId) {
+
+    }
+
+    @Override
+    public void removeTag(long postId, long tagId) {
+
+    }
 }

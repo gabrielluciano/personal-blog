@@ -38,4 +38,14 @@ public class PostController {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<Void> addTag(long postId, long tagId) {
+        postService.addTag(postId, tagId);
+        return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<Void> removeTag(long postId, long tagId) {
+        postService.removeTag(postId, tagId);
+        return ResponseEntity.noContent().build();
+    }
 }

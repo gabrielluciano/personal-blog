@@ -204,4 +204,62 @@ class PostControllerTest {
                 .isThrownBy(() -> postController.deleteById(postId))
                 .withMessageContaining("Could not find resource of type Post with id: " + postId);
     }
+
+    @Test
+    @DisplayName("addTag returns status 204 No Content when successful")
+    void addTag_ReturnsStatus204NoContent_WhenSuccessful() {
+        long postId = 1;
+        long tagId = 1;
+
+        ResponseEntity<Void> responseEntity = postController.addTag(postId, tagId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("addTag throws ResourceNotFoundException when post is not found")
+    void addTag_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                .when(postService).addTag(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.addTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+    }
+
+    @Test
+    @DisplayName("removeTag returns status 204 No Content when successful")
+    void removeTag_ReturnsStatus204NoContent_WhenSuccessful() {
+        long postId = 1;
+        long tagId = 1;
+
+        ResponseEntity<Void> responseEntity = postController.removeTag(postId, tagId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("removeTag throws ResourceNotFoundException when post is not found")
+    void removeTag_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                .when(postService).removeTag(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.removeTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+    }
 }

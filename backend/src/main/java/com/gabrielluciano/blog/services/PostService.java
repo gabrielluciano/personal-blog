@@ -17,4 +17,8 @@ public interface PostService {
     void update(PostUpdateRequest postUpdateRequest, long id);
 
     void deleteById(long id);
+
+    void addTag(long postId, long tagId);
+
+    void removeTag(long postId, long tagId);
 }
