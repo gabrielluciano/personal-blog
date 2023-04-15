@@ -99,7 +99,7 @@ DELETE /posts/{postId}/tags/{tagId}
 
     Return status:
         204 (NO_CONTENT) - Tag was successfully deleted from the post
-        404 (NOT_FOUND) - The post or tag was not found or post doesn't have the tag
+        404 (NOT_FOUND) - The post or tag was not found
         401 (UNAUTHORIZED) - When authentication is not valid or isn't present
         403 (FORBBIDEN) - User is not an admin or is not the author of the post
 ```
