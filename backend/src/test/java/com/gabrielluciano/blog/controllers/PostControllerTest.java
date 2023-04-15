@@ -42,10 +42,19 @@ class PostControllerTest {
 
     @BeforeEach
     void setUp() {
-        Page<PostResponse> postResponsePage = new PageImpl<>(List.of(PostResponseCreator.createPublishedPostResponse()));
+        Page<PostResponse> publishedPostResponsePage = new PageImpl<>(List
+                .of(PostResponseCreator.createPublishedPostResponse()));
 
-        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull()))
-                .thenReturn(postResponsePage);
+        Page<PostResponse> unpublishedPostResponsePage = new PageImpl<>(List
+                .of(PostResponseCreator.createUnpublishedPostResponse()));
+
+        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
+                        ArgumentMatchers.eq(false)))
+                .thenReturn(publishedPostResponsePage);
+
+        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
+                        ArgumentMatchers.eq(true)))
+                .thenReturn(unpublishedPostResponsePage);
 
         BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(PostResponseCreator.createPublishedPostResponse());
@@ -60,7 +69,7 @@ class PostControllerTest {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createPublishedPostResponse();
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null);
+                .list(PageRequest.of(0, 10), null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -79,11 +88,12 @@ class PostControllerTest {
     @Test
     @DisplayName("list returns empty page of post responses when no post is found")
     void list_ReturnsEmptyPageOfPostResponses_WhenNoPostIsFound() {
-        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull()))
+        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
+                        ArgumentMatchers.eq(false)))
                 .thenReturn(Page.empty());
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController.list(PageRequest.of(0, 10),
-                null);
+                null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -98,7 +108,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("list returns page of post responses containing a specific title when successful")
-    void list_ReturnsPageOfPostResponseContainingASpecificTitle_WhenSuccessful() {
+    void list_ReturnsPageOfPostResponsesContainingASpecificTitle_WhenSuccessful() {
         String title = "Super blog post";
         String slug = "super-blog-post";
 
@@ -108,11 +118,34 @@ class PostControllerTest {
         Page<PostResponse> postResponsePage = new PageImpl<>(List.of(PostResponseCreator
                 .createPublishedPostResponseWithTitleAndSlug(title,slug)));
 
-        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.anyString()))
+        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.anyString(),
+                        ArgumentMatchers.eq(false)))
                 .thenReturn(postResponsePage);
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), expectedFirstPostResponse.getTitle().toLowerCase());
+                .list(PageRequest.of(0, 10), expectedFirstPostResponse.getTitle().toLowerCase(), false);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstPostResponse);
+    }
+
+    @Test
+    @DisplayName("list returns page of unpublished post responses when drafts is true")
+    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrue() {
+        PostResponse expectedFirstPostResponse = PostResponseCreator.createUnpublishedPostResponse();
+
+        ResponseEntity<Page<PostResponse>> responseEntity = postController
+                .list(PageRequest.of(0, 10), null, true);
 
         assertThat(responseEntity).isNotNull();
 
