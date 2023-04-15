@@ -7,7 +7,7 @@ This is my personal blog project. The blog will be available soon.
 ### Post
 
 ```
-GET /posts[?name][?slug][?tag][?drafts]
+GET /posts[?title][?slug][?tag][?drafts]
 
     Returns a page of posts (Security: UNAUTHENTICATED/ADMIN)
 
@@ -15,7 +15,7 @@ GET /posts[?name][?slug][?tag][?drafts]
         200 (OK)
         
     Query parameters:
-        name - Matches all posts that have the value on its name
+        title - Matches all posts that have the value on its title
         slug - Matches all posts that have the value on its slug
         tag - Filter posts of a specific tag
         drafts - If true returns not published posts (requires admin role). Defaults to false
