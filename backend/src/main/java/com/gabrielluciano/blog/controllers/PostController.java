@@ -33,4 +33,9 @@ public class PostController {
         postService.update(postUpdateRequest, id);
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<Void> deleteById(long id) {
+        postService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

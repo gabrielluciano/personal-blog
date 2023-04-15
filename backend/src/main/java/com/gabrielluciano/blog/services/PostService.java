@@ -15,4 +15,6 @@ public interface PostService {
     PostResponse save(PostCreateRequest postCreateRequest);
 
     void update(PostUpdateRequest postUpdateRequest, long id);
+
+    void deleteById(long id);
 }

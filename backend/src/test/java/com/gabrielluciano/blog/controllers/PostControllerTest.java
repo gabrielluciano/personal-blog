@@ -29,6 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(SpringExtension.class)
 class PostControllerTest {
@@ -170,10 +171,37 @@ class PostControllerTest {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
 
         BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
-                        .when(postService).update(ArgumentMatchers.any(PostUpdateRequest.class), ArgumentMatchers.anyLong());
+                .when(postService).update(ArgumentMatchers.any(PostUpdateRequest.class), ArgumentMatchers.anyLong());
 
         Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.update(postUpdateRequest, postId))
+                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+    }
+
+    @Test
+    @DisplayName("deleteById returns status 204 No Content when successful")
+    void deleteById_ReturnsStatus204NoContent_WhenSuccessful() {
+        long postId = 1;
+
+        ResponseEntity<Void> responseEntity = postController.deleteById(postId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("deleteById returns status 204 No Content when successful")
+    void deleteById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                .when(postService).deleteById(ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.deleteById(postId))
                 .withMessageContaining("Could not find resource of type Post with id: " + postId);
     }
 }
