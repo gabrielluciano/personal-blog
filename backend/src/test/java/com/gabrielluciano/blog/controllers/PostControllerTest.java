@@ -193,7 +193,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("deleteById returns status 204 No Content when successful")
+    @DisplayName("deleteById throws ResourceNotFoundException when post is not found")
     void deleteById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
         long postId = 1;
 
