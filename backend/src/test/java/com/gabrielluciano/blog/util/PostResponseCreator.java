@@ -17,4 +17,11 @@ public class PostResponseCreator {
     public static PostResponse createUnpublishedPostResponse() {
         return PostMapper.INSTANCE.postToPostResponse(PostCreator.createUnpublishedPost());
     }
+
+    public static PostResponse createPublishedPostResponseWithTitleAndSlug(String title, String slug) {
+        PostResponse postResponse = PostMapper.INSTANCE.postToPostResponse(PostCreator.createUnpublishedPost());
+        postResponse.setTitle(title);
+        postResponse.setSlug(slug);
+        return postResponse;
+    }
 }

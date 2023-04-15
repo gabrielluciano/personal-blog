@@ -17,7 +17,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public Page<PostResponse> list(Pageable pageable) {
+    public Page<PostResponse> list(Pageable pageable, String title) {
         return postRepository.findAll(pageable)
                 .map(PostMapper.INSTANCE::postToPostResponse);
     }

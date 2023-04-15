@@ -17,8 +17,8 @@ public class PostController {
 
     private final PostService postService;
 
-    public ResponseEntity<Page<PostResponse>> list(Pageable pageable) {
-        return ResponseEntity.ok(postService.list(pageable));
+    public ResponseEntity<Page<PostResponse>> list(Pageable pageable, String title) {
+        return ResponseEntity.ok(postService.list(pageable, title));
     }
 
     public ResponseEntity<PostResponse> findById(long id) {
