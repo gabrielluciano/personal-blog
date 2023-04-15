@@ -2,11 +2,13 @@ package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.services.PostService;
 import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostResponseCreator;
+import com.gabrielluciano.blog.util.PostUpdateRequestCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -144,5 +146,34 @@ class PostControllerTest {
         assertThat(responseEntity.getBody().getUpdatedAt()).isNotNull();
 
         assertThat(responseEntity.getBody().getPublishedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("update returns status 204 No Content when successful")
+    void update_ReturnsStatus204NoContent_WhenSuccessful() {
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        ResponseEntity<Void> responseEntity = postController.update(postUpdateRequest, 1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("update throws ResourceNotFoundException when post is not found")
+    void update_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                        .when(postService).update(ArgumentMatchers.any(PostUpdateRequest.class), ArgumentMatchers.anyLong());
+
+        Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.update(postUpdateRequest, postId))
+                .withMessageContaining("Could not find resource of type Post with id: " + postId);
     }
 }

@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.controllers;
 
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,5 +27,10 @@ public class PostController {
 
     public ResponseEntity<PostResponse> save(PostCreateRequest postCreateRequest) {
         return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<Void> update(PostUpdateRequest postUpdateRequest, long id) {
+        postService.update(postUpdateRequest, id);
+        return ResponseEntity.noContent().build();
     }
 }
