@@ -3,16 +3,23 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
+import com.gabrielluciano.blog.mappers.PostMapper;
+import com.gabrielluciano.blog.repositories.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    
+
+    private final PostRepository postRepository;
+
     @Override
     public Page<PostResponse> list(Pageable pageable) {
-        return null;
+        return postRepository.findAll(pageable)
+                .map(PostMapper.INSTANCE::postToPostResponse);
     }
 
     @Override
