@@ -1,11 +1,13 @@
 package com.gabrielluciano.blog.dto.post;
 
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +27,5 @@ public class PostResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime publishedAt;
+    private Set<TagResponse> tags;
 }

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
-    Page<PostResponse> list(Pageable pageable, String title, boolean drafts);
+    Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts);
 
     PostResponse findById(long id);
 

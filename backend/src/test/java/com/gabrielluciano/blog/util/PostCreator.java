@@ -1,9 +1,11 @@
 package com.gabrielluciano.blog.util;
 
 import com.gabrielluciano.blog.models.Post;
+import com.gabrielluciano.blog.models.Tag;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Set;
 
 public class PostCreator {
 
@@ -32,6 +34,7 @@ public class PostCreator {
         post.setCreatedAt(date);
         post.setUpdatedAt(date);
         post.setPublishedAt(date);
+        post.setTags(null);
         return post;
     }
 
@@ -40,6 +43,16 @@ public class PostCreator {
         post.setCreatedAt(date);
         post.setUpdatedAt(date);
         post.setPublishedAt(null);
+        post.setTags(null);
+        return post;
+    }
+
+    public static Post createPublishedPostWithTags(Set<Tag> tags) {
+        post.setPublished(true);
+        post.setCreatedAt(date);
+        post.setUpdatedAt(date);
+        post.setPublishedAt(date);
+        post.setTags(tags);
         return post;
     }
 }

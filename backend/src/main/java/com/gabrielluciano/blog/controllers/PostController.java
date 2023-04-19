@@ -17,8 +17,11 @@ public class PostController {
 
     private final PostService postService;
 
-    public ResponseEntity<Page<PostResponse>> list(Pageable pageable, String title, boolean drafts) {
-        return ResponseEntity.ok(postService.list(pageable, title, drafts));
+    public ResponseEntity<Page<PostResponse>> list(Pageable pageable,
+                                                   String title,
+                                                   Long tagId,
+                                                   boolean drafts) {
+        return ResponseEntity.ok(postService.list(pageable, title, tagId, drafts));
     }
 
     public ResponseEntity<PostResponse> findById(long id) {

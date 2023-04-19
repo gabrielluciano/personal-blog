@@ -45,7 +45,7 @@ class PostServiceImplTest {
     void list_ReturnsPageOfPostResponses_WhenSuccessful() {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createPublishedPostResponse();
 
-        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, false);
+        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, null, false);
 
         assertThat(page).isNotNull();
 
@@ -63,7 +63,7 @@ class PostServiceImplTest {
         BDDMockito.when(postRepository.findAll(ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(Page.empty());
 
-        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, false);
+        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, null, false);
 
         assertThat(page).isNotNull();
 

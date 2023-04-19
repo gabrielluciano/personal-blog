@@ -3,12 +3,15 @@ package com.gabrielluciano.blog.controllers;
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
+import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.services.PostService;
 import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostResponseCreator;
 import com.gabrielluciano.blog.util.PostUpdateRequestCreator;
+import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.TagResponseCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -48,13 +52,20 @@ class PostControllerTest {
         Page<PostResponse> unpublishedPostResponsePage = new PageImpl<>(List
                 .of(PostResponseCreator.createUnpublishedPostResponse()));
 
+        Page<PostResponse> publishedPostResponsePageWithTag = new PageImpl<>(List.of(PostResponseCreator
+                .createPublishedPostResponseWithTags(Set.of(TagCreator.createValidTag()))));
+
         BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
-                        ArgumentMatchers.eq(false)))
+                        ArgumentMatchers.isNull(), ArgumentMatchers.eq(false)))
                 .thenReturn(publishedPostResponsePage);
 
         BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
-                        ArgumentMatchers.eq(true)))
+                        ArgumentMatchers.isNull(), ArgumentMatchers.eq(true)))
                 .thenReturn(unpublishedPostResponsePage);
+
+        BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
+                        ArgumentMatchers.anyLong(), ArgumentMatchers.eq(false)))
+                .thenReturn(publishedPostResponsePageWithTag);
 
         BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(PostResponseCreator.createPublishedPostResponse());
@@ -69,7 +80,7 @@ class PostControllerTest {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createPublishedPostResponse();
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null, false);
+                .list(PageRequest.of(0, 10), null, null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -89,11 +100,11 @@ class PostControllerTest {
     @DisplayName("list returns empty page of post responses when no post is found")
     void list_ReturnsEmptyPageOfPostResponses_WhenNoPostIsFound() {
         BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.isNull(),
-                        ArgumentMatchers.eq(false)))
+                        ArgumentMatchers.isNull(), ArgumentMatchers.eq(false)))
                 .thenReturn(Page.empty());
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController.list(PageRequest.of(0, 10),
-                null, false);
+                null, null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -116,14 +127,15 @@ class PostControllerTest {
                 title, slug);
 
         Page<PostResponse> postResponsePage = new PageImpl<>(List.of(PostResponseCreator
-                .createPublishedPostResponseWithTitleAndSlug(title,slug)));
+                .createPublishedPostResponseWithTitleAndSlug(title, slug)));
 
         BDDMockito.when(postService.list(ArgumentMatchers.any(Pageable.class), ArgumentMatchers.anyString(),
-                        ArgumentMatchers.eq(false)))
+                        ArgumentMatchers.isNull(), ArgumentMatchers.eq(false)))
                 .thenReturn(postResponsePage);
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), expectedFirstPostResponse.getTitle().toLowerCase(), false);
+                .list(PageRequest.of(0, 10), expectedFirstPostResponse.getTitle().toLowerCase(),
+                        null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -145,7 +157,7 @@ class PostControllerTest {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createUnpublishedPostResponse();
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null, true);
+                .list(PageRequest.of(0, 10), null, null, true);
 
         assertThat(responseEntity).isNotNull();
 
@@ -159,6 +171,35 @@ class PostControllerTest {
                 .hasSize(1);
 
         assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstPostResponse);
+    }
+
+    @Test
+    @DisplayName("list returns page of post responses containing a specific tag response when tag parameter is passed")
+    void list_ReturnsPageOfPostResponsesContainingASpecificTagResponse_WhenTagParameterIsPassed() {
+        TagResponse tagResponse = TagResponseCreator.createValidTagResponse();
+        PostResponse expectedFirstPostResponse = PostResponseCreator
+                .createPublishedPostResponseWithTags(Set.of(TagCreator.createValidTag()));
+
+        ResponseEntity<Page<PostResponse>> responseEntity = postController
+                .list(PageRequest.of(0, 10), null, tagResponse.getId(), false);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0)).isEqualTo(expectedFirstPostResponse);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTags())
+                .isNotNull()
+                .isNotEmpty()
+                .contains(tagResponse);
     }
 
     @Test

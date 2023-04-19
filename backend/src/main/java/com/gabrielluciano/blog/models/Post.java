@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -16,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -50,6 +53,9 @@ public class Post extends AbstractPersistentObject {
     private LocalDateTime updatedAt;
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime publishedAt;
+
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
 
     @Override
     public String toString() {
