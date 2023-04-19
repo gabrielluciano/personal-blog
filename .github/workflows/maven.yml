@@ -20,6 +20,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run unit tests
-      run: mvn -B test
+      run: cd ./backend && mvn -B test
     - name: Run integration tests
-      run: mvn -B -P integration-tests
+      run: mvn test -B -P integration-tests
