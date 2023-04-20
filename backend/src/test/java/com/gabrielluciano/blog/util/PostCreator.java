@@ -33,6 +33,18 @@ public class PostCreator {
         return createPost(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, null);
     }
 
+    public static Post createPublishedPostToBeSaved() {
+        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, null);
+        post.setId(null);
+        return post;
+    }
+
+    public static Post createUnpublishedPostToBeSaved() {
+        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, null);
+        post.setId(null);
+        return post;
+    }
+
     public static Post createPublishedPostWithTags(Set<Tag> tags) {
         return createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
     }

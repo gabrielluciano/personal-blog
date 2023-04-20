@@ -18,8 +18,8 @@ class PostRepositoryTest {
     private PostRepository postRepository;
 
     @Test
-    @DisplayName("findByTitleContainingIgnoreCase returns page of posts containing specified title when successful")
-    void findByTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
+    @DisplayName("findByPublishedIsTrueAndTitleContainingIgnoreCase returns page of posts containing specified title when successful")
+    void findByPublishedIsTrueAndTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
         String title1 = "Some title";
         String title2 = "Post title";
         String title3 = "Incredible post";
@@ -31,7 +31,7 @@ class PostRepositoryTest {
         Post post2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title2, slug));
         postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title3, slug));
 
-        Page<Post> page = postRepository.findByTitleContainingIgnoreCase(titleToSearch, PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, PageRequest.of(0, 10));
 
         assertThat(page).isNotNull();
 
@@ -49,5 +49,47 @@ class PostRepositoryTest {
                 .filter(post -> post.getId().equals(post2.getId()))
                 .findFirst())
                 .isPresent();
+    }
+
+    @Test
+    @DisplayName("findAllByPublishedIsTrue returns page of published posts when successful")
+    void findAllByPublishedIsTrue_ReturnsPageOfPublishedPosts_WhenSuccessful() {
+        Post publishedPostToBeSaved = PostCreator.createPublishedPostToBeSaved();
+        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostToBeSaved();
+
+        Post publishedPost = postRepository.save(publishedPostToBeSaved);
+        postRepository.save(unpublishedPostToBeSaved);
+
+        Page<Post> page = postRepository.findAllByPublishedIsTrue(PageRequest.of(0, 10));
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(page.getContent().get(0)).isEqualTo(publishedPost);
+    }
+
+    @Test
+    @DisplayName("findAllByPublishedIsTrue returns page of unpublished posts when successful")
+    void findAllByPublishedIsTrue_ReturnsPageOfUnpublishedPosts_WhenSuccessful() {
+        Post publishedPostToBeSaved = PostCreator.createPublishedPostToBeSaved();
+        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostToBeSaved();
+
+        postRepository.save(publishedPostToBeSaved);
+        Post unpublishedPost = postRepository.save(unpublishedPostToBeSaved);
+
+        Page<Post> page = postRepository.findAllByPublishedIsFalse(PageRequest.of(0, 10));
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(page.getContent().get(0)).isEqualTo(unpublishedPost);
     }
 }

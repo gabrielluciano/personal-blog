@@ -34,10 +34,14 @@ class PostServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Page<Post> postPage = new PageImpl<>(List.of(PostCreator.createPublishedPost()));
+        Page<Post> publishedPostPage = new PageImpl<>(List.of(PostCreator.createPublishedPost()));
+        Page<Post> unpublishedPostPage = new PageImpl<>(List.of(PostCreator.createUnpublishedPost()));
 
-        BDDMockito.when(postRepository.findAll(ArgumentMatchers.any(Pageable.class)))
-                .thenReturn(postPage);
+        BDDMockito.when(postRepository.findAllByPublishedIsTrue(ArgumentMatchers.any(Pageable.class)))
+                .thenReturn(publishedPostPage);
+
+        BDDMockito.when(postRepository.findAllByPublishedIsFalse(ArgumentMatchers.any(Pageable.class)))
+                .thenReturn(unpublishedPostPage);
     }
 
     @Test
@@ -60,7 +64,7 @@ class PostServiceImplTest {
     @Test
     @DisplayName("list returns empty page of post responses when no post is found")
     void list_ReturnsEmptyPageOfPostResponses_WhenNoPostIsFound() {
-        BDDMockito.when(postRepository.findAll(ArgumentMatchers.any(Pageable.class)))
+        BDDMockito.when(postRepository.findAllByPublishedIsTrue(ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(Page.empty());
 
         Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, null, false);
@@ -79,12 +83,30 @@ class PostServiceImplTest {
         PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponseWithTitleAndSlug(title, title);
 
         Page<Post> postPage = new PageImpl<>(List.of(PostCreator.createPublishedPostWithTitleAndSlug(title, title)));
-        BDDMockito.when(postRepository.findByTitleContainingIgnoreCase(ArgumentMatchers.eq(title),
+        BDDMockito.when(postRepository.findByPublishedIsTrueAndTitleContainingIgnoreCase(ArgumentMatchers.eq(title),
                         ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(postPage);
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<PostResponse> page = postService.list(pageable, title, null, false);
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(page.getContent().get(0)).isEqualTo(expectedPostResponse);
+    }
+
+    @Test
+    @DisplayName("list returns page of unpublished post responses when drafts is true")
+    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrue() {
+        PostResponse expectedPostResponse = PostResponseCreator.createUnpublishedPostResponse();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<PostResponse> page = postService.list(pageable, null, null, true);
 
         assertThat(page).isNotNull();
 

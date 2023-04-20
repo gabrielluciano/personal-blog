@@ -7,5 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    Page<Post> findByPublishedIsTrueAndTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    Page<Post> findAllByPublishedIsFalse(Pageable pageable);
+
+    Page<Post> findAllByPublishedIsTrue(Pageable pageable);
 }

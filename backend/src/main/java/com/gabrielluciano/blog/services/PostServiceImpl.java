@@ -19,15 +19,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts) {
-        Page<Post> posts;
-
-        if (title == null) {
-            posts = postRepository.findAll(pageable);
-        } else {
-            posts = postRepository.findByTitleContainingIgnoreCase(title, pageable);
+        if (drafts) {
+            return getPageOfUnpublishedPostResponses(pageable);
         }
 
-        return posts.map(PostMapper.INSTANCE::postToPostResponse);
+        return getPageOfPublishedPostResponsesFilteredByTitle(pageable, title);
     }
 
     @Override
@@ -58,5 +54,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public void removeTag(long postId, long tagId) {
 
+    }
+
+    private Page<PostResponse> getPageOfUnpublishedPostResponses(Pageable pageable) {
+        return postRepository.findAllByPublishedIsFalse(pageable)
+                .map(PostMapper.INSTANCE::postToPostResponse);
+    }
+
+    private Page<PostResponse> getPageOfPublishedPostResponsesFilteredByTitle(Pageable pageable, String title) {
+        Page<Post> posts;
+        if (title == null) {
+            posts = postRepository.findAllByPublishedIsTrue(pageable);
+        } else {
+            posts = postRepository.findByPublishedIsTrueAndTitleContainingIgnoreCase(title, pageable);
+        }
+        return posts.map(PostMapper.INSTANCE::postToPostResponse);
     }
 }
