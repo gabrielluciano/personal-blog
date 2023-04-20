@@ -18,8 +18,8 @@ class PostRepositoryTest {
     private PostRepository postRepository;
 
     @Test
-    @DisplayName("findAllByTitleIgnoreCaseContaining returns page of posts containing specified title when successful")
-    void findAllByTitleIgnoreCaseContaining_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
+    @DisplayName("findByTitleContainingIgnoreCase returns page of posts containing specified title when successful")
+    void findByTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
         String title1 = "Some title";
         String title2 = "Post title";
         String title3 = "Incredible post";
