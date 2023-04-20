@@ -4,6 +4,7 @@ import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.mappers.PostMapper;
+import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,8 +19,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts) {
-        return postRepository.findAll(pageable)
-                .map(PostMapper.INSTANCE::postToPostResponse);
+        Page<Post> posts;
+
+        if (title == null) {
+            posts = postRepository.findAll(pageable);
+        } else {
+            posts = postRepository.findByTitleContainingIgnoreCase(title, pageable);
+        }
+
+        return posts.map(PostMapper.INSTANCE::postToPostResponse);
     }
 
     @Override

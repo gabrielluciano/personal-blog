@@ -71,4 +71,28 @@ class PostServiceImplTest {
                 .isNotNull()
                 .isEmpty();
     }
+
+    @Test
+    @DisplayName("list returns page of post responses containing a specific title when successful")
+    void list_ReturnsPageOfPostResponsesContainingASpecificTitle_WhenSuccessful() {
+        String title = "Super blog post";
+        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponseWithTitleAndSlug(title, title);
+
+        Page<Post> postPage = new PageImpl<>(List.of(PostCreator.createPublishedPostWithTitleAndSlug(title, title)));
+        BDDMockito.when(postRepository.findByTitleContainingIgnoreCase(ArgumentMatchers.eq(title),
+                        ArgumentMatchers.any(Pageable.class)))
+                .thenReturn(postPage);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<PostResponse> page = postService.list(pageable, title, null, false);
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(page.getContent().get(0)).isEqualTo(expectedPostResponse);
+    }
 }

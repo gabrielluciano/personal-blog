@@ -9,50 +9,64 @@ import java.util.Set;
 
 public class PostCreator {
 
-    private static final LocalDateTime date = LocalDateTime.now(ZoneOffset.UTC);
+    public static long DEFAULT_ID = 1L;
+    public static String DEFAULT_TITLE = "Some Post";
+    public static String DEFAULT_SUBTITLE = "Some Post with awesome content";
+    public static String DEFAULT_CONTENT = "This is the post content";
+    public static String DEFAULT_META_TITLE = "Some Post";
+    public static String DEFAULT_IMAGE_URL = "https://example.com";
+    public static String DEFAULT_META_DESCRIPTION = "Some Post with awesome content";
+    public static String DEFAULT_SLUG = "some-post";
+    public static boolean PUBLISHED = true;
+    public static boolean UNPUBLISHED = false;
 
-    private static final Post post = Post.builder()
-            .id(1L)
-            .title("Some Post")
-            .subtitle("Some Post with awesome content")
-            .content("This is the post content")
-            .metaTitle("Some Post")
-            .metaDescription("Some Post with awesome content")
-            .slug("some-post")
-            .imageUrl("https://example.com")
-            .published(true)
-            .createdAt(date)
-            .updatedAt(date)
-            .publishedAt(date)
-            .build();
+    private static final LocalDateTime DEFAULT_DATE = LocalDateTime.now(ZoneOffset.UTC);
 
     private PostCreator() {
     }
 
     public static Post createPublishedPost() {
-        post.setPublished(true);
-        post.setCreatedAt(date);
-        post.setUpdatedAt(date);
-        post.setPublishedAt(date);
-        post.setTags(null);
-        return post;
+        return createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, null);
     }
 
     public static Post createUnpublishedPost() {
-        post.setPublished(false);
-        post.setCreatedAt(date);
-        post.setUpdatedAt(date);
-        post.setPublishedAt(null);
-        post.setTags(null);
-        return post;
+        return createPost(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, null);
     }
 
     public static Post createPublishedPostWithTags(Set<Tag> tags) {
-        post.setPublished(true);
-        post.setCreatedAt(date);
-        post.setUpdatedAt(date);
-        post.setPublishedAt(date);
-        post.setTags(tags);
+        return createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
+    }
+
+    public static Post createPublishedPostWithTitleAndSlug(String title, String slug) {
+        return createPost(title, slug, PUBLISHED, null);
+    }
+
+    public static Post createPublishedPostWithTitleAndSlugToBeSaved(String title, String slug) {
+        Post post = createPublishedPostWithTitleAndSlug(title, slug);
+        post.setId(null);
         return post;
+    }
+
+    private static Post createPost(String title, String slug, boolean published, Set<Tag> tags) {
+        LocalDateTime publishedAt = null;
+        if (published) {
+             publishedAt = DEFAULT_DATE;
+        }
+
+        return Post.builder()
+                .id(DEFAULT_ID)
+                .title(title == null ? DEFAULT_TITLE : title)
+                .subtitle(DEFAULT_SUBTITLE)
+                .content(DEFAULT_CONTENT)
+                .metaTitle(DEFAULT_META_TITLE)
+                .metaDescription(DEFAULT_META_DESCRIPTION)
+                .slug(slug == null ? DEFAULT_SLUG : slug)
+                .imageUrl(DEFAULT_IMAGE_URL)
+                .published(published)
+                .createdAt(DEFAULT_DATE)
+                .updatedAt(DEFAULT_DATE)
+                .publishedAt(publishedAt)
+                .tags(tags)
+                .build();
     }
 }
