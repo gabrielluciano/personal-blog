@@ -88,8 +88,8 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("findByIdOrThrowResourceNotFoundException returns tag response when successful")
-    void findByIdOrThrowResourceNotFoundException_ReturnsTagResponse_WhenSuccessful() {
+    @DisplayName("findById returns tag response when successful")
+    void findById_ReturnsTagResponse_WhenSuccessful() {
         TagResponse expectedTagResponse = TagResponseCreator.createValidTagResponse();
 
         TagResponse tagResponse = tagService.findById(expectedTagResponse.getId());
@@ -100,8 +100,8 @@ class TagServiceImplTest {
     }
 
     @Test
-    @DisplayName("findByIdOrThrowResourceNotFoundException throws ResourceNotFoundException when tag is not found")
-    void findByIdOrThrowResourceNotFoundException_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+    @DisplayName("findById throws ResourceNotFoundException when tag is not found")
+    void findById_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
         long tagId = 1;
 
         BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
