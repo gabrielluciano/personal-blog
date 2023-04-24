@@ -1,13 +1,18 @@
 package com.gabrielluciano.blog.repositories;
 
 import com.gabrielluciano.blog.models.Post;
+import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.util.PostCreator;
+import com.gabrielluciano.blog.util.TagCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,9 +22,12 @@ class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     @Test
-    @DisplayName("findByPublishedIsTrueAndTitleContainingIgnoreCase returns page of posts containing specified title when successful")
-    void findByPublishedIsTrueAndTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
+    @DisplayName("findAllByPublishedIsTrueAndTitleContainingIgnoreCase returns page of posts containing specified title when successful")
+    void findAllByPublishedIsTrueAndTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
         String title1 = "Some title";
         String title2 = "Post title";
         String title3 = "Incredible post";
@@ -31,7 +39,7 @@ class PostRepositoryTest {
         Post post2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title2, slug));
         postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title3, slug));
 
-        Page<Post> page = postRepository.findByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, PageRequest.of(0, 10));
 
         assertThat(page).isNotNull();
 
@@ -49,6 +57,68 @@ class PostRepositoryTest {
                 .filter(post -> post.getId().equals(post2.getId()))
                 .findFirst())
                 .isPresent();
+    }
+
+    @Test
+    @DisplayName("findAllByPublishedIsTrueAndTagsId returns page of published posts containing a specific tag when successful")
+    void findAllByPublishedIsTrueAndTagsId_ReturnsPageOfPublishedPostsContainingASpecificTag_WhenSuccessful() {
+        Tag savedTag1 = tagRepository.save(TagCreator.createTagToBeSaved("some tag 1"));
+        Tag savedTag2 = tagRepository.save(TagCreator.createTagToBeSaved("some tag 2"));
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTags(Set.of(savedTag1, savedTag2)));
+
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(savedTag1.getId(), PageRequest.of(0, 10));
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(page.getContent().get(0)).isEqualTo(savedPost);
+    }
+
+    @Test
+    @DisplayName("findAllByPublishedIsTrueAndTagsId returns empty page of posts when no post is found")
+    void findAllByPublishedIsTrueAndTagsId_ReturnsEmptyPageOfPosts_WhenNoPostIsFound() {
+        postRepository.save(PostCreator.createPublishedPost());
+
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(1L, PageRequest.of(0, 10));
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("findAllByPublishedIsTrueAndTitleContainingIgnoreCaseAndTagsId returns page of published posts containing a specific tag and title when successful")
+    void findAllByPublishedIsTrueAndTitleContainingIgnoreCaseAndTagsId_ReturnsPageOfPublishedPostsContainingASpecificTagAndTitle_WhenSuccessful() {
+        Tag savedTag1 = tagRepository.save(TagCreator.createTagToBeSaved("some tag"));
+        Tag savedTag2 = tagRepository.save(TagCreator.createTagToBeSaved("another tag"));
+
+        Post savedPost1 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("rust", "rust"));
+        Post savedPost2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Java", "java"));
+        Post savedPost3 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("java tips", "java-tips"));
+        Post savedPost4 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("java guides", "java-guides"));
+
+        savedPost1.setTags(Set.of(savedTag1, savedTag2));
+        savedPost2.setTags(Set.of(savedTag1));
+        savedPost3.setTags(Set.of(savedTag1));
+        savedPost4.setTags(Set.of(savedTag2));
+
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCaseAndTagsId("java",
+                savedTag1.getId(), Pageable.unpaged());
+
+        assertThat(page).isNotNull();
+
+        assertThat(page.getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2);
+
+        assertThat(page.getContent()).contains(savedPost2, savedPost3);
     }
 
     @Test

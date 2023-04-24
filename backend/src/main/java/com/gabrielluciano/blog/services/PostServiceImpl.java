@@ -19,11 +19,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts) {
-        if (drafts) {
-            return getPageOfUnpublishedPostResponses(pageable);
-        }
-
-        return getPageOfPublishedPostResponsesFilteredByTitle(pageable, title);
+        Page<Post> posts = getPostPage(pageable, title, tagId, drafts);
+        return postPageToPostResponsePage(posts);
     }
 
     @Override
@@ -56,18 +53,21 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    private Page<PostResponse> getPageOfUnpublishedPostResponses(Pageable pageable) {
-        return postRepository.findAllByPublishedIsFalse(pageable)
-                .map(PostMapper.INSTANCE::postToPostResponse);
+    private Page<Post> getPostPage(Pageable pageable, String title, Long tagId, boolean drafts) {
+        if (drafts) {
+            return postRepository.findAllByPublishedIsFalse(pageable);
+        } else if (title != null && tagId != null) {
+            return postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCaseAndTagsId(title, tagId, pageable);
+        } else if (title != null) {
+            return postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCase(title, pageable);
+        } else if (tagId != null) {
+            return postRepository.findAllByPublishedIsTrueAndTagsId(tagId, pageable);
+        } else {
+            return postRepository.findAllByPublishedIsTrue(pageable);
+        }
     }
 
-    private Page<PostResponse> getPageOfPublishedPostResponsesFilteredByTitle(Pageable pageable, String title) {
-        Page<Post> posts;
-        if (title == null) {
-            posts = postRepository.findAllByPublishedIsTrue(pageable);
-        } else {
-            posts = postRepository.findByPublishedIsTrueAndTitleContainingIgnoreCase(title, pageable);
-        }
+    private Page<PostResponse> postPageToPostResponsePage(Page<Post> posts) {
         return posts.map(PostMapper.INSTANCE::postToPostResponse);
     }
 }

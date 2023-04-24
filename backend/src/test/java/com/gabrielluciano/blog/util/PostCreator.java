@@ -49,6 +49,12 @@ public class PostCreator {
         return createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
     }
 
+    public static Post createPublishedPostWithTagsToBeSaved(Set<Tag> tags) {
+        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
+        post.setId(null);
+        return post;
+    }
+
     public static Post createPublishedPostWithTitleAndSlug(String title, String slug) {
         return createPost(title, slug, PUBLISHED, null);
     }
