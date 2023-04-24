@@ -70,6 +70,9 @@ class PostControllerTest {
         BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(PostResponseCreator.createPublishedPostResponse());
 
+        BDDMockito.when(postService.findBySlug(ArgumentMatchers.anyString()))
+                        .thenReturn(PostResponseCreator.createPublishedPostResponse());
+
         BDDMockito.when(postService.save(ArgumentMatchers.any(PostCreateRequest.class)))
                 .thenReturn(PostResponseCreator.createUnpublishedPostResponse());
     }
@@ -228,7 +231,38 @@ class PostControllerTest {
 
         Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.findById(postId))
-                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("findBySlug returns post response when successful")
+    void findBySlug_ReturnsPostResponse_WhenSuccessful() {
+        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();
+
+        ResponseEntity<PostResponse> responseEntity = postController.findBySlug(expectedPostResponse.getSlug());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isEqualTo(expectedPostResponse);
+
+        assertThat(responseEntity.getBody().getSlug()).isEqualTo(expectedPostResponse.getSlug());
+    }
+
+    @Test
+    @DisplayName("findBySlug throws ResourceNotFoundException when post is not found")
+    void findBySlug_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        String slug = "some-slug";
+
+        BDDMockito.when(postService.findBySlug(ArgumentMatchers.anyString()))
+                .thenThrow(new ResourceNotFoundException(Post.class, slug));
+
+        Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.findBySlug(slug))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + slug);
     }
 
     @Test
@@ -283,7 +317,7 @@ class PostControllerTest {
 
         Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.update(postUpdateRequest, postId))
-                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
 
     @Test
@@ -310,7 +344,7 @@ class PostControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.deleteById(postId))
-                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
 
     @Test
@@ -339,7 +373,7 @@ class PostControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.addTag(postId, tagId))
-                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
 
     @Test
@@ -368,6 +402,6 @@ class PostControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postController.removeTag(postId, tagId))
-                .withMessageContaining("Could not find resource of type Post with id: " + postId);
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
 }

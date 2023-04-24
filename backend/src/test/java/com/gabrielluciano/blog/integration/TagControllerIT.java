@@ -126,7 +126,7 @@ class TagControllerIT {
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
 
         assertThat(responseEntity.getBody().getMessage())
-                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
+                .isEqualTo("Could not find resource of type Tag with identifier: " + tagId);
     }
 
     @Test
@@ -269,7 +269,7 @@ class TagControllerIT {
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
 
         assertThat(responseEntity.getBody().getMessage())
-                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
+                .isEqualTo("Could not find resource of type Tag with identifier: " + tagId);
     }
 
     @Test
@@ -399,7 +399,7 @@ class TagControllerIT {
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/tags/" + tagId);
 
         assertThat(responseEntity.getBody().getMessage())
-                .isEqualTo("Could not find resource of type Tag with id: " + tagId);
+                .isEqualTo("Could not find resource of type Tag with identifier: " + tagId);
     }
 
     @Test

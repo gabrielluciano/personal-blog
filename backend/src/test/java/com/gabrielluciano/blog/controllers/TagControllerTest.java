@@ -126,7 +126,7 @@ class TagControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> tagController.findById(tagId))
-                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+                .withMessageContaining("Could not find resource of type Tag with identifier: " + tagId);
     }
 
     @Test
@@ -173,7 +173,7 @@ class TagControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> tagController.update(tagUpdateRequest, tagId))
-                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+                .withMessageContaining("Could not find resource of type Tag with identifier: " + tagId);
     }
 
     @Test
@@ -198,6 +198,6 @@ class TagControllerTest {
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> tagController.deleteById(tagId))
-                .withMessageContaining("Could not find resource of type Tag with id: " + tagId);
+                .withMessageContaining("Could not find resource of type Tag with identifier: " + tagId);
     }
 }

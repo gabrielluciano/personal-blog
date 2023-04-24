@@ -12,6 +12,8 @@ public interface PostService {
 
     PostResponse findById(long id);
 
+    PostResponse findBySlug(String slug);
+
     PostResponse save(PostCreateRequest postCreateRequest);
 
     void update(PostUpdateRequest postUpdateRequest, long id);

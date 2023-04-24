@@ -28,6 +28,10 @@ public class PostController {
         return ResponseEntity.ok(postService.findById(id));
     }
 
+    public ResponseEntity<PostResponse> findBySlug(String slug) {
+        return ResponseEntity.ok(postService.findBySlug(slug));
+    }
+
     public ResponseEntity<PostResponse> save(PostCreateRequest postCreateRequest) {
         return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
     }
