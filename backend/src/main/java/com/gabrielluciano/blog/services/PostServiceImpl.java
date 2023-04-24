@@ -6,7 +6,9 @@ import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.models.Post;
+import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.PostRepository;
+import com.gabrielluciano.blog.repositories.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
 
     @Override
     public Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts) {
@@ -38,32 +41,47 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse save(PostCreateRequest postCreateRequest) {
-        return null;
+        Post post = PostMapper.INSTANCE.postCreateRequestToPost(postCreateRequest);
+        return PostMapper.INSTANCE.postToPostResponse(postRepository.save(post));
     }
 
     @Override
     public void update(PostUpdateRequest postUpdateRequest, long id) {
-
+        Post post = findByIdOrThrowResourceNotFoundException(id);
+        PostMapper.INSTANCE.updatePostFromPostUpdateRequest(postUpdateRequest, post);
+        postRepository.save(post);
     }
 
     @Override
     public void deleteById(long id) {
-
+        findByIdOrThrowResourceNotFoundException(id);
+        postRepository.deleteById(id);
     }
 
     @Override
     public void addTag(long postId, long tagId) {
-
+        Post post = findByIdOrThrowResourceNotFoundException(postId);
+        Tag tag = findTagByIdOrThrowResourceNotFoundException(tagId);
+        post.getTags().add(tag);
+        postRepository.save(post);
     }
 
     @Override
     public void removeTag(long postId, long tagId) {
-
+        Post post = findByIdOrThrowResourceNotFoundException(postId);
+        Tag tag = findTagByIdOrThrowResourceNotFoundException(tagId);
+        post.getTags().remove(tag);
+        postRepository.save(post);
     }
 
     private Post findByIdOrThrowResourceNotFoundException(long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Post.class, id));
+    }
+
+    private Tag findTagByIdOrThrowResourceNotFoundException(long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
 
     private Post findBySlugOrThrowResourceNotFoundException(String slug) {

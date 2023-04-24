@@ -1,12 +1,17 @@
 package com.gabrielluciano.blog.services;
 
+import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.dto.tag.TagResponse;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.repositories.PostRepository;
+import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostCreator;
 import com.gabrielluciano.blog.util.PostResponseCreator;
+import com.gabrielluciano.blog.util.PostUpdateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
 import com.gabrielluciano.blog.util.TagResponseCreator;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class PostServiceImplTest {
@@ -38,6 +42,9 @@ class PostServiceImplTest {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private TagRepository tagRepository;
 
     @BeforeEach
     void setUp() {
@@ -61,6 +68,13 @@ class PostServiceImplTest {
 
         BDDMockito.when(postRepository.findByPublishedIsTrueAndSlug(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(PostCreator.createPublishedPost()));
+
+        BDDMockito.when(postRepository.save(ArgumentMatchers.any(Post.class)))
+                .thenReturn(PostCreator.createUnpublishedPost());
+
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(TagCreator.createValidTag()));
     }
 
     @Test
@@ -206,5 +220,143 @@ class PostServiceImplTest {
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() -> postService.findBySlug(slug))
                 .withMessageContaining("Could not find resource of type Post with identifier: " + slug);
+    }
+
+    @Test
+    @DisplayName("save returns created post response when successful")
+    void save_ReturnsCreatedPostResponse_WhenSuccessful() {
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
+
+        PostResponse createdPostResponse = postService.save(postCreateRequest);
+
+        assertThat(createdPostResponse).isNotNull();
+
+        assertThat(createdPostResponse.getId()).isNotNull();
+
+        assertThat(createdPostResponse.getTitle()).isEqualTo(postCreateRequest.getTitle());
+
+        assertThat(createdPostResponse.getCreatedAt()).isNotNull();
+
+        assertThat(createdPostResponse.getUpdatedAt()).isNotNull();
+
+        assertThat(createdPostResponse.getPublishedAt()).isNull();
+
+        assertThat(createdPostResponse.getPublished()).isFalse();
+    }
+
+    @Test
+    @DisplayName("update updates post when successful")
+    void update_UpdatesPost_WhenSuccessful() {
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        assertThatNoException().isThrownBy(() -> postService.update(postUpdateRequest, 1L));
+    }
+
+    @Test
+    @DisplayName("update throws ResourceNotFoundException when post is not found")
+    void update_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.update(postUpdateRequest, postId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("deleteById deletes post when successful")
+    void deleteById_DeletesPost_WhenSuccessful() {
+        assertThatNoException().isThrownBy(() -> postService.deleteById(1L));
+    }
+
+    @Test
+    @DisplayName("deleteById throws ResourceNotFoundException when post is not found")
+    void deleteById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.deleteById(postId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("addTag adds a Tag to a Post when successful")
+    void addTag_AddsATagToAPost_WhenSuccessful() {
+        long postId = 1;
+        long tagId = 1;
+
+        assertThatNoException().isThrownBy(() -> postService.addTag(postId, tagId));
+    }
+
+    @Test
+    @DisplayName("addTag throws ResourceNotFoundException when post is not found")
+    void addTag_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.addTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("addTag throws ResourceNotFoundException when tag is not found")
+    void addTag_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.addTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Tag with identifier: " + tagId);
+    }
+
+    @Test
+    @DisplayName("removeTag removes a Tag from a Post when successful")
+    void removeTag_RemovesATagFromAPost_WhenSuccessful() {
+        long postId = 1;
+        long tagId = 1;
+
+        assertThatNoException().isThrownBy(() -> postService.removeTag(postId, tagId));
+    }
+
+    @Test
+    @DisplayName("removeTag throws ResourceNotFoundException when post is not found")
+    void removeTag_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.removeTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("removeTag throws ResourceNotFoundException when tag is not found")
+    void removeTag_ThrowsResourceNotFoundException_WhenTagIsNotFound() {
+        long postId = 1;
+        long tagId = 1;
+
+        BDDMockito.when(tagRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.removeTag(postId, tagId))
+                .withMessageContaining("Could not find resource of type Tag with identifier: " + tagId);
     }
 }

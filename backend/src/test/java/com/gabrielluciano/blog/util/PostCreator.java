@@ -5,6 +5,7 @@ import com.gabrielluciano.blog.models.Tag;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PostCreator {
@@ -79,6 +80,10 @@ public class PostCreator {
         LocalDateTime publishedAt = null;
         if (published) {
              publishedAt = DEFAULT_DATE;
+        }
+
+        if (tags == null) {
+            tags = new HashSet<>();
         }
 
         return Post.builder()
