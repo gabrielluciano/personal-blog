@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByPublishedIsTrueAndTitleContainingIgnoreCaseAndTagsId(String title, Long tagId, Pageable pageable);
@@ -16,4 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByPublishedIsFalse(Pageable pageable);
 
     Page<Post> findAllByPublishedIsTrue(Pageable pageable);
+
+    Optional<Post> findByPublishedIsTrueAndSlug(String slug);
 }

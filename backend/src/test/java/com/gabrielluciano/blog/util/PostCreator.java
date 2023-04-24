@@ -59,8 +59,18 @@ public class PostCreator {
         return createPost(title, slug, PUBLISHED, null);
     }
 
+    public static Post createUnpublishedPostWithTitleAndSlug(String title, String slug) {
+        return createPost(title, slug, UNPUBLISHED, null);
+    }
+
     public static Post createPublishedPostWithTitleAndSlugToBeSaved(String title, String slug) {
         Post post = createPublishedPostWithTitleAndSlug(title, slug);
+        post.setId(null);
+        return post;
+    }
+
+    public static Post createUnpublishedPostWithTitleAndSlugToBeSaved(String title, String slug) {
+        Post post = createUnpublishedPostWithTitleAndSlug(title, slug);
         post.setId(null);
         return post;
     }

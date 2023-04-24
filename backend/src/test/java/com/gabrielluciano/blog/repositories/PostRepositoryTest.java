@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -161,5 +162,38 @@ class PostRepositoryTest {
                 .hasSize(1);
 
         assertThat(page.getContent().get(0)).isEqualTo(unpublishedPost);
+    }
+
+    @Test
+    @DisplayName("findByPublishedIsTrueAndSlug returns optional of published post with specific slug when successful")
+    void findByPublishedIsTrueAndSlug_ReturnsOptionalOfPublishedPostWithSpecificSlug_WhenSuccessful() {
+        String slug = "some-slug";
+        Post postToBeSaved = PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Some title", slug);
+
+        Post expectedPost = postRepository.save(postToBeSaved);
+
+        Optional<Post> optionalPost = postRepository.findByPublishedIsTrueAndSlug(slug);
+
+        assertThat(optionalPost)
+                .isNotNull()
+                .isPresent()
+                .contains(expectedPost);
+    }
+
+    @Test
+    @DisplayName("findByPublishedIsTrueAndSlug returns optional empty when post is not found or post is not published")
+    void findByPublishedIsTrueAndSlug_ReturnsOptionalEmpty_WhenPostIsNotFoundOrPostIsNotPublished() {
+        String slug = "non-existent-slug";
+        Post postToBeSaved1 = PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Some title", "some-slug");
+        Post postToBeSaved2 = PostCreator.createUnpublishedPostWithTitleAndSlugToBeSaved("Some title", slug);
+
+        postRepository.save(postToBeSaved1);
+        postRepository.save(postToBeSaved2);
+
+        Optional<Post> optionalPost = postRepository.findByPublishedIsTrueAndSlug(slug);
+
+        assertThat(optionalPost)
+                .isNotNull()
+                .isEmpty();
     }
 }

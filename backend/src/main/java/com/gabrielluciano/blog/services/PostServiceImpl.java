@@ -3,6 +3,7 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.repositories.PostRepository;
@@ -25,7 +26,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse findById(long id) {
-        return null;
+        Post post = findByIdOrThrowResourceNotFoundException(id);
+        return PostMapper.INSTANCE.postToPostResponse(post);
+    }
+
+    @Override
+    public PostResponse findBySlug(String slug) {
+        Post post = findBySlugOrThrowResourceNotFoundException(slug);
+        return PostMapper.INSTANCE.postToPostResponse(post);
     }
 
     @Override
@@ -51,6 +59,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public void removeTag(long postId, long tagId) {
 
+    }
+
+    private Post findByIdOrThrowResourceNotFoundException(long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Post.class, id));
+    }
+
+    private Post findBySlugOrThrowResourceNotFoundException(String slug) {
+        return postRepository.findByPublishedIsTrueAndSlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException(Post.class, slug));
     }
 
     private Page<Post> getPostPage(Pageable pageable, String title, Long tagId, boolean drafts) {

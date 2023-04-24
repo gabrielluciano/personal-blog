@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.services;
 
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.tag.TagResponse;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.repositories.PostRepository;
 import com.gabrielluciano.blog.util.PostCreator;
@@ -23,9 +24,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(SpringExtension.class)
 class PostServiceImplTest {
@@ -50,8 +53,14 @@ class PostServiceImplTest {
                 .thenReturn(unpublishedPostPage);
 
         BDDMockito.when(postRepository.findAllByPublishedIsTrueAndTagsId(ArgumentMatchers.anyLong(),
-                ArgumentMatchers.any(Pageable.class)))
+                        ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(publishedPostWithTagPage);
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(PostCreator.createPublishedPost()));
+
+        BDDMockito.when(postRepository.findByPublishedIsTrueAndSlug(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(PostCreator.createPublishedPost()));
     }
 
     @Test
@@ -147,5 +156,55 @@ class PostServiceImplTest {
 
         assertThat(page.getContent().get(0)).isEqualTo(expectedPostResponse);
         assertThat(page.getContent().get(0).getTags()).contains(expectedTagResponse);
+    }
+
+    @Test
+    @DisplayName("findById returns post response when successful")
+    void findById_ReturnsPostResponse_WhenSuccessful() {
+        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();
+
+        PostResponse postResponse = postService.findById(expectedPostResponse.getId());
+
+        assertThat(postResponse)
+                .isNotNull()
+                .isEqualTo(expectedPostResponse);
+    }
+
+    @Test
+    @DisplayName("findById throws ResourceNotFoundException when post is not found")
+    void findById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.findById(postId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("findBySlug returns post response when successful")
+    void findBySlug_ReturnsPostResponse_WhenSuccessful() {
+        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();
+
+        PostResponse postResponse = postService.findBySlug(expectedPostResponse.getSlug());
+
+        assertThat(postResponse)
+                .isNotNull()
+                .isEqualTo(expectedPostResponse);
+    }
+
+    @Test
+    @DisplayName("findBySlug throws ResourceNotFoundException when post is not found")
+    void findBySlug_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        String slug = "some-slug";
+
+        BDDMockito.when(postRepository.findByPublishedIsTrueAndSlug(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postService.findBySlug(slug))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + slug);
     }
 }
