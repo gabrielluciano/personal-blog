@@ -23,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +82,7 @@ class PostControllerTest {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createPublishedPostResponse();
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null, null, false);
+                .list(Pageable.unpaged(), null, null, false);
 
         assertThat(responseEntity).isNotNull();
 
@@ -106,7 +105,7 @@ class PostControllerTest {
                         ArgumentMatchers.isNull(), ArgumentMatchers.eq(false)))
                 .thenReturn(Page.empty());
 
-        ResponseEntity<Page<PostResponse>> responseEntity = postController.list(PageRequest.of(0, 10),
+        ResponseEntity<Page<PostResponse>> responseEntity = postController.list(Pageable.unpaged(),
                 null, null, false);
 
         assertThat(responseEntity).isNotNull();
@@ -137,7 +136,7 @@ class PostControllerTest {
                 .thenReturn(postResponsePage);
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), expectedFirstPostResponse.getTitle().toLowerCase(),
+                .list(Pageable.unpaged(), expectedFirstPostResponse.getTitle().toLowerCase(),
                         null, false);
 
         assertThat(responseEntity).isNotNull();
@@ -160,7 +159,7 @@ class PostControllerTest {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createUnpublishedPostResponse();
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null, null, true);
+                .list(Pageable.unpaged(), null, null, true);
 
         assertThat(responseEntity).isNotNull();
 
@@ -184,7 +183,7 @@ class PostControllerTest {
                 .createPublishedPostResponseWithTags(Set.of(TagCreator.createValidTag()));
 
         ResponseEntity<Page<PostResponse>> responseEntity = postController
-                .list(PageRequest.of(0, 10), null, tagResponse.getId(), false);
+                .list(Pageable.unpaged(), null, tagResponse.getId(), false);
 
         assertThat(responseEntity).isNotNull();
 

@@ -24,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -82,7 +81,7 @@ class PostServiceImplTest {
     void list_ReturnsPageOfPostResponses_WhenSuccessful() {
         PostResponse expectedFirstPostResponse = PostResponseCreator.createPublishedPostResponse();
 
-        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, null, false);
+        Page<PostResponse> page = postService.list(Pageable.unpaged(), null, null, false);
 
         assertThat(page).isNotNull();
 
@@ -100,7 +99,7 @@ class PostServiceImplTest {
         BDDMockito.when(postRepository.findAllByPublishedIsTrue(ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(Page.empty());
 
-        Page<PostResponse> page = postService.list(PageRequest.of(0, 10), null, null, false);
+        Page<PostResponse> page = postService.list(Pageable.unpaged(), null, null, false);
 
         assertThat(page).isNotNull();
 
@@ -120,8 +119,7 @@ class PostServiceImplTest {
                         ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(postPage);
 
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<PostResponse> page = postService.list(pageable, title, null, false);
+        Page<PostResponse> page = postService.list(Pageable.unpaged(), title, null, false);
 
         assertThat(page).isNotNull();
 
@@ -138,8 +136,7 @@ class PostServiceImplTest {
     void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsParameterIsTrue() {
         PostResponse expectedPostResponse = PostResponseCreator.createUnpublishedPostResponse();
 
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<PostResponse> page = postService.list(pageable, null, null, true);
+        Page<PostResponse> page = postService.list(Pageable.unpaged(), null, null, true);
 
         assertThat(page).isNotNull();
 
@@ -158,8 +155,7 @@ class PostServiceImplTest {
                 .createPublishedPostResponseWithTags(Set.of(TagCreator.createValidTag()));
         TagResponse expectedTagResponse = TagResponseCreator.createValidTagResponse();
 
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<PostResponse> page = postService.list(pageable, null, expectedTagResponse.getId(), false);
+        Page<PostResponse> page = postService.list(Pageable.unpaged(), null, expectedTagResponse.getId(), false);
 
         assertThat(page).isNotNull();
 

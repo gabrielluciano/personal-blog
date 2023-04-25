@@ -19,7 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -63,7 +63,7 @@ class TagControllerTest {
     void list_ReturnsPageOfTagResponses_WhenSuccessful() {
         TagResponse expectedFirstTagResponse = TagResponseCreator.createValidTagResponse();
 
-        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(PageRequest.of(0, 10));
+        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(Pageable.unpaged());
 
         assertThat(responseEntity).isNotNull();
 
@@ -85,7 +85,7 @@ class TagControllerTest {
         BDDMockito.when(tagService.list(ArgumentMatchers.any()))
                 .thenReturn(Page.empty());
 
-        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(PageRequest.of(0, 10));
+        ResponseEntity<Page<TagResponse>> responseEntity = tagController.list(Pageable.unpaged());
 
         assertThat(responseEntity).isNotNull();
 

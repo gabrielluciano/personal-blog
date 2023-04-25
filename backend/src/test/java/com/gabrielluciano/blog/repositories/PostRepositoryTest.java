@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
@@ -40,7 +39,7 @@ class PostRepositoryTest {
         Post post2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title2, slug));
         postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title3, slug));
 
-        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, Pageable.unpaged());
 
         assertThat(page).isNotNull();
 
@@ -67,7 +66,7 @@ class PostRepositoryTest {
         Tag savedTag2 = tagRepository.save(TagCreator.createTagToBeSaved("some tag 2"));
         Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTags(Set.of(savedTag1, savedTag2)));
 
-        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(savedTag1.getId(), PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(savedTag1.getId(), Pageable.unpaged());
 
         assertThat(page).isNotNull();
 
@@ -84,7 +83,7 @@ class PostRepositoryTest {
     void findAllByPublishedIsTrueAndTagsId_ReturnsEmptyPageOfPosts_WhenNoPostIsFound() {
         postRepository.save(PostCreator.createPublishedPost());
 
-        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(1L, PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(1L, Pageable.unpaged());
 
         assertThat(page).isNotNull();
 
@@ -131,7 +130,7 @@ class PostRepositoryTest {
         Post publishedPost = postRepository.save(publishedPostToBeSaved);
         postRepository.save(unpublishedPostToBeSaved);
 
-        Page<Post> page = postRepository.findAllByPublishedIsTrue(PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsTrue(Pageable.unpaged());
 
         assertThat(page).isNotNull();
 
@@ -152,7 +151,7 @@ class PostRepositoryTest {
         postRepository.save(publishedPostToBeSaved);
         Post unpublishedPost = postRepository.save(unpublishedPostToBeSaved);
 
-        Page<Post> page = postRepository.findAllByPublishedIsFalse(PageRequest.of(0, 10));
+        Page<Post> page = postRepository.findAllByPublishedIsFalse(Pageable.unpaged());
 
         assertThat(page).isNotNull();
 
