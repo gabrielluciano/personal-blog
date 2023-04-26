@@ -1,0 +1,207 @@
+package com.gabrielluciano.blog.integration;
+
+import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.models.Post;
+import com.gabrielluciano.blog.models.Tag;
+import com.gabrielluciano.blog.repositories.PostRepository;
+import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.util.PostCreator;
+import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.wrappers.RestPageImpl;
+import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Log4j2
+class PostControllerIT {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Test
+    @DisplayName("list returns page of post responses when successful")
+    void list_ReturnsPageOfPostResponses_WhenSuccessful() {
+        Post expectedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts", HttpMethod.GET,
+                 null, new ParameterizedTypeReference<>() {});
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getId()).isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTitle()).isEqualTo(expectedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("list returns empty page of post responses when no post is found")
+    void list_ReturnsEmptyPageOfPostResponses_WhenNoPostIsFound() {
+        postRepository.save(PostCreator.createUnpublishedPost());
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts", HttpMethod.GET,
+                 null, new ParameterizedTypeReference<>() {});
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("list returns page of post responses containing a specific title when successful")
+    void list_ReturnsPageOfPostResponsesContainingASpecificTitle_WhenSuccessful() {
+        String titleToBeFound1 = "Java Tools";
+        String titleToBeFound2 = "Java tooling";
+        String titleToBeNotFound = "Last news about javascript";
+        String search = "tool";
+
+        Post expectedPost1 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved(titleToBeFound1, "some-slug-1"));
+        Post expectedPost2 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved(titleToBeFound2, "some-slug-2"));
+        Post savedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved(titleToBeNotFound, "some-slug-3"));
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?title={title}",
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, search);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2);
+
+        List<Long> ids = responseEntity.getBody().getContent()
+                .stream()
+                .map(PostResponse::getId)
+                .toList();
+
+        assertThat(ids)
+                .contains(expectedPost1.getId(), expectedPost2.getId())
+                .doesNotContain(savedPost.getId());
+    }
+
+    @Test
+    @DisplayName("list returns page of unpublished post responses when drafts is true")
+    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrue() {
+        postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        Post expectedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?drafts={drafts}",
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, true);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getId()).isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTitle()).isEqualTo(expectedPost.getTitle());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getPublished()).isFalse();
+    }
+
+    @Test
+    @DisplayName("list returns page of post responses containing a specific tag response when tag parameter is passed")
+    void list_ReturnsPageOfPostResponsesContainingASpecificTagResponse_WhenTagParameterIsPassed() {
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("development"));
+        postRepository.save(PostCreator.createPublishedPostWithTagsToBeSaved(Set.of(savedTag)));
+
+        Tag expectedTag = tagRepository.save(TagCreator.createTagToBeSaved("news"));
+        Post expectedPost = postRepository.save(PostCreator.createPublishedPostWithTagsToBeSaved(Set.of(expectedTag)));
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?tag={tagId}",
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, expectedTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getId()).isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTitle()).isEqualTo(expectedPost.getTitle());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTags()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("list returns page of post responses containing a specific title and tag response when title and tag parameters are passed")
+    void list_ReturnsPageOfPostResponsesContainingASpecificTitleAndTagResponse_WhenTitleAndTagParametersArePassed() {
+        String expectedTitle = "Java Tools";
+        String savedTitle1 = "Java tooling";
+        String savedTitle2 = "Some title";
+        String titleSearch = "tool";
+
+        Tag expectedTag = tagRepository.save(TagCreator.createTagToBeSaved("development"));
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("news"));
+
+        Post expectedPost = postRepository.save(PostCreator
+                .createPostToBeSaved(expectedTitle, "s1", true, Set.of(expectedTag)));
+        postRepository.save(PostCreator.createPostToBeSaved(savedTitle1, "s2", true, Set.of(savedTag)));
+        postRepository.save(PostCreator.createPostToBeSaved(savedTitle2, "s3", true, Set.of(expectedTag)));
+
+        ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.
+                exchange("/posts?title={title}&tag={tagId}", HttpMethod.GET, null,
+                        new ParameterizedTypeReference<>() {}, titleSearch, expectedTag.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getContent())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getId()).isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTitle()).isEqualTo(expectedTitle);
+
+        assertThat(responseEntity.getBody().getContent().get(0).getTags()).hasSize(1);
+    }
+}

@@ -35,15 +35,11 @@ public class PostCreator {
     }
 
     public static Post createPublishedPostToBeSaved() {
-        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, null);
-        post.setId(null);
-        return post;
+        return createPostToBeSaved(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, null);
     }
 
     public static Post createUnpublishedPostToBeSaved() {
-        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, null);
-        post.setId(null);
-        return post;
+        return createPostToBeSaved(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, null);
     }
 
     public static Post createPublishedPostWithTags(Set<Tag> tags) {
@@ -51,9 +47,7 @@ public class PostCreator {
     }
 
     public static Post createPublishedPostWithTagsToBeSaved(Set<Tag> tags) {
-        Post post = createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
-        post.setId(null);
-        return post;
+        return createPostToBeSaved(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
     }
 
     public static Post createPublishedPostWithTitleAndSlug(String title, String slug) {
@@ -65,18 +59,20 @@ public class PostCreator {
     }
 
     public static Post createPublishedPostWithTitleAndSlugToBeSaved(String title, String slug) {
-        Post post = createPublishedPostWithTitleAndSlug(title, slug);
-        post.setId(null);
-        return post;
+        return createPostToBeSaved(title, slug, PUBLISHED, null);
     }
 
     public static Post createUnpublishedPostWithTitleAndSlugToBeSaved(String title, String slug) {
-        Post post = createUnpublishedPostWithTitleAndSlug(title, slug);
+        return createPostToBeSaved(title, slug, UNPUBLISHED, null);
+    }
+
+    public static Post createPostToBeSaved(String title, String slug, boolean published, Set<Tag> tags) {
+        Post post = createPost(title, slug, published, tags);
         post.setId(null);
         return post;
     }
 
-    private static Post createPost(String title, String slug, boolean published, Set<Tag> tags) {
+    public static Post createPost(String title, String slug, boolean published, Set<Tag> tags) {
         LocalDateTime publishedAt = null;
         if (published) {
              publishedAt = DEFAULT_DATE;

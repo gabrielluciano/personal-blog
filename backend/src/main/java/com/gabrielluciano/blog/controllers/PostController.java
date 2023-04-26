@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,10 +19,11 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("posts")
     public ResponseEntity<Page<PostResponse>> list(Pageable pageable,
-                                                   String title,
-                                                   Long tagId,
-                                                   boolean drafts) {
+                                                   @RequestParam(required = false) String title,
+                                                   @RequestParam(required = false, name = "tag") Long tagId,
+                                                   @RequestParam(defaultValue = "false") boolean drafts) {
         return ResponseEntity.ok(postService.list(pageable, title, tagId, drafts));
     }
 
