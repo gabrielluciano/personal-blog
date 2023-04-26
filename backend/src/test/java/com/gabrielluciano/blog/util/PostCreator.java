@@ -46,6 +46,10 @@ public class PostCreator {
         return createPost(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
     }
 
+    public static Post createUnpublishedPostWithTags(Set<Tag> tags) {
+        return createPost(DEFAULT_TITLE, DEFAULT_SLUG, UNPUBLISHED, tags);
+    }
+
     public static Post createPublishedPostWithTagsToBeSaved(Set<Tag> tags) {
         return createPostToBeSaved(DEFAULT_TITLE, DEFAULT_SLUG, PUBLISHED, tags);
     }
