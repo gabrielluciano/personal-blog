@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,11 +28,13 @@ public class PostController {
         return ResponseEntity.ok(postService.list(pageable, title, tagId, drafts));
     }
 
-    public ResponseEntity<PostResponse> findById(long id) {
+    @GetMapping("posts/{id}")
+    public ResponseEntity<PostResponse> findById(@PathVariable long id) {
         return ResponseEntity.ok(postService.findById(id));
     }
 
-    public ResponseEntity<PostResponse> findBySlug(String slug) {
+    @GetMapping("posts/slug/{slug}")
+    public ResponseEntity<PostResponse> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(postService.findBySlug(slug));
     }
 

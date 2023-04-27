@@ -1,6 +1,7 @@
 package com.gabrielluciano.blog.integration;
 
 import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.PostRepository;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -50,6 +52,8 @@ class PostControllerIT {
 
         assertThat(responseEntity).isNotNull();
 
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
         assertThat(responseEntity.getBody()).isNotNull();
 
         assertThat(responseEntity.getBody().getContent())
@@ -71,6 +75,8 @@ class PostControllerIT {
                  null, new ParameterizedTypeReference<>() {});
 
         assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(responseEntity.getBody()).isNotNull();
 
@@ -98,6 +104,8 @@ class PostControllerIT {
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, search);
 
         assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(responseEntity.getBody()).isNotNull();
 
@@ -127,6 +135,8 @@ class PostControllerIT {
 
         assertThat(responseEntity).isNotNull();
 
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
         assertThat(responseEntity.getBody()).isNotNull();
 
         assertThat(responseEntity.getBody().getContent())
@@ -154,6 +164,8 @@ class PostControllerIT {
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, expectedTag.getId());
 
         assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(responseEntity.getBody()).isNotNull();
 
@@ -191,6 +203,8 @@ class PostControllerIT {
 
         assertThat(responseEntity).isNotNull();
 
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
         assertThat(responseEntity.getBody()).isNotNull();
 
         assertThat(responseEntity.getBody().getContent())
@@ -203,5 +217,111 @@ class PostControllerIT {
         assertThat(responseEntity.getBody().getContent().get(0).getTitle()).isEqualTo(expectedTitle);
 
         assertThat(responseEntity.getBody().getContent().get(0).getTags()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("findById returns post response when successful")
+    void findById_ReturnsPostResponse_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+
+        ResponseEntity<PostResponse> responseEntity = restTemplate
+                .getForEntity("/posts/{id}", PostResponse.class, savedPost.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId())
+                .isEqualTo(savedPost.getId());
+
+        assertThat(responseEntity.getBody().getTitle())
+                .isEqualTo(savedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("findById returns error details and status 404 Not Found when post is not found")
+    void findById_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/posts/{id}", ErrorDetails.class, postId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("findById returns error details and status 400 Bad Request when id is not valid")
+    void findById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/posts/invalidID", ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID");
+    }
+
+    @Test
+    @DisplayName("findBySlug returns post response when successful")
+    void findBySlug_ReturnsPostResponse_WhenSuccessful() {
+        String expectedSlug = "some-post";
+
+        Post expectedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved("Expected Title", expectedSlug));
+
+        ResponseEntity<PostResponse> responseEntity = restTemplate
+                .getForEntity("/posts/slug/{slug}", PostResponse.class, expectedSlug);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId())
+                .isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getTitle())
+                .isEqualTo(expectedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("findBySlug returns error details and status 404 Not Found when post is not found")
+    void findBySlug_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        String expectedSlug = "some-post";
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/posts/slug/{slug}", ErrorDetails.class, expectedSlug);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/slug/" + expectedSlug);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + expectedSlug);
     }
 }
