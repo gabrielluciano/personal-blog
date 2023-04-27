@@ -89,9 +89,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
 
+        String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .title(ex.getMessage())
-                .message(ex.getCause().getMessage())
+                .message(message)
                 .status(statusCode.value())
                 .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .path(servletWebRequest.getRequest().getRequestURI())
