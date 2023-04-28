@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +47,8 @@ public class PostController {
         return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Void> update(PostUpdateRequest postUpdateRequest, long id) {
+    @PutMapping("posts/{id}")
+    public ResponseEntity<Void> update(@RequestBody @Valid PostUpdateRequest postUpdateRequest, @PathVariable long id) {
         postService.update(postUpdateRequest, id);
         return ResponseEntity.noContent().build();
     }

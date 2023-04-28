@@ -2,6 +2,7 @@ package com.gabrielluciano.blog.integration;
 
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
+import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Post;
@@ -10,6 +11,7 @@ import com.gabrielluciano.blog.repositories.PostRepository;
 import com.gabrielluciano.blog.repositories.TagRepository;
 import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostCreator;
+import com.gabrielluciano.blog.util.PostUpdateRequestCreator;
 import com.gabrielluciano.blog.util.RegexPatterns;
 import com.gabrielluciano.blog.util.TagCreator;
 import com.gabrielluciano.blog.wrappers.RestPageImpl;
@@ -21,11 +23,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -446,4 +452,198 @@ class PostControllerIT {
         log.info(responseEntity.getBody().getMessage());
     }
 
+    @Test
+    @DisplayName("save returns error details with JSON parse error and status 400 Bad Request when request body " +
+            "is an invalid JSON")
+    void save_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
+        String invalidJSON = "{ \"name\": \"news\"' }";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, headers);
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
+                httpEntity, ErrorDetails.class, 1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
+    }
+
+    @Test
+    @DisplayName("update returns status 204 No Content when successful")
+    void update_ReturnsStatus204NoContent_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        LocalDateTime updatedAtBefore = savedPost.getUpdatedAt();
+
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), Void.class, savedPost.getId());
+
+        try {
+            savedPost = postRepository.findById(savedPost.getId()).orElseThrow();
+        } catch (Exception e) {
+            log.error("Error fetching saved post");
+        }
+
+        assertThat(savedPost.getUpdatedAt()).isAfter(updatedAtBefore);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("update returns error details and status 404 Not Found when post is not found")
+    void update_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), ErrorDetails.class, postId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("update returns validation error details and status 400 Bad Request when request body contains an invalid title")
+    void update_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyContainsAnInvalidTitle() {
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequestWithTitle("");
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts/9", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), ValidationErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).isEqualTo("title");
+
+        log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
+    }
+
+    @Test
+    @DisplayName("update returns validation error details and status 400 Bad Request when request body contains an invalid slug")
+    void update_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyContainsAnInvalidSlug() {
+        tryToUpdatePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("invalid slug");
+        tryToUpdatePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("-invalid-slug");
+        tryToUpdatePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("´invalid-slug");
+        tryToUpdatePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("çinvalid-slug");
+    }
+
+    private void tryToUpdatePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned(String slug) {
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequestWithSlug(slug);
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts/9", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), ValidationErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).isEqualTo("slug");
+
+        log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
+    }
+
+    @Test
+    @DisplayName("update returns error details with JSON parse error and status 400 Bad Request when request body " +
+            "is an invalid JSON")
+    void update_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
+        String invalidJSON = "{ \"name\": \"news\"' }";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, headers);
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
+                httpEntity, ErrorDetails.class, 1L);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
+    }
+
+    @Test
+    @DisplayName("update returns error details with constraint violation exception and status 400 Bad Request when " +
+            "request title or slug already exists in the database")
+    void update_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenTitleOrSlugAlreadyExistsInTheDatabase() {
+        postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved("Spring Boot", "spring-boot"));
+        Post javaPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved("Java", "java"));
+
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator
+                .createValidPostUpdateRequestWithTitleAndSlug("Spring Boot", "spring-boot");
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), ErrorDetails.class, javaPost.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
+    }
+
+    @Test
+    @DisplayName("update returns error details and status 400 Bad Request when id is not valid")
+    void update_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID", HttpMethod.PUT,
+                new HttpEntity<>(postUpdateRequest), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID");
+    }
 }

@@ -52,6 +52,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void update(PostUpdateRequest postUpdateRequest, long id) {
+        throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(postUpdateRequest.getTitle(),
+                postUpdateRequest.getSlug(), id);
         Post post = findByIdOrThrowResourceNotFoundException(id);
         PostMapper.INSTANCE.updatePostFromPostUpdateRequest(postUpdateRequest, post);
         postRepository.save(post);
