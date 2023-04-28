@@ -3,6 +3,7 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
+import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.models.Post;
@@ -13,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +45,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse save(PostCreateRequest postCreateRequest) {
+        throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(postCreateRequest.getTitle(), postCreateRequest.getSlug());
         Post post = PostMapper.INSTANCE.postCreateRequestToPost(postCreateRequest);
         return PostMapper.INSTANCE.postToPostResponse(postRepository.save(post));
     }
@@ -105,5 +110,29 @@ public class PostServiceImpl implements PostService {
 
     private Page<PostResponse> postPageToPostResponsePage(Page<Post> posts) {
         return posts.map(PostMapper.INSTANCE::postToPostResponse);
+    }
+
+    private void throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(String title, String slug) {
+        postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(title, slug)
+                .ifPresent(post -> prepareConstraintViolationExceptionAndThrow(post, title, slug));
+    }
+
+    private void throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(String title, String slug, long idToUpdate) {
+        postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(title, slug)
+                .ifPresent(post -> {
+                    if (post.getId().equals(idToUpdate)) return;
+                    prepareConstraintViolationExceptionAndThrow(post, title, slug);
+                });
+    }
+
+    private void prepareConstraintViolationExceptionAndThrow(Post savedPost, String title, String slug) {
+        boolean isTitleViolation = savedPost.getTitle().equalsIgnoreCase(title);
+        boolean isSlugViolation = savedPost.getSlug().equalsIgnoreCase(slug);
+        Map<String, String> violations = new LinkedHashMap<>();
+
+        if (isTitleViolation) violations.put("title", title);
+        if (isSlugViolation) violations.put("slug", slug);
+
+        throw new ConstraintViolationException("posts", violations);
     }
 }

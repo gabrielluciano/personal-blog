@@ -20,4 +20,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByPublishedIsTrue(Pageable pageable);
 
     Optional<Post> findByPublishedIsTrueAndSlug(String slug);
+
+    Optional<Post> findFirstByTitleIgnoreCaseOrSlugIgnoreCase(String title, String slug);
 }

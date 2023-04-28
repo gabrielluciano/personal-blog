@@ -52,7 +52,8 @@ class PostControllerIT {
         Post expectedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts", HttpMethod.GET,
-                 null, new ParameterizedTypeReference<>() {});
+                null, new ParameterizedTypeReference<>() {
+                });
 
         assertThat(responseEntity).isNotNull();
 
@@ -76,7 +77,8 @@ class PostControllerIT {
         postRepository.save(PostCreator.createUnpublishedPost());
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts", HttpMethod.GET,
-                 null, new ParameterizedTypeReference<>() {});
+                null, new ParameterizedTypeReference<>() {
+                });
 
         assertThat(responseEntity).isNotNull();
 
@@ -105,7 +107,8 @@ class PostControllerIT {
                 .createPublishedPostWithTitleAndSlugToBeSaved(titleToBeNotFound, "some-slug-3"));
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?title={title}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, search);
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                }, search);
 
         assertThat(responseEntity).isNotNull();
 
@@ -135,7 +138,8 @@ class PostControllerIT {
         Post expectedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?drafts={drafts}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, true);
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                }, true);
 
         assertThat(responseEntity).isNotNull();
 
@@ -165,7 +169,8 @@ class PostControllerIT {
         Post expectedPost = postRepository.save(PostCreator.createPublishedPostWithTagsToBeSaved(Set.of(expectedTag)));
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?tag={tagId}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, expectedTag.getId());
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                }, expectedTag.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -203,7 +208,8 @@ class PostControllerIT {
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.
                 exchange("/posts?title={title}&tag={tagId}", HttpMethod.GET, null,
-                        new ParameterizedTypeReference<>() {}, titleSearch, expectedTag.getId());
+                        new ParameterizedTypeReference<>() {
+                        }, titleSearch, expectedTag.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -415,4 +421,29 @@ class PostControllerIT {
 
         log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
     }
+
+    @Test
+    @DisplayName("save returns error details with constraint violation exception and status 400 Bad Request when " +
+            "request title or slug already exists in the database")
+    void save_ReturnsErrorDetailsWithConstraintViolationExceptionAndStatus400BadRequest_WhenTitleOrSlugAlreadyExistsInTheDatabase() {
+        postRepository.save(PostCreator.createPublishedPost());
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .postForEntity("/posts", postCreateRequest, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
+        log.info(responseEntity.getBody().getMessage());
+    }
+
 }

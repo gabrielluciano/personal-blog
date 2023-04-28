@@ -195,4 +195,54 @@ class PostRepositoryTest {
                 .isNotNull()
                 .isEmpty();
     }
+
+    @Test
+    @DisplayName("findFirstByTitleIgnoreCaseOrSlugIgnoreCase returns optional of post when post with same title is found")
+    void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalOfPost_WhenPostWithSameTitleIsFound() {
+        String expectedTitle = "Some post";
+
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlug(expectedTitle, "some-slug"));
+
+        Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(expectedTitle, "wrong slug");
+
+        assertThat(postOptional)
+                .isNotNull()
+                .isPresent()
+                .contains(savedPost);
+    }
+
+    @Test
+    @DisplayName("findFirstByTitleIgnoreCaseOrSlugIgnoreCase returns optional of post when post with same slug is found")
+    void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalOfPost_WhenPostWithSameSlugIsFound() {
+        String expectedSlug = "some-slug";
+
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlug("Some title", expectedSlug));
+
+        Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase("Wrong title", expectedSlug);
+
+        assertThat(postOptional)
+                .isNotNull()
+                .isPresent()
+                .contains(savedPost);
+    }
+
+
+    @Test
+    @DisplayName("findFirstByTitleIgnoreCaseOrSlugIgnoreCase returns optional empty when no post is found")
+    void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalEmpty_WhenNoPostIsFound() {
+        String wrongTitle = "Wrong title";
+        String wrongSlug = "wrong-slug";
+
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+
+        Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(wrongTitle, wrongSlug);
+
+        assertThat(savedPost.getTitle()).isNotEqualTo(wrongTitle);
+
+        assertThat(savedPost.getSlug()).isNotEqualTo(wrongSlug);
+
+        assertThat(postOptional)
+                .isNotNull()
+                .isEmpty();
+    }
 }
