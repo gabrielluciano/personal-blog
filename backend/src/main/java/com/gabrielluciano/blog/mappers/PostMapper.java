@@ -19,6 +19,7 @@ public interface PostMapper {
     @Mapping(target = "published", constant = "false")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now(java.time.ZoneOffset.UTC))")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now(java.time.ZoneOffset.UTC))")
+    @Mapping(target = "tags", expression = "java(java.util.Collections.emptySet())")
     Post postCreateRequestToPost(PostCreateRequest postCreateRequest);
 
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now(java.time.ZoneOffset.UTC))")

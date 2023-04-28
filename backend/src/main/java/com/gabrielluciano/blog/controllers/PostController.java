@@ -4,6 +4,7 @@ import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.dto.post.PostUpdateRequest;
 import com.gabrielluciano.blog.services.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +41,8 @@ public class PostController {
         return ResponseEntity.ok(postService.findBySlug(slug));
     }
 
-    public ResponseEntity<PostResponse> save(PostCreateRequest postCreateRequest) {
+    @PostMapping("posts")
+    public ResponseEntity<PostResponse> save(@RequestBody @Valid PostCreateRequest postCreateRequest) {
         return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
     }
 

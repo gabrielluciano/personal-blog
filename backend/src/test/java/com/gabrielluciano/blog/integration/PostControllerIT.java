@@ -1,12 +1,16 @@
 package com.gabrielluciano.blog.integration;
 
+import com.gabrielluciano.blog.dto.post.PostCreateRequest;
 import com.gabrielluciano.blog.dto.post.PostResponse;
 import com.gabrielluciano.blog.error.ErrorDetails;
+import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.PostRepository;
 import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.util.PostCreateRequestCreator;
 import com.gabrielluciano.blog.util.PostCreator;
+import com.gabrielluciano.blog.util.RegexPatterns;
 import com.gabrielluciano.blog.util.TagCreator;
 import com.gabrielluciano.blog.wrappers.RestPageImpl;
 import lombok.extern.log4j.Log4j2;
@@ -323,5 +327,92 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody().getMessage())
                 .isEqualTo("Could not find resource of type Post with identifier: " + expectedSlug);
+    }
+
+    @Test
+    @DisplayName("save returns created post response and status 201 Created when successful")
+    void save_ReturnsCreatedPostResponseAndStatus201Created_WhenSuccessful() {
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
+
+        ResponseEntity<PostResponse> responseEntity = restTemplate
+                .postForEntity("/posts", postCreateRequest, PostResponse.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        PostResponse postResponse = responseEntity.getBody();
+
+        assertThat(postResponse).isNotNull();
+
+        assertThat(postResponse.getId()).isNotNull();
+
+        assertThat(postResponse.getTitle()).isEqualTo(postCreateRequest.getTitle());
+
+        assertThat(postResponse.getSlug())
+                .isNotNull()
+                .matches(RegexPatterns.VALID_SLUG_PATTERN)
+                .isEqualTo(postCreateRequest.getSlug());
+
+        assertThat(postResponse.getCreatedAt()).isNotNull();
+
+        assertThat(postResponse.getUpdatedAt()).isNotNull();
+
+        assertThat(postResponse.getPublishedAt()).isNull();
+
+        assertThat(postResponse.getPublished()).isFalse();
+
+        assertThat(postResponse.getTags())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("save returns validation error details and status 400 Bad Request when request body contains an invalid title")
+    void save_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyContainsAnInvalidTitle() {
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createPostCreateRequestWithTitle("");
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate
+                .postForEntity("/posts", postCreateRequest, ValidationErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).isEqualTo("title");
+
+        log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
+    }
+
+    @Test
+    @DisplayName("save returns validation error details and status 400 Bad Request when request body contains an invalid slug")
+    void save_ReturnsValidationErrorDetailsAndStatus400BadRequest_WhenRequestBodyContainsAnInvalidSlug() {
+        tryToSavePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("invalid slug");
+        tryToSavePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("-invalid-slug");
+        tryToSavePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("´invalid-slug");
+        tryToSavePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned("çinvalid-slug");
+    }
+
+    private void tryToSavePostWithInvalidSlugAndValidateThatValidationErrorDetailsIsReturned(String slug) {
+        PostCreateRequest postCreateRequest = PostCreateRequestCreator.createPostCreateRequestWithSlug(slug);
+
+        ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate
+                .postForEntity("/posts", postCreateRequest, ValidationErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ValidationErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getFields()).isEqualTo("slug");
+
+        log.info(String.format("Fields messages: %s", responseEntity.getBody().getFieldsMessages()));
     }
 }

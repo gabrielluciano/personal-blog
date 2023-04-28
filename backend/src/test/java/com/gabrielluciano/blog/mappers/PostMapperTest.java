@@ -121,7 +121,9 @@ class PostMapperTest {
 
         assertThat(post.getUpdatedAt()).isNotNull().isInstanceOf(LocalDateTime.class);
 
-        assertThat(post.getTags()).isNull();
+        assertThat(post.getTags())
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test

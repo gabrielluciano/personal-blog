@@ -5,19 +5,31 @@ import com.gabrielluciano.blog.models.Post;
 
 public class PostCreateRequestCreator {
 
+    private static final Post post = PostCreator.createPublishedPost();
+
     private PostCreateRequestCreator() {
     }
 
     public static PostCreateRequest createValidPostCreateRequest() {
-        Post post = PostCreator.createPublishedPost();
+        return createPostCreateRequestWithTitle(post.getTitle());
+    }
 
+    public static PostCreateRequest createPostCreateRequestWithTitle(String title) {
+        return createPostCreateRequestWithTitleAndSlug(title, post.getSlug());
+    }
+
+    public static PostCreateRequest createPostCreateRequestWithSlug(String slug) {
+        return createPostCreateRequestWithTitleAndSlug(post.getTitle(), slug);
+    }
+
+    private static PostCreateRequest createPostCreateRequestWithTitleAndSlug(String title, String slug) {
         return PostCreateRequest.builder()
-                .title(post.getTitle())
+                .title(title)
+                .slug(slug)
                 .subtitle(post.getSubtitle())
                 .content(post.getContent())
                 .metaTitle(post.getMetaTitle())
                 .metaDescription(post.getMetaDescription())
-                .slug(post.getSlug())
                 .imageUrl(post.getImageUrl())
                 .build();
     }
