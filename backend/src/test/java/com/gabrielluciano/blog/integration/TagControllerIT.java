@@ -230,6 +230,7 @@ class TagControllerIT {
                 .isInstanceOf(ErrorDetails.class);
 
         assertThat(responseEntity.getBody().getTitle()).contains("Constraint Violation Exception");
+        log.info(responseEntity.getBody().getMessage());
     }
 
     @Test

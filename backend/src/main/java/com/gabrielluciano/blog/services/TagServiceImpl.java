@@ -13,8 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -77,13 +77,11 @@ public class TagServiceImpl implements TagService {
     private void prepareConstraintViolationExceptionAndThrow(Tag savedTag, String name, String slug) {
         boolean isNameViolation = savedTag.getName().equalsIgnoreCase(name);
         boolean isSlugViolation = savedTag.getSlug().equalsIgnoreCase(slug);
-        Set<String> violations = new HashSet<>();
+        Map<String, String> violations = new LinkedHashMap<>();
 
-        if (isNameViolation) violations.add("name: " + name);
-        if (isSlugViolation) violations.add("slug: " + slug);
+        if (isNameViolation) violations.put("name", name);
+        if (isSlugViolation) violations.put("slug", slug);
 
-        String message = "The following attributes already exists in database: " + String.join(", ", violations);
-
-        throw new ConstraintViolationException(message);
+        throw new ConstraintViolationException("tags", violations);
     }
 }
