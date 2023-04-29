@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,17 +54,20 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> deleteById(long id) {
+    @DeleteMapping("posts/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> addTag(long postId, long tagId) {
+    @PutMapping("posts/{postId}/tags/{tagId}")
+    public ResponseEntity<Void> addTag(@PathVariable long postId, @PathVariable long tagId) {
         postService.addTag(postId, tagId);
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> removeTag(long postId, long tagId) {
+    @DeleteMapping("posts/{postId}/tags/{tagId}")
+    public ResponseEntity<Void> removeTag(@PathVariable long postId, @PathVariable long tagId) {
         postService.removeTag(postId, tagId);
         return ResponseEntity.noContent().build();
     }

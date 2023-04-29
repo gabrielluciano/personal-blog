@@ -646,4 +646,285 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID");
     }
+
+    @Test
+    @DisplayName("deleteById returns status 204 No Content when successful")
+    void deleteById_ReturnsStatus204NoContent_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.DELETE,
+                null, Void.class, savedPost.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        ResponseEntity<ErrorDetails> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
+                ErrorDetails.class, savedPost.getId());
+
+        assertThat(findByIdResponseEntity).isNotNull();
+
+        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("deleteById returns error details and status 404 Not Found when post is not found")
+    void deleteById_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.DELETE,
+                null, ErrorDetails.class, postId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("deleteById returns error details and status 400 Bad Request when id is not valid")
+    void deleteById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID", HttpMethod.DELETE,
+                null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID");
+    }
+
+    @Test
+    @DisplayName("addTag returns status 204 No Content when successful")
+    void addTag_ReturnsStatus204NoContent_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
+
+        assertThat(savedPost.getTags())
+                .isNotNull()
+                .isEmpty();
+
+        ResponseEntity<Void> voidResponseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
+                null, Void.class, savedPost.getId(), savedTag.getId());
+
+        assertThat(voidResponseEntity).isNotNull();
+
+        assertThat(voidResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(voidResponseEntity.getBody()).isNull();
+
+        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/{id}",
+                PostResponse.class, savedPost.getId());
+
+        assertThat(postResponseEntity).isNotNull();
+
+        assertThat(postResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(postResponseEntity.getBody()).isNotNull();
+
+        assertThat(postResponseEntity.getBody().getTags())
+                .isNotNull()
+                .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("addTag returns error details and status 404 Not Found when post is not found")
+    void addTag_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
+                null, ErrorDetails.class, postId, savedTag.getId());
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath())
+                .isEqualTo(String.format("/posts/%s/tags/%s", postId, savedTag.getId()));
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("addTag returns error details and status 404 Not Found when tag is not found")
+    void addTag_ReturnsErrorDetailsAndStatus404NotFound_WhenTagIsNotFound() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        long tagId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
+                null, ErrorDetails.class, savedPost.getId(), tagId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath())
+                .isEqualTo(String.format("/posts/%s/tags/%s", savedPost.getId(), tagId));
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Tag with identifier: " + tagId);
+    }
+
+    @Test
+    @DisplayName("addTag returns error details and status 400 Bad Request when postId is not valid")
+    void addTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenPostIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/tags/1", HttpMethod.PUT,
+                null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID/tags/1");
+    }
+
+    @Test
+    @DisplayName("addTag returns error details and status 400 Bad Request when tagId is not valid")
+    void addTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenTagIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/1/tags/invalidID", HttpMethod.PUT,
+                null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/1/tags/invalidID");
+    }
+
+    @Test
+    @DisplayName("removeTag returns status 204 No Content when successful")
+    void removeTag_ReturnsStatus204NoContent_WhenSuccessful() {
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTagsToBeSaved(Set.of(savedTag)));
+
+        assertThat(savedPost.getTags())
+                .isNotNull()
+                .hasSize(1);
+
+        ResponseEntity<Void> voidResponseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.DELETE,
+                null, Void.class, savedPost.getId(), savedTag.getId());
+
+        assertThat(voidResponseEntity).isNotNull();
+
+        assertThat(voidResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(voidResponseEntity.getBody()).isNull();
+
+        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/{id}",
+                PostResponse.class, savedPost.getId());
+
+        assertThat(postResponseEntity).isNotNull();
+
+        assertThat(postResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(postResponseEntity.getBody()).isNotNull();
+
+        assertThat(postResponseEntity.getBody().getTags())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("removeTag returns error details and status 404 Not Found when post is not found")
+    void removeTag_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+        Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}",
+                HttpMethod.DELETE, null, ErrorDetails.class, postId, savedTag.getId());
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath())
+                .isEqualTo(String.format("/posts/%s/tags/%s", postId, savedTag.getId()));
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("removeTag returns error details and status 404 Not Found when tag is not found")
+    void removeTag_ReturnsErrorDetailsAndStatus404NotFound_WhenTagIsNotFound() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        long tagId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}",
+                HttpMethod.DELETE, null, ErrorDetails.class, savedPost.getId(), tagId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath())
+                .isEqualTo(String.format("/posts/%s/tags/%s", savedPost.getId(), tagId));
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Tag with identifier: " + tagId);
+    }
+
+    @Test
+    @DisplayName("removeTag returns error details and status 400 Bad Request when postId is not valid")
+    void removeTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenPostIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/tags/1",
+                HttpMethod.DELETE, null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID/tags/1");
+    }
+
+    @Test
+    @DisplayName("removeTag returns error details and status 400 Bad Request when tagId is not valid")
+    void removeTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenTagIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/1/tags/invalidID",
+                HttpMethod.DELETE, null, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/1/tags/invalidID");
+    }
 }
