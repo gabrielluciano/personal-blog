@@ -22,10 +22,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "posts")
-@SequenceGenerator(
-        name = Post.SEQUENCE_NAME,
-        sequenceName = Post.SEQUENCE_NAME
-)
+@SequenceGenerator(name = Post.SEQUENCE_NAME, sequenceName = Post.SEQUENCE_NAME)
 @Getter
 @Setter
 @Builder

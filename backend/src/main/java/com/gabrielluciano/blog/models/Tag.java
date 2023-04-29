@@ -15,10 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "tags")
-@SequenceGenerator(
-        name = Tag.SEQUENCE_NAME,
-        sequenceName = Tag.SEQUENCE_NAME
-)
+@SequenceGenerator(name = Tag.SEQUENCE_NAME, sequenceName = Tag.SEQUENCE_NAME)
 @Getter
 @Setter
 @Builder
