@@ -12,7 +12,7 @@ public class UserCreateRequestCreator {
         return UserCreateRequest.builder()
                 .name(user.getName())
                 .email(user.getEmail())
-                .password(user.getPassword())
+                .password("12345")
                 .build();
     }
 }
