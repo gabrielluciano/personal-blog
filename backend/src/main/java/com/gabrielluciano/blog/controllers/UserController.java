@@ -23,7 +23,8 @@ public class UserController {
         return new ResponseEntity<>(userService.signup(userCreateRequest), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> login(LoginRequest loginRequest) {
+    @PostMapping("login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.login(loginRequest));
     }
 }

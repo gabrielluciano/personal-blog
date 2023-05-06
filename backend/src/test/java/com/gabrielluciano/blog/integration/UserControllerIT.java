@@ -1,11 +1,14 @@
 package com.gabrielluciano.blog.integration;
 
+import com.gabrielluciano.blog.dto.user.LoginRequest;
 import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.repositories.UserRepository;
+import com.gabrielluciano.blog.util.LoginRequestCreator;
+import com.gabrielluciano.blog.util.TestRegexPatterns;
 import com.gabrielluciano.blog.util.UserCreateRequestCreator;
 import com.gabrielluciano.blog.util.UserCreator;
 import lombok.extern.log4j.Log4j2;
@@ -182,5 +185,50 @@ class UserControllerIT {
                 .isInstanceOf(ErrorDetails.class);
 
         assertThat(responseEntity.getBody().getTitle()).contains("JSON parse error");
+    }
+
+    @Test
+    @DisplayName("login returns jwt token and status 200 Ok when successful")
+    void login_ReturnsJwtTokenAndStatus200Ok_WhenSuccessful() {
+        userRepository.save(UserCreator.createValidUser());
+
+        LoginRequest loginRequest = LoginRequestCreator.createValidLoginRequest();
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/login", loginRequest, String.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .matches(TestRegexPatterns.VALID_JWT_PATTERN);
+
+        log.info(responseEntity.getBody());
+    }
+
+    @Test
+    @DisplayName("login returns ErrorDetails and status 401 Unauthorized when credentials are invalid")
+    void login_ReturnsErrorDetailsAndStatus401Unauthorized_WhenCredentialsAreInvalid() {
+        userRepository.save(UserCreator.createValidUser());
+
+        LoginRequest loginRequest = LoginRequestCreator.createValidLoginRequest();
+        loginRequest.setEmail("some@email.com");
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.postForEntity("/login",
+                loginRequest, ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/login");
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Authentication failed: Incorrect email or password. Please try again.");
     }
 }

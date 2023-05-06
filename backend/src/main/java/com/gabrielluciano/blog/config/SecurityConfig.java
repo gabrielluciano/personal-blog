@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tags/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/signup", "/login").permitAll()
                         // .anyRequest().hasRole(Role.ADMIN.name())) // TODO: Uncomment this line when authentication is implement
                         .anyRequest().permitAll()) // TODO: Remove this line when authentication is implemented
                 .build();
