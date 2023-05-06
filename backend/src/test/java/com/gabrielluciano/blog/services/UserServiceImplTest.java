@@ -3,6 +3,7 @@ package com.gabrielluciano.blog.services;
 import com.gabrielluciano.blog.dto.user.LoginRequest;
 import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
+import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
 import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.User;
@@ -51,7 +52,7 @@ class UserServiceImplTest {
                 .thenReturn(UserCreator.createValidUser());
 
         BDDMockito.when(userRepository.findByEmailIgnoreCase(ArgumentMatchers.anyString()))
-                .thenReturn(Optional.of(UserCreator.createValidUser()));
+                .thenReturn(Optional.empty());
 
         BDDMockito.when(passwordEncoder.encode(ArgumentMatchers.anyString()))
                 .thenReturn(UserCreator.createValidUser().getPassword());
@@ -80,9 +81,26 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("signup throws ConstraintViolationException when email already exists in database")
+    void signup_throwsConstraintViolationException_WhenEmailAlreadyExistsInDatabase() {
+        UserCreateRequest userCreateRequest = UserCreateRequestCreator.createValidUserCreateRequest();
+
+        BDDMockito.when(userRepository.findByEmailIgnoreCase(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(UserCreator.createValidUser()));
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> userService.signup(userCreateRequest))
+                .withMessageContaining("The following attributes already exist in one or more entries in the database table 'users' => email: "
+                        + userCreateRequest.getEmail());
+    }
+
+    @Test
     @DisplayName("login returns jwt token when successful")
     void login_ReturnsJwtToken_WhenSuccessful() {
         LoginRequest loginRequest = LoginRequestCreator.createValidLoginRequest();
+
+        BDDMockito.when(userRepository.findByEmailIgnoreCase(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(UserCreator.createValidUser()));
 
         String token = userService.login(loginRequest);
 

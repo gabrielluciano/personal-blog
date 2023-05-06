@@ -3,10 +3,9 @@ package com.gabrielluciano.blog.controllers;
 import com.gabrielluciano.blog.dto.user.LoginRequest;
 import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
+import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
-import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Role;
-import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.services.UserService;
 import com.gabrielluciano.blog.util.LoginRequestCreator;
 import com.gabrielluciano.blog.util.TestRegexPatterns;
@@ -24,6 +23,8 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -67,6 +68,20 @@ class UserControllerTest {
         assertThat(responseEntity.getBody().getEmail()).isEqualTo(userCreateRequest.getEmail());
 
         assertThat(responseEntity.getBody().getRoles()).contains(Role.ADMIN);
+    }
+
+    @Test
+    @DisplayName("signup throws ConstraintViolationException when email already exists in database")
+    void signup_throwsConstraintViolationException_WhenEmailAlreadyExistsInDatabase() {
+        UserCreateRequest userCreateRequest = UserCreateRequestCreator.createValidUserCreateRequest();
+
+        BDDMockito.when(userService.signup(ArgumentMatchers.any(UserCreateRequest.class)))
+                .thenThrow(new ConstraintViolationException("users", Map.of("email", userCreateRequest.getEmail())));
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> userController.signup(userCreateRequest))
+                .withMessageContaining("The following attributes already exist in one or more entries in the database table 'users' => email: "
+                        + userCreateRequest.getEmail());
     }
 
     @Test

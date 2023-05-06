@@ -4,16 +4,22 @@ import com.gabrielluciano.blog.dto.user.LoginRequest;
 import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    public ResponseEntity<UserResponse> signup(UserCreateRequest userCreateRequest) {
+    @PostMapping("signup")
+    public ResponseEntity<UserResponse> signup(@RequestBody @Valid UserCreateRequest userCreateRequest) {
         return new ResponseEntity<>(userService.signup(userCreateRequest), HttpStatus.CREATED);
     }
 

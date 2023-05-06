@@ -11,7 +11,7 @@ public class UserCreator {
             .id(1L)
             .name("John")
             .email("john@mail.com")
-            .password("{bcrypt}$2a$10$QFbx9CplU/dr7.mxlmkuK.3Pkeih7jfUT/9Nt7Hcw39dpFWYOZQje") // pw: 12345
+            .password("{bcrypt}$2a$10$22TVLWAtcnOpYwU3gXYNL.2ipe1jgiPLeM/AqWitvFTI37gc.yIBW") // pw: P@ssword1
             .roles(Set.of(Role.ADMIN))
             .build();
 
