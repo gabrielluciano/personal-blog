@@ -1,5 +1,6 @@
 package com.gabrielluciano.blog.controllers;
 
+import com.gabrielluciano.blog.dto.user.LoginRequest;
 import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.services.UserService;
@@ -14,5 +15,9 @@ public class UserController {
 
     public ResponseEntity<UserResponse> signup(UserCreateRequest userCreateRequest) {
         return new ResponseEntity<>(userService.signup(userCreateRequest), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<String> login(LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.login(loginRequest));
     }
 }
