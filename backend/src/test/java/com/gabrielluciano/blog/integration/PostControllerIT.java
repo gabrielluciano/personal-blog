@@ -152,13 +152,39 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("list returns page of unpublished post responses when drafts is true")
-    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrue() {
+    @DisplayName("list returns status 401 Unauthorized when drafts is true and user is not authenticated")
+    void list_ReturnsStatus401Unauthorized_WhenDraftsIsTrueAndUserIsNotAuthenticated() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts?drafts=true", HttpMethod.GET,
+                null, Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("list returns status 401 Unauthorized when drafts is true and user is not admin")
+    void list_ReturnsStatus401Unauthorized_WhenDraftsIsTrueAndUserIsNotAdmin() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts?drafts=true", HttpMethod.GET,
+                new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("list returns page of unpublished post responses when drafts is true and user is admin")
+    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrueAndUserIsAdmin() {
         postRepository.save(PostCreator.createPublishedPostToBeSaved());
         Post expectedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?drafts={drafts}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), new ParameterizedTypeReference<>() {
                 }, true);
 
         assertThat(responseEntity).isNotNull();
