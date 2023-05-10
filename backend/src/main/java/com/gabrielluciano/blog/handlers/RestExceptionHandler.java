@@ -3,6 +3,7 @@ package com.gabrielluciano.blog.handlers;
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
+import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
@@ -53,6 +54,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorDetails> handleInvalidCredentialsException(InvalidCredentialsException ex,
+                                                                          HttpServletRequest request) {
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .title("Invalid Credentials")
+                .message(ex.getMessage())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @Override
