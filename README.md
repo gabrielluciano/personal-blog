@@ -186,3 +186,24 @@ DELETE /tags/{id}
         401 (UNAUTHORIZED) - When authentication is not valid or isn't present
         403 (FORBBIDEN) - User is not an admin
 ```
+
+### User
+
+POST /signup
+
+    Allows user to create an account providing name, email and password
+
+    Return status:
+        201 (CREATED) - User created with success
+        400 (BAD_REQUEST) - Request body is invalid
+
+
+POST /login
+
+    Allows user to login using its email and password returning a JWT Token
+
+    Return status:
+        200 (OK) - User successfully logged in
+        401 (UNAUTHORIZED) - Wrong credentials were provided
+
+        
