@@ -103,6 +103,30 @@ DELETE /posts/{postId}/tags/{tagId}
         403 (FORBBIDEN) - User is not an admin or is not the author of the post
 ```
 
+```
+PUT /posts/{postId}/publish
+
+    Publish a post (Security: ADMIN)
+
+    Return status:
+        204 (NO_CONTENT) - The command was successfuly executed
+        404 (NOT_FOUND) - The post was not found
+        401 (UNAUTHORIZED) - When authentication is not valid or isn't present
+        403 (FORBBIDEN) - User is not an admin or is not the author of the post
+```
+
+```
+PUT /posts/{postId}/unpublish
+
+    Unpublish a post (Security: ADMIN)
+
+    Return status:
+        204 (NO_CONTENT) - The command was successfuly executed
+        404 (NOT_FOUND) - The post was not found
+        401 (UNAUTHORIZED) - When authentication is not valid or isn't present
+        403 (FORBBIDEN) - User is not an admin or is not the author of the post
+```
+
 ### Tag
 
 ```

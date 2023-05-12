@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -79,6 +81,26 @@ public class PostServiceImpl implements PostService {
         Tag tag = findTagByIdOrThrowResourceNotFoundException(tagId);
         post.getTags().remove(tag);
         postRepository.save(post);
+    }
+
+    @Override
+    public void publishById(long id) {
+        Post post = findByIdOrThrowResourceNotFoundException(id);
+        if (post.getPublished().equals(false)) {
+            post.setPublished(true);
+            post.setPublishedAt(LocalDateTime.now(ZoneOffset.UTC));
+            postRepository.save(post);
+        }
+    }
+
+    @Override
+    public void unpublishById(long id) {
+        Post post = findByIdOrThrowResourceNotFoundException(id);
+        if (post.getPublished().equals(true)) {
+            post.setPublished(false);
+            post.setPublishedAt(null);
+            postRepository.save(post);
+        }
     }
 
     private Post findByIdOrThrowResourceNotFoundException(long id) {

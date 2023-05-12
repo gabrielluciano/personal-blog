@@ -23,4 +23,8 @@ public interface PostService {
     void addTag(long postId, long tagId);
 
     void removeTag(long postId, long tagId);
+
+    void publishById(long id);
+
+    void unpublishById(long id);
 }

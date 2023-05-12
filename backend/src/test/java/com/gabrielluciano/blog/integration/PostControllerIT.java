@@ -1095,4 +1095,196 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/1/tags/invalidID");
     }
+
+    @Test
+    @DisplayName("publishById returns status 401 Unauthorized when user is not authenticated")
+    void publishById_ReturnsStatus401Unauthorized_WhenUserIsNotAuthenticated() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/publish", HttpMethod.PUT,
+                null, Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("publishById returns status 401 Unauthorized when user is not admin")
+    void publishById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/publish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("publishById returns status 204 No Content when successful")
+    void publishById_ReturnsStatus204NoContent_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}/publish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        ResponseEntity<PostResponse> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
+                PostResponse.class, savedPost.getId());
+
+        assertThat(findByIdResponseEntity).isNotNull();
+
+        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(findByIdResponseEntity.getBody()).isNotNull();
+
+        assertThat(findByIdResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
+
+        assertThat(savedPost.getPublished()).isFalse();
+
+        assertThat(findByIdResponseEntity.getBody().getPublished()).isTrue();
+
+        assertThat(findByIdResponseEntity.getBody().getPublishedAt())
+                .isNotNull()
+                .isAfter(findByIdResponseEntity.getBody().getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("publishById returns error details and status 404 Not Found when post is not found")
+    void publishById_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}/publish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId + "/publish");
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("publishById returns error details and status 400 Bad Request when id is not valid")
+    void publishById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/publish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID/publish");
+    }
+
+    @Test
+    @DisplayName("unpublishById returns status 401 Unauthorized when user is not authenticated")
+    void unpublishById_ReturnsStatus401Unauthorized_WhenUserIsNotAuthenticated() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/unpublish", HttpMethod.PUT,
+                null, Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("unpublishById returns status 401 Unauthorized when user is not admin")
+    void unpublishById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/unpublish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("unpublishById returns status 204 No Content when successful")
+    void unpublishById_ReturnsStatus204NoContent_WhenSuccessful() {
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}/unpublish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        ResponseEntity<PostResponse> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
+                PostResponse.class, savedPost.getId());
+
+        assertThat(findByIdResponseEntity).isNotNull();
+
+        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(findByIdResponseEntity.getBody()).isNotNull();
+
+        assertThat(findByIdResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
+
+        assertThat(savedPost.getPublished()).isTrue();
+
+        assertThat(findByIdResponseEntity.getBody().getPublished()).isFalse();
+
+        assertThat(findByIdResponseEntity.getBody().getPublishedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("unpublishById returns error details and status 404 Not Found when post is not found")
+    void unpublishById_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
+        long postId = 1;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}/unpublish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId + "/unpublish");
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("unpublishById returns error details and status 400 Bad Request when id is not valid")
+    void unpublishById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/unpublish", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID/unpublish");
+    }
 }

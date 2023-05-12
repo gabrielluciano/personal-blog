@@ -403,4 +403,58 @@ class PostControllerTest {
                 .isThrownBy(() -> postController.removeTag(postId, tagId))
                 .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
+
+    @Test
+    @DisplayName("publishById returns status 204 No Content when successful")
+    void publishById_ReturnsStatus404NoContent_WhenSuccessful() {
+        long postId = 1;
+
+        ResponseEntity<Void> responseEntity = postController.publishById(postId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("publishById throws ResourceNotFoundException when post is not found")
+    void publishById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                .when(postService).publishById(ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.publishById(postId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
+
+    @Test
+    @DisplayName("unpublishById returns status 204 No Content when successful")
+    void unpublishById_ReturnsStatus404NoContent_WhenSuccessful() {
+        long postId = 1;
+
+        ResponseEntity<Void> responseEntity = postController.unpublishById(postId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("unpublishById throws ResourceNotFoundException when post is not found")
+    void unpublishById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
+        long postId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(Post.class, postId))
+                .when(postService).unpublishById(ArgumentMatchers.anyLong());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> postController.unpublishById(postId))
+                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
+    }
 }

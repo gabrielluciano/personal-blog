@@ -73,4 +73,16 @@ public class PostController {
         postService.removeTag(postId, tagId);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("posts/{id}/publish")
+    public ResponseEntity<Void> publishById(@PathVariable long id) {
+        postService.publishById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("posts/{id}/unpublish")
+    public ResponseEntity<Void> unpublishById(@PathVariable long id) {
+        postService.unpublishById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
