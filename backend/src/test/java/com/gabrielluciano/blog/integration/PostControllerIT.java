@@ -63,7 +63,7 @@ class PostControllerIT {
     @BeforeEach
     void setUp() {
         httpHeadersWithRoleAdminJwt = authUtil.getHttpHeadersForAdminUser();
-        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUserWithNoRole();
+        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUser();
     }
 
     @Test

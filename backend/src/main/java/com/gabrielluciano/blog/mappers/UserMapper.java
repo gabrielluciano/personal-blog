@@ -12,7 +12,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "roles", expression = "java(java.util.Set.of(com.gabrielluciano.blog.models.Role.ADMIN))")
+    @Mapping(target = "roles", expression = "java(java.util.Set.of(com.gabrielluciano.blog.models.Role.USER))")
     User userCreateRequestToUser(UserCreateRequest userCreateRequest);
 
     UserResponse userToUserResponse(User user);

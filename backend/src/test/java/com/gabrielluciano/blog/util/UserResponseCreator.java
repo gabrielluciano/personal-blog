@@ -6,6 +6,7 @@ import com.gabrielluciano.blog.models.User;
 public class UserResponseCreator {
 
     private static final User user = UserCreator.createValidUser();
+    private static final User adminuser = UserCreator.createValidAdminUser();
 
     public static UserResponse createValidUserResponse() {
 
@@ -14,6 +15,16 @@ public class UserResponseCreator {
                 .name(user.getName())
                 .email(user.getEmail())
                 .roles(user.getRoles())
+                .build();
+    }
+
+    public static UserResponse createValidAdminUserResponse() {
+
+        return UserResponse.builder()
+                .id(adminuser.getId())
+                .name(adminuser.getName())
+                .email(adminuser.getEmail())
+                .roles(adminuser.getRoles())
                 .build();
     }
 }

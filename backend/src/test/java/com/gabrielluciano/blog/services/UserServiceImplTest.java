@@ -77,7 +77,9 @@ class UserServiceImplTest {
 
         assertThat(userResponse.getEmail()).isEqualTo(userCreateRequest.getEmail());
 
-        assertThat(userResponse.getRoles()).contains(Role.ADMIN);
+        assertThat(userResponse.getRoles())
+                .hasSize(1)
+                .contains(Role.USER);
     }
 
     @Test

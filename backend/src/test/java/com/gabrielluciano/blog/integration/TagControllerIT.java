@@ -7,8 +7,6 @@ import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.repositories.TagRepository;
-import com.gabrielluciano.blog.repositories.UserRepository;
-import com.gabrielluciano.blog.services.UserService;
 import com.gabrielluciano.blog.util.AuthUtil;
 import com.gabrielluciano.blog.util.TagCreateRequestCreator;
 import com.gabrielluciano.blog.util.TagCreator;
@@ -54,7 +52,7 @@ class TagControllerIT {
     @BeforeEach
     void setUp() {
         httpHeadersWithRoleAdminJwt = authUtil.getHttpHeadersForAdminUser();
-        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUserWithNoRole();
+        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUser();
     }
 
     @Test

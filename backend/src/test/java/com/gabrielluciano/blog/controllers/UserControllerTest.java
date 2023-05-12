@@ -67,7 +67,9 @@ class UserControllerTest {
 
         assertThat(responseEntity.getBody().getEmail()).isEqualTo(userCreateRequest.getEmail());
 
-        assertThat(responseEntity.getBody().getRoles()).contains(Role.ADMIN);
+        assertThat(responseEntity.getBody().getRoles())
+                .hasSize(1)
+                .contains(Role.USER);
     }
 
     @Test
