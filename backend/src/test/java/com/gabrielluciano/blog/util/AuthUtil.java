@@ -18,8 +18,8 @@ public class AuthUtil {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public HttpHeaders getHttpHeadersForAdminUser() {
-        return getHttpHeadersForUserWithIdEmailAndRoles(1L, "john@mail.com", Set.of(Role.USER, Role.ADMIN));
+    public HttpHeaders getHttpHeadersForEditorUser() {
+        return getHttpHeadersForUserWithIdEmailAndRoles(1L, "john@mail.com", Set.of(Role.USER, Role.EDITOR));
     }
 
     public HttpHeaders getHttpHeadersForUser() {

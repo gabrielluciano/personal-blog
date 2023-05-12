@@ -46,12 +46,12 @@ class TagControllerIT {
     @Autowired
     private AuthUtil authUtil;
 
-    private HttpHeaders httpHeadersWithRoleAdminJwt;
+    private HttpHeaders httpHeadersWithRoleEditorJwt;
     private HttpHeaders httpHeadersWithNoRoleJwt;
 
     @BeforeEach
     void setUp() {
-        httpHeadersWithRoleAdminJwt = authUtil.getHttpHeadersForAdminUser();
+        httpHeadersWithRoleEditorJwt = authUtil.getHttpHeadersForEditorUser();
         httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUser();
     }
 
@@ -177,8 +177,8 @@ class TagControllerIT {
 
 
     @Test
-    @DisplayName("save returns status 401 Unauthorized when user is not admin")
-    void save_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("save returns status 401 Unauthorized when user is not editor")
+    void save_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -195,7 +195,7 @@ class TagControllerIT {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
         ResponseEntity<TagResponse> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
-                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleAdminJwt), TagResponse.class);
+                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleEditorJwt), TagResponse.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -214,7 +214,7 @@ class TagControllerIT {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createInvalidTagCreateRequest();
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
-                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class);
+                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -234,8 +234,8 @@ class TagControllerIT {
     void save_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
-        httpHeadersWithRoleAdminJwt.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleAdminJwt);
+        httpHeadersWithRoleEditorJwt.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleEditorJwt);
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
                 httpEntity, ErrorDetails.class);
@@ -259,7 +259,7 @@ class TagControllerIT {
         TagCreateRequest tagCreateRequest = TagCreateRequestCreator.createValidTagCreateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags", HttpMethod.POST,
-                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(tagCreateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -289,8 +289,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("update returns status 401 Unauthorized when user is not admin")
-    void update_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("update returns status 401 Unauthorized when user is not editor")
+    void update_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/1", HttpMethod.PUT,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -308,7 +308,7 @@ class TagControllerIT {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
-                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleAdminJwt), Void.class, savedTag.getId());
+                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleEditorJwt), Void.class, savedTag.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -325,7 +325,7 @@ class TagControllerIT {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
-                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class, tagId);
+                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class, tagId);
 
         assertThat(responseEntity).isNotNull();
 
@@ -347,7 +347,7 @@ class TagControllerIT {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createInvalidTagUpdateRequest();
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
-                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class, 1L);
+                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class, 1L);
 
         assertThat(responseEntity).isNotNull();
 
@@ -366,8 +366,8 @@ class TagControllerIT {
     void update_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
-        httpHeadersWithRoleAdminJwt.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleAdminJwt);
+        httpHeadersWithRoleEditorJwt.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleEditorJwt);
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
                 httpEntity, ErrorDetails.class, 1L);
@@ -393,7 +393,7 @@ class TagControllerIT {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest("News");
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.PUT,
-                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class, guidesTag.getId());
+                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class, guidesTag.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -415,7 +415,7 @@ class TagControllerIT {
         TagUpdateRequest tagUpdateRequest = TagUpdateRequestCreator.createValidTagUpdateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/invalidID", HttpMethod.PUT,
-                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(tagUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -442,8 +442,8 @@ class TagControllerIT {
     }
 
     @Test
-    @DisplayName("deleteById returns status 401 Unauthorized when user is not admin")
-    void deleteById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("deleteById returns status 401 Unauthorized when user is not editor")
+    void deleteById_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/1", HttpMethod.DELETE,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -460,7 +460,7 @@ class TagControllerIT {
         Tag savedTag = tagRepository.save(TagCreator.createNewsTagToBeSaved());
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedTag.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedTag.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -482,7 +482,7 @@ class TagControllerIT {
         long tagId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/{id}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, tagId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, tagId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -500,7 +500,7 @@ class TagControllerIT {
     @DisplayName("deleteById returns error details and status 400 Bad Request when id is not valid")
     void deleteById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/tags/invalidID", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 

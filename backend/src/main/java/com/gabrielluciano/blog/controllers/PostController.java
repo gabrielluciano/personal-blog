@@ -27,7 +27,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("posts")
-    @PreAuthorize("#drafts == false or hasRole('ADMIN')")
+    @PreAuthorize("#drafts == false or hasRole('EDITOR')")
     public ResponseEntity<Page<PostResponse>> list(Pageable pageable,
                                                    @RequestParam(required = false) String title,
                                                    @RequestParam(required = false, name = "tag") Long tagId,

@@ -5,26 +5,26 @@ import com.gabrielluciano.blog.models.User;
 
 public class UserResponseCreator {
 
-    private static final User user = UserCreator.createValidUser();
-    private static final User adminuser = UserCreator.createValidAdminUser();
+    private static final User USER = UserCreator.createValidUser();
+    private static final User EDITOR_USER = UserCreator.createValidEditorUser();
 
     public static UserResponse createValidUserResponse() {
 
         return UserResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .roles(user.getRoles())
+                .id(USER.getId())
+                .name(USER.getName())
+                .email(USER.getEmail())
+                .roles(USER.getRoles())
                 .build();
     }
 
-    public static UserResponse createValidAdminUserResponse() {
+    public static UserResponse createValidEditorUserResponse() {
 
         return UserResponse.builder()
-                .id(adminuser.getId())
-                .name(adminuser.getName())
-                .email(adminuser.getEmail())
-                .roles(adminuser.getRoles())
+                .id(EDITOR_USER.getId())
+                .name(EDITOR_USER.getName())
+                .email(EDITOR_USER.getEmail())
+                .roles(EDITOR_USER.getRoles())
                 .build();
     }
 }

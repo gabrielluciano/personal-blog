@@ -1,4 +1,4 @@
 package com.gabrielluciano.blog.models;
 public enum Role {
-    USER, ADMIN
+    USER, EDITOR, ADMIN
 }

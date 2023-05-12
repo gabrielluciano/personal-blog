@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tags/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/signup", "/login").permitAll()
-                        .anyRequest().hasRole(Role.ADMIN.name()))
+                        .anyRequest().hasRole(Role.EDITOR.name()))
                 .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint())
                 .and().build();
     }
