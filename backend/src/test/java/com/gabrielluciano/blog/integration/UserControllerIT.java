@@ -6,12 +6,15 @@ import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.error.ErrorDetails;
 import com.gabrielluciano.blog.error.ValidationErrorDetails;
 import com.gabrielluciano.blog.models.Role;
+import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
+import com.gabrielluciano.blog.util.AuthUtil;
 import com.gabrielluciano.blog.util.LoginRequestCreator;
 import com.gabrielluciano.blog.util.TestRegexPatterns;
 import com.gabrielluciano.blog.util.UserCreateRequestCreator;
 import com.gabrielluciano.blog.util.UserCreator;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,6 +44,21 @@ class UserControllerIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthUtil authUtil;
+
+
+    private HttpHeaders httpHeadersWithNoRolesJwt;
+    private HttpHeaders httpHeadersWithRoleEditorJwt;
+    private HttpHeaders httpHeadersWithRoleAdminJwt;
+
+    @BeforeEach
+    void setUp() {
+        httpHeadersWithNoRolesJwt = authUtil.getHttpHeadersForUser();
+        httpHeadersWithRoleEditorJwt = authUtil.getHttpHeadersForEditorUser();
+        httpHeadersWithRoleAdminJwt = authUtil.getHttpHeadersForAdminUser();
+    }
 
     @Test
     @DisplayName("signup returns UserResponse and status 201 Created when successful")
@@ -232,5 +252,202 @@ class UserControllerIT {
 
         assertThat(responseEntity.getBody().getMessage())
                 .isEqualTo("Authentication failed: Incorrect email or password. Please try again.");
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns status 401 Unauthorized when user is not authenticated")
+    void addEditorRole_ReturnsStatus401Unauthorized_WhenUserIsNotAuthenticated() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/users/1/roles/editor", HttpMethod.PUT,
+                null, Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns status 401 Unauthorized when user is not admin")
+    void addEditorRole_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+        ResponseEntity<Void> responseEntityEditor = restTemplate.exchange("/users/1/roles/editor", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class);
+
+        assertThat(responseEntityEditor).isNotNull();
+
+        assertThat(responseEntityEditor.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntityEditor.getBody()).isNull();
+
+
+        ResponseEntity<Void> responseEntityUser = restTemplate.exchange("/users/1/roles/editor", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithNoRolesJwt), Void.class);
+
+        assertThat(responseEntityUser).isNotNull();
+
+        assertThat(responseEntityUser.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntityUser.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns status 204 No Content when successful")
+    void addEditorRole_ReturnsStatus204NoContent_WhenSuccessful() {
+        User savedUser = userRepository.save(UserCreator.createValidUser());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/users/{id}/roles/editor", HttpMethod.PUT,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedUser.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        Optional<User> optionalUserFromDB = userRepository.findById(savedUser.getId());
+
+        assertThat(optionalUserFromDB).isPresent();
+
+        assertThat(optionalUserFromDB.get().getId()).isEqualTo(savedUser.getId());
+
+        assertThat(optionalUserFromDB.get().getRoles())
+                .hasSize(2)
+                .contains(Role.USER, Role.EDITOR);
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns error details and status 404 Not Found when user is not found")
+    void addEditorRole_ReturnsErrorDetailsAndStatus404NotFound_WhenUserIsNotFound() {
+        long userId = 100;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/users/{id}/roles/editor",
+                HttpMethod.PUT, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, userId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/users/" + userId + "/roles/editor");
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type User with identifier: " + userId);
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns error details and status 400 Bad Request when id is not valid")
+    void addEditorRole_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/users/id/roles/editor",
+                HttpMethod.PUT, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/users/id/roles/editor");
+    }
+
+
+    @Test
+    @DisplayName("removeEditorRole returns status 401 Unauthorized when user is not authenticated")
+    void removeEditorRole_ReturnsStatus401Unauthorized_WhenUserIsNotAuthenticated() {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/users/1/roles/editor", HttpMethod.DELETE,
+                null, Void.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("removeEditorRole returns status 401 Unauthorized when user is not admin")
+    void removeEditorRole_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+        ResponseEntity<Void> responseEntityEditor = restTemplate.exchange("/users/1/roles/editor", HttpMethod.DELETE,
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class);
+
+        assertThat(responseEntityEditor).isNotNull();
+
+        assertThat(responseEntityEditor.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntityEditor.getBody()).isNull();
+
+
+        ResponseEntity<Void> responseEntityUser = restTemplate.exchange("/users/1/roles/editor", HttpMethod.DELETE,
+                new HttpEntity<>(null, httpHeadersWithNoRolesJwt), Void.class);
+
+        assertThat(responseEntityUser).isNotNull();
+
+        assertThat(responseEntityUser.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        assertThat(responseEntityUser.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("removeEditorRole returns status 204 No Content when successful")
+    void removeEditorRole_ReturnsStatus204NoContent_WhenSuccessful() {
+        User savedUser = userRepository.save(UserCreator.createValidEditorUser());
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/users/{id}/roles/editor", HttpMethod.DELETE,
+                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedUser.getId());
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+
+        Optional<User> optionalUserFromDB = userRepository.findById(savedUser.getId());
+
+        assertThat(optionalUserFromDB).isPresent();
+
+        assertThat(optionalUserFromDB.get().getId()).isEqualTo(savedUser.getId());
+
+        assertThat(optionalUserFromDB.get().getRoles())
+                .hasSize(1)
+                .contains(Role.USER);
+    }
+
+    @Test
+    @DisplayName("removeEditorRole returns error details and status 404 Not Found when user is not found")
+    void removeEditorRole_ReturnsErrorDetailsAndStatus404NotFound_WhenUserIsNotFound() {
+        long userId = 100;
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/users/{id}/roles/editor",
+                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, userId);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/users/" + userId + "/roles/editor");
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type User with identifier: " + userId);
+    }
+
+    @Test
+    @DisplayName("removeEditorRole returns error details and status 400 Bad Request when id is not valid")
+    void removeEditorRole_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/users/id/roles/editor",
+                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/users/id/roles/editor");
     }
 }

@@ -5,6 +5,7 @@ import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
@@ -26,8 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class UserServiceImplTest {
@@ -53,6 +53,12 @@ class UserServiceImplTest {
 
         BDDMockito.when(userRepository.findByEmailIgnoreCase(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
+
+        BDDMockito.when(userRepository.findById(ArgumentMatchers.eq(1L)))
+                .thenReturn(Optional.of(UserCreator.createValidUser()));
+
+        BDDMockito.when(userRepository.findById(ArgumentMatchers.eq(2L)))
+                .thenReturn(Optional.of(UserCreator.createValidEditorUser()));
 
         BDDMockito.when(passwordEncoder.encode(ArgumentMatchers.anyString()))
                 .thenReturn(UserCreator.createValidUser().getPassword());
@@ -135,5 +141,43 @@ class UserServiceImplTest {
         assertThatExceptionOfType(InvalidCredentialsException.class)
                 .isThrownBy(() -> userService.login(loginRequest))
                 .withMessageContaining("Authentication failed: Incorrect email or password. Please try again.");
+    }
+
+    @Test
+    @DisplayName("addEditorRole adds editor role to user when successful")
+    void addEditorRole_AddsEditorRoleToUser_WhenSuccessful() {
+        assertThatNoException().isThrownBy(() -> userService.addEditorRole(1L));
+    }
+
+    @Test
+    @DisplayName("addEditorRole throws ResourceNotFoundException when user is not found")
+    void addEditorRole_ThrowsResourceNotFoundException_WhenUserIsNotFound() {
+        long userId = 1;
+
+        BDDMockito.when(userRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> userService.addEditorRole(userId))
+                .withMessageContaining("Could not find resource of type User with identifier: " + userId);
+    }
+
+    @Test
+    @DisplayName("removeEditorRole removes editor role from user when successful")
+    void removeEditorRole_RemovesEditorRoleFromUser_WhenSuccessful() {
+        assertThatNoException().isThrownBy(() -> userService.removeEditorRole(2L));
+    }
+
+    @Test
+    @DisplayName("removeEditorRole throws ResourceNotFoundException when user is not found")
+    void removeEditorRole_ThrowsResourceNotFoundException_WhenUserIsNotFound() {
+        long userId = 1;
+
+        BDDMockito.when(userRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> userService.removeEditorRole(userId))
+                .withMessageContaining("Could not find resource of type User with identifier: " + userId);
     }
 }
