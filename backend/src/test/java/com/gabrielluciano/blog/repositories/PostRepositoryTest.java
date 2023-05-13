@@ -2,8 +2,11 @@ package com.gabrielluciano.blog.repositories;
 
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.models.Tag;
+import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.util.PostCreator;
 import com.gabrielluciano.blog.util.TagCreator;
+import com.gabrielluciano.blog.util.UserCreator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,16 @@ class PostRepositoryTest {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User author;
+
+    @BeforeEach
+    void setUp() {
+        author = userRepository.save(UserCreator.createValidEditorUserToBeSaved());
+    }
+
     @Test
     @DisplayName("findAllByPublishedIsTrueAndTitleContainingIgnoreCase returns page of posts containing specified title when successful")
     void findAllByPublishedIsTrueAndTitleContainingIgnoreCase_ReturnsPageOfPostsContainingSpecifiedTitle_WhenSuccessful() {
@@ -35,9 +48,9 @@ class PostRepositoryTest {
         String slug = "some-slug";
         String titleToSearch = "title";
 
-        Post post1 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title1, slug));
-        Post post2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title2, slug));
-        postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved(title3, slug));
+        Post post1 = postRepository.save(PostCreator.createPublishedPostWithTitleSlugAndAuthorToBeSaved(title1, slug, author));
+        Post post2 = postRepository.save(PostCreator.createPublishedPostWithTitleSlugAndAuthorToBeSaved(title2, slug, author));
+        postRepository.save(PostCreator.createPublishedPostWithTitleSlugAndAuthorToBeSaved(title3, slug, author));
 
         Page<Post> page = postRepository.findAllByPublishedIsTrueAndTitleContainingIgnoreCase(titleToSearch, Pageable.unpaged());
 
@@ -64,7 +77,8 @@ class PostRepositoryTest {
     void findAllByPublishedIsTrueAndTagsId_ReturnsPageOfPublishedPostsContainingASpecificTag_WhenSuccessful() {
         Tag savedTag1 = tagRepository.save(TagCreator.createTagToBeSaved("some tag 1"));
         Tag savedTag2 = tagRepository.save(TagCreator.createTagToBeSaved("some tag 2"));
-        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTags(Set.of(savedTag1, savedTag2)));
+        Post savedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTagsAndAuthorToBeSaved(Set.of(savedTag1, savedTag2), author));
 
         Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(savedTag1.getId(), Pageable.unpaged());
 
@@ -81,7 +95,7 @@ class PostRepositoryTest {
     @Test
     @DisplayName("findAllByPublishedIsTrueAndTagsId returns empty page of posts when no post is found")
     void findAllByPublishedIsTrueAndTagsId_ReturnsEmptyPageOfPosts_WhenNoPostIsFound() {
-        postRepository.save(PostCreator.createPublishedPost());
+        postRepository.save(PostCreator.createPublishedPostWithAuthorToBeSaved(author));
 
         Page<Post> page = postRepository.findAllByPublishedIsTrueAndTagsId(1L, Pageable.unpaged());
 
@@ -98,10 +112,14 @@ class PostRepositoryTest {
         Tag savedTag1 = tagRepository.save(TagCreator.createTagToBeSaved("some tag"));
         Tag savedTag2 = tagRepository.save(TagCreator.createTagToBeSaved("another tag"));
 
-        Post savedPost1 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("rust", "rust"));
-        Post savedPost2 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Java", "java"));
-        Post savedPost3 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("java tips", "java-tips"));
-        Post savedPost4 = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("java guides", "java-guides"));
+        Post savedPost1 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("rust", "rust", author));
+        Post savedPost2 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("Java", "java", author));
+        Post savedPost3 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("java tips", "java-tips", author));
+        Post savedPost4 = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("java guides", "java-guides", author));
 
         savedPost1.setTags(Set.of(savedTag1, savedTag2));
         savedPost2.setTags(Set.of(savedTag1));
@@ -124,8 +142,8 @@ class PostRepositoryTest {
     @Test
     @DisplayName("findAllByPublishedIsTrue returns page of published posts when successful")
     void findAllByPublishedIsTrue_ReturnsPageOfPublishedPosts_WhenSuccessful() {
-        Post publishedPostToBeSaved = PostCreator.createPublishedPostToBeSaved();
-        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostToBeSaved();
+        Post publishedPostToBeSaved = PostCreator.createPublishedPostWithAuthorToBeSaved(author);
+        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostWithAuthorToBeSaved(author);
 
         Post publishedPost = postRepository.save(publishedPostToBeSaved);
         postRepository.save(unpublishedPostToBeSaved);
@@ -145,8 +163,8 @@ class PostRepositoryTest {
     @Test
     @DisplayName("findAllByPublishedIsTrue returns page of unpublished posts when successful")
     void findAllByPublishedIsTrue_ReturnsPageOfUnpublishedPosts_WhenSuccessful() {
-        Post publishedPostToBeSaved = PostCreator.createPublishedPostToBeSaved();
-        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostToBeSaved();
+        Post publishedPostToBeSaved = PostCreator.createPublishedPostWithAuthorToBeSaved(author);
+        Post unpublishedPostToBeSaved = PostCreator.createUnpublishedPostWithAuthorToBeSaved(author);
 
         postRepository.save(publishedPostToBeSaved);
         Post unpublishedPost = postRepository.save(unpublishedPostToBeSaved);
@@ -167,7 +185,7 @@ class PostRepositoryTest {
     @DisplayName("findByPublishedIsTrueAndSlug returns optional of published post with specific slug when successful")
     void findByPublishedIsTrueAndSlug_ReturnsOptionalOfPublishedPostWithSpecificSlug_WhenSuccessful() {
         String slug = "some-slug";
-        Post postToBeSaved = PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Some title", slug);
+        Post postToBeSaved = PostCreator.createPublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", slug, author);
 
         Post expectedPost = postRepository.save(postToBeSaved);
 
@@ -183,8 +201,10 @@ class PostRepositoryTest {
     @DisplayName("findByPublishedIsTrueAndSlug returns optional empty when post is not found or post is not published")
     void findByPublishedIsTrueAndSlug_ReturnsOptionalEmpty_WhenPostIsNotFoundOrPostIsNotPublished() {
         String slug = "non-existent-slug";
-        Post postToBeSaved1 = PostCreator.createPublishedPostWithTitleAndSlugToBeSaved("Some title", "some-slug");
-        Post postToBeSaved2 = PostCreator.createUnpublishedPostWithTitleAndSlugToBeSaved("Some title", slug);
+        Post postToBeSaved1 = PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", "some-slug", author);
+        Post postToBeSaved2 = PostCreator
+                .createUnpublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", slug, author);
 
         postRepository.save(postToBeSaved1);
         postRepository.save(postToBeSaved2);
@@ -201,7 +221,8 @@ class PostRepositoryTest {
     void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalOfPost_WhenPostWithSameTitleIsFound() {
         String expectedTitle = "Some post";
 
-        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlug(expectedTitle, "some-slug"));
+        Post savedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved(expectedTitle, "some-slug", author));
 
         Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(expectedTitle, "wrong slug");
 
@@ -216,7 +237,8 @@ class PostRepositoryTest {
     void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalOfPost_WhenPostWithSameSlugIsFound() {
         String expectedSlug = "some-slug";
 
-        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithTitleAndSlug("Some title", expectedSlug));
+        Post savedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", expectedSlug, author));
 
         Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase("Wrong title", expectedSlug);
 
@@ -226,14 +248,13 @@ class PostRepositoryTest {
                 .contains(savedPost);
     }
 
-
     @Test
     @DisplayName("findFirstByTitleIgnoreCaseOrSlugIgnoreCase returns optional empty when no post is found")
     void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalEmpty_WhenNoPostIsFound() {
         String wrongTitle = "Wrong title";
         String wrongSlug = "wrong-slug";
 
-        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
+        Post savedPost = postRepository.save(PostCreator.createPublishedPostWithAuthorToBeSaved(author));
 
         Optional<Post> postOptional = postRepository.findFirstByTitleIgnoreCaseOrSlugIgnoreCase(wrongTitle, wrongSlug);
 

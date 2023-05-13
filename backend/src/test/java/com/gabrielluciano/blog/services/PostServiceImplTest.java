@@ -238,6 +238,8 @@ class PostServiceImplTest {
         assertThat(createdPostResponse.getPublishedAt()).isNull();
 
         assertThat(createdPostResponse.getPublished()).isFalse();
+
+        assertThat(createdPostResponse.getAuthor()).isNotNull();
     }
 
     @Test

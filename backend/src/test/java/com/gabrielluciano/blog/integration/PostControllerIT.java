@@ -443,6 +443,8 @@ class PostControllerIT {
         assertThat(postResponse.getTags())
                 .isNotNull()
                 .isEmpty();
+
+        assertThat(postResponse.getAuthor()).isNotNull();
     }
 
     @Test
