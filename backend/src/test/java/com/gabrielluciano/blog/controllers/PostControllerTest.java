@@ -288,6 +288,9 @@ class PostControllerTest {
         assertThat(responseEntity.getBody().getUpdatedAt()).isNotNull();
 
         assertThat(responseEntity.getBody().getPublishedAt()).isNull();
+
+        assertThat(responseEntity.getBody().getAuthor())
+                .isNotNull();
     }
 
     @Test

@@ -8,11 +8,15 @@ import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.models.Post;
 import com.gabrielluciano.blog.models.Tag;
+import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.repositories.PostRepository;
 import com.gabrielluciano.blog.repositories.TagRepository;
+import com.gabrielluciano.blog.security.models.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -49,6 +53,7 @@ public class PostServiceImpl implements PostService {
     public PostResponse save(PostCreateRequest postCreateRequest) {
         throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(postCreateRequest.getTitle(), postCreateRequest.getSlug());
         Post post = PostMapper.INSTANCE.postCreateRequestToPost(postCreateRequest);
+        post.setAuthor(getUserFromAuthenticationContext());
         return PostMapper.INSTANCE.postToPostResponse(postRepository.save(post));
     }
 
@@ -158,5 +163,14 @@ public class PostServiceImpl implements PostService {
         if (isSlugViolation) violations.put("slug", slug);
 
         throw new ConstraintViolationException("posts", violations);
+    }
+
+    private User getUserFromAuthenticationContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+            return securityUser.getUser();
+        }
+        return null;
     }
 }

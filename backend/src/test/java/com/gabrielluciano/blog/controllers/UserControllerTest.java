@@ -5,13 +5,16 @@ import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.models.Role;
+import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.services.UserService;
 import com.gabrielluciano.blog.util.LoginRequestCreator;
 import com.gabrielluciano.blog.util.TestRegexPatterns;
 import com.gabrielluciano.blog.util.UserCreateRequestCreator;
 import com.gabrielluciano.blog.util.UserResponseCreator;
 import lombok.extern.log4j.Log4j2;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,7 +70,9 @@ class UserControllerTest {
 
         assertThat(responseEntity.getBody().getEmail()).isEqualTo(userCreateRequest.getEmail());
 
-        assertThat(responseEntity.getBody().getRoles()).contains(Role.ADMIN);
+        assertThat(responseEntity.getBody().getRoles())
+                .hasSize(1)
+                .contains(Role.USER);
     }
 
     @Test
@@ -113,5 +118,59 @@ class UserControllerTest {
         assertThatExceptionOfType(InvalidCredentialsException.class)
                 .isThrownBy(() -> userController.login(loginRequest))
                 .withMessageContaining("Authentication failed: Incorrect email or password. Please try again.");
+    }
+
+    @Test
+    @DisplayName("addEditorRole returns status 204 No Content when successful")
+    void addEditorRole_ReturnsStatus204NoContent_WhenSuccessful() {
+        long userId = 1;
+
+        ResponseEntity<Void> responseEntity = userController.addEditorRole(userId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("addEditorRole throws ResourceNotFoundException when user is not found")
+    void addEditorRole_ThrowsResourceNotFoundException_WhenUserIsNotFound() {
+        long userId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(User.class, userId))
+                .when(userService).addEditorRole(ArgumentMatchers.anyLong());
+
+        Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> userController.addEditorRole(userId))
+                .withMessageContaining("Could not find resource of type User with identifier: " + userId);
+    }
+
+    @Test
+    @DisplayName("removeEditorRole returns status 204 No Content when successful")
+    void removeEditorRole_ReturnsStatus204NoContent_WhenSuccessful() {
+        long userId = 1;
+
+        ResponseEntity<Void> responseEntity = userController.removeEditorRole(userId);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("removeEditorRole throws ResourceNotFoundException when user is not found")
+    void removeEditorRole_ThrowsResourceNotFoundException_WhenUserIsNotFound() {
+        long userId = 1;
+
+        BDDMockito.doThrow(new ResourceNotFoundException(User.class, userId))
+                .when(userService).removeEditorRole(ArgumentMatchers.anyLong());
+
+        Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> userController.removeEditorRole(userId))
+                .withMessageContaining("Could not find resource of type User with identifier: " + userId);
     }
 }

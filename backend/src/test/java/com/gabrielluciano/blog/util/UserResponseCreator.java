@@ -5,15 +5,15 @@ import com.gabrielluciano.blog.models.User;
 
 public class UserResponseCreator {
 
-    private static final User user = UserCreator.createValidUser();
+    private static final User USER = UserCreator.createValidUser();
 
     public static UserResponse createValidUserResponse() {
 
         return UserResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .roles(user.getRoles())
+                .id(USER.getId())
+                .name(USER.getName())
+                .email(USER.getEmail())
+                .roles(USER.getRoles())
                 .build();
     }
 }

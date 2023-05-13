@@ -57,13 +57,13 @@ class PostControllerIT {
     @Autowired
     private AuthUtil authUtil;
 
-    private HttpHeaders httpHeadersWithRoleAdminJwt;
+    private HttpHeaders httpHeadersWithRoleEditorJwt;
     private HttpHeaders httpHeadersWithNoRoleJwt;
 
     @BeforeEach
     void setUp() {
-        httpHeadersWithRoleAdminJwt = authUtil.getHttpHeadersForAdminUser();
-        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUserWithNoRole();
+        httpHeadersWithRoleEditorJwt = authUtil.getHttpHeadersForEditorUser();
+        httpHeadersWithNoRoleJwt = authUtil.getHttpHeadersForUser();
     }
 
     @Test
@@ -165,8 +165,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("list returns status 401 Unauthorized when drafts is true and user is not admin")
-    void list_ReturnsStatus401Unauthorized_WhenDraftsIsTrueAndUserIsNotAdmin() {
+    @DisplayName("list returns status 401 Unauthorized when drafts is true and user is not editor")
+    void list_ReturnsStatus401Unauthorized_WhenDraftsIsTrueAndUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts?drafts=true", HttpMethod.GET,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -178,13 +178,13 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("list returns page of unpublished post responses when drafts is true and user is admin")
-    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrueAndUserIsAdmin() {
+    @DisplayName("list returns page of unpublished post responses when drafts is true and user is editor")
+    void list_ReturnsPageOfUnpublishedPostResponses_WhenDraftsIsTrueAndUserIsEditor() {
         postRepository.save(PostCreator.createPublishedPostToBeSaved());
         Post expectedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
 
         ResponseEntity<RestPageImpl<PostResponse>> responseEntity = restTemplate.exchange("/posts?drafts={drafts}",
-                HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), new ParameterizedTypeReference<>() {
+                HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), new ParameterizedTypeReference<>() {
                 }, true);
 
         assertThat(responseEntity).isNotNull();
@@ -395,8 +395,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("save returns status 401 Unauthorized when user is not admin")
-    void save_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("save returns status 401 Unauthorized when user is not editor")
+    void save_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -413,7 +413,7 @@ class PostControllerIT {
         PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
 
         ResponseEntity<PostResponse> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
-                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleAdminJwt), PostResponse.class);
+                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleEditorJwt), PostResponse.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -443,6 +443,8 @@ class PostControllerIT {
         assertThat(postResponse.getTags())
                 .isNotNull()
                 .isEmpty();
+
+        assertThat(postResponse.getAuthor()).isNotNull();
     }
 
     @Test
@@ -451,7 +453,7 @@ class PostControllerIT {
         PostCreateRequest postCreateRequest = PostCreateRequestCreator.createPostCreateRequestWithTitle("");
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
-                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class);
+                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -479,7 +481,7 @@ class PostControllerIT {
         PostCreateRequest postCreateRequest = PostCreateRequestCreator.createPostCreateRequestWithSlug(slug);
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
-                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class);
+                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -502,7 +504,7 @@ class PostControllerIT {
         PostCreateRequest postCreateRequest = PostCreateRequestCreator.createValidPostCreateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
-                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(postCreateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -524,8 +526,8 @@ class PostControllerIT {
     void save_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
-        httpHeadersWithRoleAdminJwt.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleAdminJwt);
+        httpHeadersWithRoleEditorJwt.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleEditorJwt);
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts", HttpMethod.POST,
                 httpEntity, ErrorDetails.class, 1L);
@@ -555,8 +557,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("update returns status 401 Unauthorized when user is not admin")
-    void update_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("update returns status 401 Unauthorized when user is not editor")
+    void update_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1", HttpMethod.PUT,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -576,7 +578,7 @@ class PostControllerIT {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId());
 
         try {
             savedPost = postRepository.findById(savedPost.getId()).orElseThrow();
@@ -601,7 +603,7 @@ class PostControllerIT {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId);
 
         assertThat(responseEntity).isNotNull();
 
@@ -623,7 +625,7 @@ class PostControllerIT {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequestWithTitle("");
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts/9", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class);
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -651,7 +653,7 @@ class PostControllerIT {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequestWithSlug(slug);
 
         ResponseEntity<ValidationErrorDetails> responseEntity = restTemplate.exchange("/posts/9", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), ValidationErrorDetails.class);
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), ValidationErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -672,8 +674,8 @@ class PostControllerIT {
     void update_ReturnsErrorDetailsWithJSONParseErrorAndStatus400BadRequest_WhenRequestBodyIsAnInvalidJSON() {
         String invalidJSON = "{ \"name\": \"news\"' }";
 
-        httpHeadersWithRoleAdminJwt.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleAdminJwt);
+        httpHeadersWithRoleEditorJwt.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(invalidJSON, httpHeadersWithRoleEditorJwt);
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
                 httpEntity, ErrorDetails.class, 1L);
@@ -702,7 +704,7 @@ class PostControllerIT {
                 .createValidPostUpdateRequestWithTitleAndSlug("Spring Boot", "spring-boot");
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class, javaPost.getId());
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class, javaPost.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -724,7 +726,7 @@ class PostControllerIT {
         PostUpdateRequest postUpdateRequest = PostUpdateRequestCreator.createValidPostUpdateRequest();
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID", HttpMethod.PUT,
-                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(postUpdateRequest, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -751,8 +753,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("deleteById returns status 401 Unauthorized when user is not admin")
-    void deleteById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("deleteById returns status 401 Unauthorized when user is not editor")
+    void deleteById_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1", HttpMethod.DELETE,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -769,7 +771,7 @@ class PostControllerIT {
         Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -791,7 +793,7 @@ class PostControllerIT {
         long postId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -809,7 +811,7 @@ class PostControllerIT {
     @DisplayName("deleteById returns error details and status 400 Bad Request when id is not valid")
     void deleteById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -836,8 +838,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("addTag returns status 401 Unauthorized when user is not admin")
-    void addTag_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("addTag returns status 401 Unauthorized when user is not editor")
+    void addTag_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/tags/1", HttpMethod.PUT,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -859,7 +861,7 @@ class PostControllerIT {
                 .isEmpty();
 
         ResponseEntity<Void> voidResponseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId(), savedTag.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId(), savedTag.getId());
 
         assertThat(voidResponseEntity).isNotNull();
 
@@ -888,7 +890,7 @@ class PostControllerIT {
         Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId, savedTag.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId, savedTag.getId());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -910,7 +912,7 @@ class PostControllerIT {
         long tagId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, savedPost.getId(), tagId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, savedPost.getId(), tagId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -929,7 +931,7 @@ class PostControllerIT {
     @DisplayName("addTag returns error details and status 400 Bad Request when postId is not valid")
     void addTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenPostIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/tags/1", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -946,7 +948,7 @@ class PostControllerIT {
     @DisplayName("addTag returns error details and status 400 Bad Request when tagId is not valid")
     void addTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenTagIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/1/tags/invalidID", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -973,8 +975,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("removeTag returns status 401 Unauthorized when user is not admin")
-    void removeTag_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("removeTag returns status 401 Unauthorized when user is not editor")
+    void removeTag_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/tags/1", HttpMethod.DELETE,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -996,7 +998,7 @@ class PostControllerIT {
                 .hasSize(1);
 
         ResponseEntity<Void> voidResponseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId(), savedTag.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId(), savedTag.getId());
 
         assertThat(voidResponseEntity).isNotNull();
 
@@ -1025,7 +1027,7 @@ class PostControllerIT {
         Tag savedTag = tagRepository.save(TagCreator.createTagToBeSaved("Some tag"));
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId, savedTag.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId, savedTag.getId());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -1047,7 +1049,7 @@ class PostControllerIT {
         long tagId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{postId}/tags/{tagId}", HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, savedPost.getId(), tagId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, savedPost.getId(), tagId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -1066,7 +1068,7 @@ class PostControllerIT {
     @DisplayName("removeTag returns error details and status 400 Bad Request when postId is not valid")
     void removeTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenPostIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/tags/1",
-                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -1083,7 +1085,7 @@ class PostControllerIT {
     @DisplayName("removeTag returns error details and status 400 Bad Request when tagId is not valid")
     void removeTag_ReturnsErrorDetailsAndStatus400BadRequest_WhenTagIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/1/tags/invalidID",
-                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                HttpMethod.DELETE, new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -1110,8 +1112,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("publishById returns status 401 Unauthorized when user is not admin")
-    void publishById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("publishById returns status 401 Unauthorized when user is not editor")
+    void publishById_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/publish", HttpMethod.PUT,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -1128,7 +1130,7 @@ class PostControllerIT {
         Post savedPost = postRepository.save(PostCreator.createUnpublishedPostToBeSaved());
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}/publish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -1162,7 +1164,7 @@ class PostControllerIT {
         long postId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}/publish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -1180,7 +1182,7 @@ class PostControllerIT {
     @DisplayName("publishById returns error details and status 400 Bad Request when id is not valid")
     void publishById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/publish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 
@@ -1207,8 +1209,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("unpublishById returns status 401 Unauthorized when user is not admin")
-    void unpublishById_ReturnsStatus401Unauthorized_WhenUserIsNotAdmin() {
+    @DisplayName("unpublishById returns status 401 Unauthorized when user is not editor")
+    void unpublishById_ReturnsStatus401Unauthorized_WhenUserIsNotEditor() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/1/unpublish", HttpMethod.PUT,
                 new HttpEntity<>(null, httpHeadersWithNoRoleJwt), Void.class);
 
@@ -1225,7 +1227,7 @@ class PostControllerIT {
         Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange("/posts/{id}/unpublish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), Void.class, savedPost.getId());
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), Void.class, savedPost.getId());
 
         assertThat(responseEntity).isNotNull();
 
@@ -1257,7 +1259,7 @@ class PostControllerIT {
         long postId = 1;
 
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/{id}/unpublish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class, postId);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, postId);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -1275,7 +1277,7 @@ class PostControllerIT {
     @DisplayName("unpublishById returns error details and status 400 Bad Request when id is not valid")
     void unpublishById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
         ResponseEntity<ErrorDetails> responseEntity = restTemplate.exchange("/posts/invalidID/unpublish", HttpMethod.PUT,
-                new HttpEntity<>(null, httpHeadersWithRoleAdminJwt), ErrorDetails.class);
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class);
 
         assertThat(responseEntity).isNotNull();
 

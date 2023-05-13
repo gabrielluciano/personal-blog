@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -53,6 +54,9 @@ public class Post extends AbstractPersistentObject {
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
+
+    @ManyToOne
+    private User author;
 
     @Override
     public String toString() {

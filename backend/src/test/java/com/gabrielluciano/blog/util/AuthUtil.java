@@ -19,16 +19,19 @@ public class AuthUtil {
     private final UserService userService;
 
     public HttpHeaders getHttpHeadersForAdminUser() {
-        return getHttpHeadersForUserWithIdEmailAndRoles(1L, "john@mail.com", Set.of(Role.ADMIN));
+        return getHttpHeadersForUserWithIdEmailAndRoles("adminuser@mail.com", Set.of(Role.USER, Role.EDITOR, Role.ADMIN));
     }
 
-    public HttpHeaders getHttpHeadersForUserWithNoRole() {
-        return getHttpHeadersForUserWithIdEmailAndRoles(2L, "mark@mail.com", Set.of());
+    public HttpHeaders getHttpHeadersForEditorUser() {
+        return getHttpHeadersForUserWithIdEmailAndRoles("editoruser@mail.com", Set.of(Role.USER, Role.EDITOR));
     }
 
-    private HttpHeaders getHttpHeadersForUserWithIdEmailAndRoles(long id, String email, Set<Role> roles) {
+    public HttpHeaders getHttpHeadersForUser() {
+        return getHttpHeadersForUserWithIdEmailAndRoles("user@mail.com", Set.of(Role.USER));
+    }
+
+    private HttpHeaders getHttpHeadersForUserWithIdEmailAndRoles(String email, Set<Role> roles) {
         User user = User.builder()
-                .id(id)
                 .name(email)
                 .email(email)
                 .password("{bcrypt}$2a$10$22TVLWAtcnOpYwU3gXYNL.2ipe1jgiPLeM/AqWitvFTI37gc.yIBW") // pw: P@ssword1

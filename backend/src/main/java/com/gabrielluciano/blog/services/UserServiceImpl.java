@@ -5,7 +5,9 @@ import com.gabrielluciano.blog.dto.user.UserCreateRequest;
 import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.InvalidCredentialsException;
+import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.UserMapper;
+import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.repositories.UserRepository;
 import com.gabrielluciano.blog.security.jwt.JWTUtil;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +41,25 @@ public class UserServiceImpl implements UserService {
             return jwtUtil.createToken(user);
         }
         throw new InvalidCredentialsException();
+    }
+
+    @Override
+    public void addEditorRole(long id) {
+        User user = findByIdOrThrowResourceNotFoundException(id);
+        user.setRoles(Set.of(Role.USER, Role.EDITOR));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void removeEditorRole(long id) {
+        User user = findByIdOrThrowResourceNotFoundException(id);
+        user.setRoles(Set.of(Role.USER));
+        userRepository.save(user);
+    }
+
+    private User findByIdOrThrowResourceNotFoundException(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
     }
 
     private User findUserByEmailOrThrowInvalidCredentialsException(String email) {

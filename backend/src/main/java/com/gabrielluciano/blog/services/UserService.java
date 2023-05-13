@@ -9,4 +9,8 @@ public interface UserService {
     UserResponse signup(UserCreateRequest userCreateRequest);
 
     String login(LoginRequest loginRequest);
+
+    void addEditorRole(long id);
+
+    void removeEditorRole(long id);
 }

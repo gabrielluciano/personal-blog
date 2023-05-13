@@ -1,6 +1,7 @@
 package com.gabrielluciano.blog.dto.post;
 
 import com.gabrielluciano.blog.dto.tag.TagResponse;
+import com.gabrielluciano.blog.dto.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,5 @@ public class PostResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime publishedAt;
     private Set<TagResponse> tags;
+    private UserResponse author;
 }

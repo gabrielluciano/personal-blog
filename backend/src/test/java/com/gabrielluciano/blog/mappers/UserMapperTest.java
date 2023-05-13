@@ -32,7 +32,7 @@ class UserMapperTest {
 
         assertThat(user.getRoles())
                 .hasSize(1)
-                .contains(Role.ADMIN);
+                .contains(Role.USER);
     }
 
     @Test
