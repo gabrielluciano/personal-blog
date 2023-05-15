@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +31,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf().disable() // TODO: Replace this line with csrf configuration
+                .csrf().disable()
+                .cors(conf -> conf.configurationSource(req -> new CorsConfiguration().applyPermitDefaultValues()))
+                .sessionManagement(conf -> conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(conf -> conf.authenticationEntryPoint(new JWTAuthenticationEntryPoint()))
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
@@ -37,7 +42,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/signup", "/login").permitAll()
                         .requestMatchers("/users/**").hasRole(Role.ADMIN.name())
                         .anyRequest().hasAnyRole(Role.EDITOR.name(), Role.ADMIN.name()))
-                .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint())
-                .and().build();
+                .build();
     }
 }
