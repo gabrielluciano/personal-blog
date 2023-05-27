@@ -1,0 +1,10 @@
+// Colors
+$dark-background-color: #212121;
+$dark-primary: #304FFE;
+$text-white: #fff;
+
+// Mixins
+@mixin title-bold {
+  font-family: Inter;
+  font-weight: 700;
+}

@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 86px;
+}
+
+.app-header {
+
+  width: 100%;
+  max-width: 1088px;
+
+  h2 {
+    @include title-bold;
+    font-size: 2rem;
+
+    color: $text-white;
+
+    span {
+      color: $dark-primary;
+    }
+  }
+}
