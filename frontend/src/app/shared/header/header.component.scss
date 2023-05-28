@@ -1,11 +1,11 @@
 @import '../../styles/variables';
 
 :host {
+  height: 86px;
+
   display: flex;
   justify-content: center;
   align-items: center;
-
-  height: 86px;
 }
 
 .app-header {
@@ -13,14 +13,39 @@
   width: 100%;
   max-width: 1088px;
 
-  h2 {
-    @include title-bold;
-    font-size: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-    color: $text-white;
+  .app-header__title {
+    h2 {
+      @include title-bold;
+      font-size: 2rem;
 
-    span {
-      color: $dark-primary;
+      color: $text-white;
+
+      span {
+        color: $dark-primary;
+      }
+    }
+  }
+
+  .app-header__buttons {
+    display: flex;
+    gap: 30px;
+
+    a img {
+      filter: $white-color-filter;
+
+      transition: all ease-in-out 0.3s;
+
+      &.github-logo:hover {
+        filter: $github-color-filter;
+      }
+
+      &.linkedin-logo:hover {
+        filter: $linkedin-color-filter;
+      }
     }
   }
 }
