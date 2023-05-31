@@ -1,0 +1,29 @@
+@import '../../../styles/variables';
+
+.app-hero {
+  max-width: 716px;
+
+  margin-top: 48px;
+
+  display: flex;
+  gap: 42px;
+
+  .app-hero__image img {
+    width: 144px;
+  }
+
+  .app-hero__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+
+    h1 {
+      @include blog-logo-style;
+    }
+
+    p {
+      color: $text-white;
+    }
+  }
+}

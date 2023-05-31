@@ -9,7 +9,6 @@
 }
 
 .app-header {
-
   width: 100%;
   max-width: 1088px;
 
@@ -19,14 +18,7 @@
 
   .app-header__title {
     h2 {
-      @include title-bold;
-      font-size: 2rem;
-
-      color: $text-white;
-
-      span {
-        color: $dark-primary;
-      }
+      @include blog-logo-style;
     }
   }
 
