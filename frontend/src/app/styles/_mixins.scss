@@ -1,0 +1,15 @@
+@mixin title-bold {
+  font-family: Inter;
+  font-weight: 700;
+}
+
+@mixin blog-logo {
+  @include title-bold;
+  font-size: 2rem;
+
+  color: var(--white);
+
+  span {
+    color: var(--blue);
+  }
+}

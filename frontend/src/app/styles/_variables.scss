@@ -1,26 +1,13 @@
-// Colors
-$dark-background-color: #212121;
-$dark-primary: #304FFE;
-$text-white: #fff;
+:root {
+  // Colors
+  --black: #212121;
+  --white: #FAFAFA;
+  --gray: #CBCBCB;
+  --blue: #304FFE;
+  --red: #FB3640;
 
-// Mixins
-@mixin title-bold {
-  font-family: Inter;
-  font-weight: 700;
+  // Filters
+  --white-filter: invert(100%) sepia(4%) saturate(12%) hue-rotate(165deg) brightness(105%) contrast(96%);
+  --linkedin-color-filter: invert(22%) sepia(97%) saturate(2984%) hue-rotate(199deg) brightness(89%) contrast(92%);
+  --github-color-filter: invert(46%) sepia(43%) saturate(813%) hue-rotate(80deg) brightness(82%) contrast(87%);
 }
-
-@mixin blog-logo-style {
-  @include title-bold;
-  font-size: 2rem;
-
-  color: $text-white;
-
-  span {
-    color: $dark-primary;
-  }
-}
-
-// Filters
-$white-color-filter: invert(100%) sepia(4%) saturate(12%) hue-rotate(165deg) brightness(105%) contrast(96%);
-$linkedin-color-filter: invert(22%) sepia(97%) saturate(2984%) hue-rotate(199deg) brightness(89%) contrast(92%);
-$github-color-filter: invert(46%) sepia(43%) saturate(813%) hue-rotate(80deg) brightness(82%) contrast(87%);

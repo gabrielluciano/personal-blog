@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../../styles/mixins';
 
 :host {
   height: 86px;
@@ -16,27 +16,25 @@
   justify-content: space-between;
   align-items: center;
 
-  .app-header__title {
-    h2 {
-      @include blog-logo-style;
-    }
+  .title {
+    @include blog-logo;
   }
 
-  .app-header__buttons {
+  .buttons {
     display: flex;
     gap: 30px;
 
-    a img {
-      filter: $white-color-filter;
+    img {
+      filter: var(--white-filter);
 
       transition: all ease-in-out 0.3s;
 
       &.github-logo:hover {
-        filter: $github-color-filter;
+        filter: var(--github-color-filter);
       }
 
       &.linkedin-logo:hover {
-        filter: $linkedin-color-filter;
+        filter: var(--linkedin-color-filter);
       }
     }
   }

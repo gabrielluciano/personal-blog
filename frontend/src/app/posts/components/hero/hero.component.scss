@@ -1,6 +1,6 @@
-@import '../../../styles/variables';
+@import '../../../styles/mixins';
 
-.app-hero {
+.hero {
   max-width: 716px;
 
   margin-top: 48px;
@@ -8,22 +8,22 @@
   display: flex;
   gap: 42px;
 
-  .app-hero__image img {
+  .image {
     width: 144px;
   }
 
-  .app-hero__content {
+  .content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 32px;
 
     h1 {
-      @include blog-logo-style;
+      @include blog-logo;
     }
 
     p {
-      color: $text-white;
+      color: var(--white);
     }
   }
 }
