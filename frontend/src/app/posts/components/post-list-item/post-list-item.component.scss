@@ -1,0 +1,30 @@
+.post-list-item {
+  height: 120px;
+
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  column-gap: 30px;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+
+    .publish-date {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+    }
+  }
+}
