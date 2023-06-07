@@ -6,6 +6,7 @@ import { PostsComponent } from './pages/posts/posts.component';
 import { HeroComponent } from './components/hero/hero.component';
 import { PostListItemComponent } from './components/post-list-item/post-list-item.component';
 import { PostListComponent } from './components/post-list/post-list.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { PostListComponent } from './components/post-list/post-list.component';
   ],
   imports: [
     CommonModule,
-    PostsRoutingModule
+    PostsRoutingModule,
+    SharedModule
   ]
 })
 export class PostsModule { }
