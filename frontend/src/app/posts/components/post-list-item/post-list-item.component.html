@@ -1,30 +1,29 @@
 <article class="post-list-item">
   <div class="image-container">
-    <a href="" title="Post image">
-      <img src="assets/computer-image-150.jpg" alt="">
+    <a [href]="post.slug" title="Post image">
+      <img [src]="post.imageUrl" alt="Post image">
     </a>
   </div>
   <div class="content">
     <header>
-      <a href="">
+      <a [href]="post.slug">
         <h2 class="title">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit
+          {{ post.title }}
         </h2>
       </a>
     </header>
     <main>
-      <a href="">
+      <a [href]="post.slug">
         <p class="subtitle">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum,
-          maiores veniam possimus sequi.
+          {{ post.subtitle }}
         </p>
       </a>
     </main>
     <footer class="footer">
-      <span class="publish-date">12 de janeiro de 2023 às 18:30h</span>
-      <ul class="tag-list">
-        <li>
-          <app-pill></app-pill>
+      <span class="publish-date">{{ post.publishedAt | date: 'medium' }}</span>
+      <ul class="tag-list" *ngIf="post.tags">
+        <li *ngFor="let tag of post.tags">
+          <app-pill>{{ tag.name }}</app-pill>
         </li>
       </ul>
     </footer>

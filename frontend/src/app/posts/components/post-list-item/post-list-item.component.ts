@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { PostReponse } from 'src/app/models/post/postResponse';
 
 @Component({
   selector: 'app-post-list-item',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./post-list-item.component.scss']
 })
 export class PostListItemComponent {
-
+  @Input() post!: PostReponse;
 }

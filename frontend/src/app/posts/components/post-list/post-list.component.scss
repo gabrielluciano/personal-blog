@@ -1,4 +1,11 @@
 :host {
   margin-top: 84px;
+  width: 100%;
   max-width: 824px;
+}
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { PostReponse } from 'src/app/models/post/postResponse';
+import { posts } from '../../posts';
 
 @Component({
   selector: 'app-post-list',
@@ -7,4 +9,5 @@ import { Component } from '@angular/core';
 })
 export class PostListComponent {
 
+  posts: PostReponse[] = posts;
 }
