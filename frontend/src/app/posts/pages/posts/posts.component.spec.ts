@@ -6,6 +6,7 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
 import { CustomDateComponent } from 'src/app/shared/custom-date/custom-date.component';
 import { PillComponent } from 'src/app/shared/pill/pill.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PostsComponent', () => {
   let component: PostsComponent;
@@ -13,6 +14,7 @@ describe('PostsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [PostsComponent, HeroComponent, PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent]
     });
     fixture = TestBed.createComponent(PostsComponent);

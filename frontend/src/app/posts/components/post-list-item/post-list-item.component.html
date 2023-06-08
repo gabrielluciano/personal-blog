@@ -1,19 +1,19 @@
 <article class="post-list-item" *ngIf="post">
   <div class="image-container">
-    <a [href]="post.slug" title="Post image">
+    <a [routerLink]="post.slug" title="Post image">
       <img [src]="post.imageUrl" alt="Post image" />
     </a>
   </div>
   <div class="content">
     <header>
-      <a [href]="post.slug">
+      <a [routerLink]="post.slug">
         <h2 class="title">
           {{ post.title }}
         </h2>
       </a>
     </header>
     <main>
-      <a [href]="post.slug">
+      <a [routerLink]="post.slug">
         <p class="subtitle">
           {{ post.subtitle }}
         </p>
