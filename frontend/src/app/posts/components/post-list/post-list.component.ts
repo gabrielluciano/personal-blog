@@ -8,6 +8,5 @@ import { posts } from '../../posts';
   styleUrls: ['./post-list.component.scss']
 })
 export class PostListComponent {
-
   posts: PostReponse[] = posts;
 }

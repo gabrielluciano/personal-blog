@@ -1,4 +1,4 @@
-<article class="post-list-item">
+<article class="post-list-item" *ngIf="post">
   <div class="image-container">
     <a [href]="post.slug" title="Post image">
       <img [src]="post.imageUrl" alt="Post image" />
