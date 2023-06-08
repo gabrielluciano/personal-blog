@@ -1,7 +1,7 @@
 <article class="post-list-item">
   <div class="image-container">
     <a [href]="post.slug" title="Post image">
-      <img [src]="post.imageUrl" alt="Post image">
+      <img [src]="post.imageUrl" alt="Post image" />
     </a>
   </div>
   <div class="content">
@@ -20,7 +20,7 @@
       </a>
     </main>
     <footer class="footer">
-      <span class="publish-date">{{ post.publishedAt | date: 'medium' }}</span>
+      <app-custom-date class="publish-date" [dateString]="post.publishedAt"></app-custom-date>
       <ul class="tag-list" *ngIf="post.tags">
         <li *ngFor="let tag of post.tags">
           <app-pill [path]="tag.slug">{{ tag.name }}</app-pill>
