@@ -23,7 +23,7 @@
       <span class="publish-date">{{ post.publishedAt | date: 'medium' }}</span>
       <ul class="tag-list" *ngIf="post.tags">
         <li *ngFor="let tag of post.tags">
-          <app-pill>{{ tag.name }}</app-pill>
+          <app-pill [path]="tag.slug">{{ tag.name }}</app-pill>
         </li>
       </ul>
     </footer>
