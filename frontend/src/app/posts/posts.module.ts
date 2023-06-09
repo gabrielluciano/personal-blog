@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { PostsRoutingModule } from './posts-routing.module';
 import { PostsComponent } from './pages/posts/posts.component';
 import { HeroComponent } from './components/hero/hero.component';
@@ -18,6 +20,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   imports: [
     CommonModule,
+    MatProgressSpinnerModule,
     PostsRoutingModule,
     SharedModule
   ]

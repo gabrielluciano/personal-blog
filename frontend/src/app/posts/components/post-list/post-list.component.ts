@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PostReponse } from 'src/app/models/post/postResponse';
-import { posts } from '../../posts';
+import { Page } from 'src/app/models/page';
 
 @Component({
   selector: 'app-post-list',
@@ -8,5 +8,5 @@ import { posts } from '../../posts';
   styleUrls: ['./post-list.component.scss']
 })
 export class PostListComponent {
-  posts: PostReponse[] = posts;
+  @Input() postsPage!: Page<PostReponse>;
 }

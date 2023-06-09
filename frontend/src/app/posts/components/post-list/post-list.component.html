@@ -1,3 +1,13 @@
-<section class="post-list" >
-  <app-post-list-item *ngFor="let post of posts" [post]="post"></app-post-list-item>
+<section>
+  <div class="post-list" *ngIf="postsPage; else loading">
+    <app-post-list-item
+      *ngFor="let post of postsPage.content"
+      [post]="post"
+    ></app-post-list-item>
+  </div>
+  <ng-template #loading>
+    <div class="loading">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+  </ng-template>
 </section>
