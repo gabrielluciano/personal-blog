@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
-import { HeaderComponent } from './header/header.component';
-import { PillComponent } from './pill/pill.component';
-import { CustomDateComponent } from './custom-date/custom-date.component';
+import { HeaderComponent } from './components/header/header.component';
+import { PillComponent } from './components/pill/pill.component';
+import { CustomDateComponent } from './components/custom-date/custom-date.component';
 import { CommonModule } from '@angular/common';
 
 @NgModule({

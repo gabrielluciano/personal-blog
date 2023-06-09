@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PostListItemComponent } from './post-list-item.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { CustomDateComponent } from 'src/app/shared/custom-date/custom-date.component';
+import { CustomDateComponent } from 'src/app/shared/components/custom-date/custom-date.component';
 
 describe('PostListItemComponent', () => {
   let component: PostListItemComponent;
