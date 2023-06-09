@@ -1,0 +1,31 @@
+<article class="post-list-item" *ngIf="post">
+  <div class="image-container">
+    <a [routerLink]="post.slug" title="Post image">
+      <img [src]="post.imageUrl" alt="Post image" />
+    </a>
+  </div>
+  <div class="content">
+    <header>
+      <a [routerLink]="post.slug">
+        <h2 class="title">
+          {{ post.title }}
+        </h2>
+      </a>
+    </header>
+    <main>
+      <a [routerLink]="post.slug">
+        <p class="subtitle">
+          {{ post.subtitle }}
+        </p>
+      </a>
+    </main>
+    <footer class="footer">
+      <app-custom-date class="publish-date" [dateString]="post.publishedAt"></app-custom-date>
+      <ul class="tag-list" *ngIf="post.tags">
+        <li *ngFor="let tag of post.tags">
+          <app-pill [path]="tag.slug">{{ tag.name }}</app-pill>
+        </li>
+      </ul>
+    </footer>
+  </div>
+</article>
