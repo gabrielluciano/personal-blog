@@ -4,10 +4,18 @@
       *ngFor="let post of postsPage.content"
       [post]="post"
     ></app-post-list-item>
+    <mat-paginator
+      class="paginator"
+      (page)="onPageEvent($event)"
+      [length]="postsPage.totalElements"
+      [pageIndex]="postsPage.number"
+      [pageSize]="postsPage.size"
+      [pageSizeOptions]="[10, 20, 30]"
+    ></mat-paginator>
   </div>
   <ng-template #loading>
     <div class="loading">
-      <mat-spinner [diameter]="60"></mat-spinner>
+      <mat-spinner [diameter]="60" title="Posts loading spinner"></mat-spinner>
     </div>
   </ng-template>
 </section>

@@ -25,12 +25,12 @@ describe('PostsService', () => {
   });
 
   it('should return a Page of PostReponse', () => {
-    service.list().subscribe(page => {
+    service.list(5,0).subscribe(page => {
       expect(page).toBeTruthy();
       expect(page.content.length).toEqual(postsPageMock.content.length);
     });
 
-    const req = httpTestingController.expectOne("http://localhost:8080/posts");
+    const req = httpTestingController.expectOne("http://localhost:8080/posts?size=5&page=0");
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);
   });

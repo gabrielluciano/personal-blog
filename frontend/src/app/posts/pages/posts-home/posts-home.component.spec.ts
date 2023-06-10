@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostsComponent } from './posts.component';
+import { PostsHomeComponent } from './posts-home.component';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { PostListComponent } from '../../components/post-list/post-list.component';
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
@@ -10,10 +10,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { PostsService } from '../../posts.service';
 import { of } from 'rxjs';
 import { postsPageMock } from '../../postsPageMock';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('PostsComponent', () => {
-  let component: PostsComponent;
-  let fixture: ComponentFixture<PostsComponent>;
+describe('PostsHomeComponent', () => {
+  let component: PostsHomeComponent;
+  let fixture: ComponentFixture<PostsHomeComponent>;
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
 
   beforeEach(() => {
@@ -22,13 +24,13 @@ describe('PostsComponent', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [PostsComponent, HeroComponent, PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent],
+      imports: [RouterTestingModule, BrowserAnimationsModule, MatPaginatorModule],
+      declarations: [PostsHomeComponent, HeroComponent, PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent],
       providers: [
         { provide: PostsService, useValue: postsServiceSpy }
       ]
     });
-    fixture = TestBed.createComponent(PostsComponent);
+    fixture = TestBed.createComponent(PostsHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
