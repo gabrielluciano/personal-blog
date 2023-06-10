@@ -5,14 +5,13 @@ import { PostReponse } from '../models/post/postResponse';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PostsService {
-
   DEFAULT_PAGE_SIZE = 10;
   DEFAULT_PAGE_INDEX = 0;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   list(pageSize: number, pageIndex: number): Observable<Page<PostReponse>> {
     if (!pageSize && pageSize != 0) {
@@ -23,8 +22,8 @@ export class PostsService {
       pageIndex = this.DEFAULT_PAGE_INDEX;
     }
 
-    return this.http.get<Page<PostReponse>>("http://localhost:8080/posts", {
-      params: new HttpParams().set("size", pageSize).set("page", pageIndex)
+    return this.http.get<Page<PostReponse>>('http://localhost:8080/posts', {
+      params: new HttpParams().set('size', pageSize).set('page', pageIndex),
     });
   }
 }

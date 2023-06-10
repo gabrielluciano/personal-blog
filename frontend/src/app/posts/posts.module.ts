@@ -11,20 +11,14 @@ import { PostListItemComponent } from './components/post-list-item/post-list-ite
 import { PostListComponent } from './components/post-list/post-list.component';
 import { SharedModule } from '../shared/shared.module';
 
-
 @NgModule({
-  declarations: [
-    PostsHomeComponent,
-    HeroComponent,
-    PostListItemComponent,
-    PostListComponent
-  ],
+  declarations: [PostsHomeComponent, HeroComponent, PostListItemComponent, PostListComponent],
   imports: [
     CommonModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
     PostsRoutingModule,
-    SharedModule
-  ]
+    SharedModule,
+  ],
 })
-export class PostsModule { }
+export class PostsModule {}

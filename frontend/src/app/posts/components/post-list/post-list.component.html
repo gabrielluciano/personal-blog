@@ -1,9 +1,6 @@
 <section>
   <div class="post-list" *ngIf="postsPage; else loading">
-    <app-post-list-item
-      *ngFor="let post of postsPage.content"
-      [post]="post"
-    ></app-post-list-item>
+    <app-post-list-item *ngFor="let post of postsPage.content" [post]="post"></app-post-list-item>
     <mat-paginator
       class="paginator"
       (page)="onPageEvent($event)"

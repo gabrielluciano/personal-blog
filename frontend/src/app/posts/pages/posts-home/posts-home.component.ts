@@ -6,7 +6,7 @@ import { PostReponse } from 'src/app/models/post/postResponse';
 @Component({
   selector: 'app-posts-home',
   templateUrl: './posts-home.component.html',
-  styleUrls: ['./posts-home.component.scss']
+  styleUrls: ['./posts-home.component.scss'],
 })
 export class PostsHomeComponent {
   postsPage!: Page<PostReponse>;
@@ -16,10 +16,10 @@ export class PostsHomeComponent {
   constructor(private postsService: PostsService) {
     effect(() => {
       this.list(this.pageSize(), this.pageIndex());
-    })
+    });
   }
 
   list(pageSize: number, pageIndex: number) {
-    this.postsService.list(pageSize, pageIndex).subscribe(page => this.postsPage = page);
+    this.postsService.list(pageSize, pageIndex).subscribe((page) => (this.postsPage = page));
   }
 }

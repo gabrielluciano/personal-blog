@@ -6,7 +6,7 @@ import { PageEvent } from '@angular/material/paginator';
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.scss']
+  styleUrls: ['./post-list.component.scss'],
 })
 export class PostListComponent {
   @Input() postsPage!: Page<PostReponse>;

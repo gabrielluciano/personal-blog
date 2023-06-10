@@ -20,15 +20,20 @@ describe('PostsHomeComponent', () => {
 
   beforeEach(() => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', {
-      list: of(postsPageMock)
+      list: of(postsPageMock),
     });
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, BrowserAnimationsModule, MatPaginatorModule],
-      declarations: [PostsHomeComponent, HeroComponent, PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent],
-      providers: [
-        { provide: PostsService, useValue: postsServiceSpy }
-      ]
+      declarations: [
+        PostsHomeComponent,
+        HeroComponent,
+        PostListComponent,
+        PostListItemComponent,
+        CustomDateComponent,
+        PillComponent,
+      ],
+      providers: [{ provide: PostsService, useValue: postsServiceSpy }],
     });
     fixture = TestBed.createComponent(PostsHomeComponent);
     component = fixture.componentInstance;
@@ -42,5 +47,5 @@ describe('PostsHomeComponent', () => {
   it('should fetch Page of PostResponse', () => {
     expect(component).toBeTruthy();
     expect(component.postsPage.numberOfElements).toBe(postsPageMock.content.length);
-  })
+  });
 });

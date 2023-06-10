@@ -1,6 +1,6 @@
-import { Page } from "../models/page";
-import { PostReponse } from "../models/post/postResponse";
-import { postsMock } from "./postsMock";
+import { Page } from '../models/page';
+import { PostReponse } from '../models/post/postResponse';
+import { postsMock } from './postsMock';
 
 export const postsPageMock: Page<PostReponse> = {
   content: postsMock,
@@ -8,13 +8,13 @@ export const postsPageMock: Page<PostReponse> = {
     sort: {
       empty: true,
       sorted: false,
-      unsorted: true
+      unsorted: true,
     },
     offset: 0,
     pageNumber: 0,
     pageSize: 5,
     unpaged: false,
-    paged: true
+    paged: true,
   },
   last: true,
   totalPages: 2,
@@ -24,9 +24,9 @@ export const postsPageMock: Page<PostReponse> = {
   sort: {
     empty: true,
     sorted: false,
-    unsorted: true
+    unsorted: true,
   },
   first: true,
   numberOfElements: 5,
-  empty: false
+  empty: false,
 };

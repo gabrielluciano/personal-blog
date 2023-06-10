@@ -6,19 +6,9 @@ import { CustomDateComponent } from './components/custom-date/custom-date.compon
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [
-    HeaderComponent,
-    PillComponent,
-    CustomDateComponent
-  ],
-  imports: [
-    CommonModule
-  ],
-  exports: [
-    HeaderComponent,
-    PillComponent,
-    CustomDateComponent
-  ],
-  providers: []
+  declarations: [HeaderComponent, PillComponent, CustomDateComponent],
+  imports: [CommonModule],
+  exports: [HeaderComponent, PillComponent, CustomDateComponent],
+  providers: [],
 })
-export class SharedModule { }
+export class SharedModule {}

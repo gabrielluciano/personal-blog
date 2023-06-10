@@ -16,7 +16,7 @@ describe('PostListComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, MatProgressSpinnerModule],
-      declarations: [PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent]
+      declarations: [PostListComponent, PostListItemComponent, CustomDateComponent, PillComponent],
     });
     fixture = TestBed.createComponent(PostListComponent);
     component = fixture.componentInstance;

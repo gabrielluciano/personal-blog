@@ -11,7 +11,7 @@ describe('PostListItemComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule],
-      declarations: [PostListItemComponent, CustomDateComponent]
+      declarations: [PostListItemComponent, CustomDateComponent],
     });
     fixture = TestBed.createComponent(PostListItemComponent);
     component = fixture.componentInstance;
