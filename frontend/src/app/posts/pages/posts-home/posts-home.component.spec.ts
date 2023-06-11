@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PostsHomeComponent } from './posts-home.component';
-import { HeroComponent } from '../../components/hero/hero.component';
+import { HeroComponent } from '../../../shared/components/hero/hero.component';
 import { PostListComponent } from '../../components/post-list/post-list.component';
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
 import { PillComponent } from 'src/app/shared/components/pill/pill.component';
