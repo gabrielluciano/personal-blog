@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 
 import { HeaderComponent } from './components/header/header.component';
 import { PillComponent } from './components/pill/pill.component';
-import { CustomDateComponent } from './components/custom-date/custom-date.component';
 import { CommonModule } from '@angular/common';
+import { DateFormatPipe } from './pipes/date-format.pipe';
 
 @NgModule({
-  declarations: [HeaderComponent, PillComponent, CustomDateComponent],
+  declarations: [HeaderComponent, PillComponent, DateFormatPipe],
   imports: [CommonModule],
-  exports: [HeaderComponent, PillComponent, CustomDateComponent],
+  exports: [HeaderComponent, PillComponent, DateFormatPipe],
   providers: [],
 })
 export class SharedModule {}

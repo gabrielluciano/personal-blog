@@ -4,7 +4,6 @@ import { PostsHomeComponent } from './posts-home.component';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { PostListComponent } from '../../components/post-list/post-list.component';
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
-import { CustomDateComponent } from 'src/app/shared/components/custom-date/custom-date.component';
 import { PillComponent } from 'src/app/shared/components/pill/pill.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PostsService } from '../../posts.service';
@@ -12,6 +11,7 @@ import { of } from 'rxjs';
 import { postsPageMock } from '../../postsPageMock';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DateFormatPipe } from 'src/app/shared/pipes/date-format.pipe';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
@@ -30,8 +30,8 @@ describe('PostsHomeComponent', () => {
         HeroComponent,
         PostListComponent,
         PostListItemComponent,
-        CustomDateComponent,
         PillComponent,
+        DateFormatPipe,
       ],
       providers: [{ provide: PostsService, useValue: postsServiceSpy }],
     });

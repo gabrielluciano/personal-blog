@@ -20,7 +20,7 @@
       </a>
     </main>
     <footer class="footer">
-      <app-custom-date class="publish-date" [dateString]="post.publishedAt"></app-custom-date>
+      <span class="publish-date">{{ post.publishedAt | dateFormat }}</span>
       <ul class="tag-list" *ngIf="post.tags">
         <li *ngFor="let tag of post.tags">
           <app-pill [path]="tag.slug">{{ tag.name }}</app-pill>
