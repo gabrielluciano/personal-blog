@@ -2,7 +2,6 @@
   <div class="post-list" *ngIf="postsPage; else loading">
     <app-post-list-item *ngFor="let post of postsPage.content" [post]="post"></app-post-list-item>
     <app-paginator
-      class="paginator"
       (page)="onPageEvent($event)"
       [length]="postsPage.totalElements"
       [pageIndex]="postsPage.number"
