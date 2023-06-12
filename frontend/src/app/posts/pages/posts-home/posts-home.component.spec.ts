@@ -9,9 +9,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { PostsService } from '../../posts.service';
 import { of } from 'rxjs';
 import { postsPageMock } from '../../postsPageMock';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFormatPipe } from 'src/app/shared/pipes/date-format.pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
@@ -24,7 +24,7 @@ describe('PostsHomeComponent', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, BrowserAnimationsModule, MatPaginatorModule],
+      imports: [RouterTestingModule, BrowserAnimationsModule, SharedModule],
       declarations: [
         PostsHomeComponent,
         HeroComponent,

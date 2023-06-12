@@ -25,20 +25,3 @@
   justify-content: center;
   align-items: center;
 }
-
-.paginator {
-  margin-bottom: 32px;
-
-  align-self: center;
-  font-size: 0.8rem;
-
-  background-color: var(--black);
-
-  @media (max-width: $laptop) {
-    font-size: 0.75rem;
-  }
-
-  @media (max-width: $mobile) {
-    font-size: 0.625rem;
-  }
-}

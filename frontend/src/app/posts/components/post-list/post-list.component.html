@@ -1,14 +1,14 @@
 <section>
   <div class="post-list" *ngIf="postsPage; else loading">
     <app-post-list-item *ngFor="let post of postsPage.content" [post]="post"></app-post-list-item>
-    <mat-paginator
+    <app-paginator
       class="paginator"
       (page)="onPageEvent($event)"
       [length]="postsPage.totalElements"
       [pageIndex]="postsPage.number"
       [pageSize]="postsPage.size"
       [pageSizeOptions]="[10, 20, 30]"
-    ></mat-paginator>
+    ></app-paginator>
   </div>
   <ng-template #loading>
     <div class="loading">
