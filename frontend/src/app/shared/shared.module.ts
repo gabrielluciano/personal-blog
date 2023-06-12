@@ -5,11 +5,12 @@ import { PillComponent } from './components/pill/pill.component';
 import { CommonModule } from '@angular/common';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { RouterModule } from '@angular/router';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
-  declarations: [HeaderComponent, PillComponent, DateFormatPipe],
+  declarations: [HeaderComponent, PillComponent, DateFormatPipe, FooterComponent],
   imports: [CommonModule, RouterModule],
-  exports: [HeaderComponent, PillComponent, DateFormatPipe],
+  exports: [HeaderComponent, FooterComponent, PillComponent, DateFormatPipe],
   providers: [],
 })
 export class SharedModule {}
