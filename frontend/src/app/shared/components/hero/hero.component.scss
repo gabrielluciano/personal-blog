@@ -1,15 +1,34 @@
 @import 'mixins';
+@import 'variables';
 
 .hero {
-  max-width: 716px;
+  max-width: 748px;
 
   margin-top: 48px;
+  padding: 0 16px;
 
   display: flex;
+  align-items: center;
   gap: 42px;
+
+  @media (max-width: $tablet) {
+    gap: 32px;
+  }
 
   .image {
     width: 144px;
+
+    @media (max-width: $laptop) {
+      width: 130px;
+    }
+
+    @media (max-width: $tablet) {
+      width: 112px;
+    }
+
+    @media (max-width: $mobile) {
+      width: 100px;
+    }
   }
 
   .content {
@@ -18,12 +37,36 @@
     justify-content: center;
     gap: 32px;
 
+    @media (max-width: $tablet) {
+      gap: 24px;
+    }
+
+    @media (max-width: $mobile) {
+      gap: 16px;
+    }
+
     h1 {
       @include blog-logo;
+
+      @media (max-width: $laptop) {
+        font-size: 1.75rem;
+      }
+
+      @media (max-width: $mobile) {
+        font-size: 1.5rem;
+      }
     }
 
     p {
       color: var(--white);
+
+      @media (max-width: $laptop) {
+        font-size: 0.875rem;
+      }
+
+      @media (max-width: $mobile) {
+        font-size: 0.75rem;
+      }
     }
   }
 }

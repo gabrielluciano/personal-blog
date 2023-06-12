@@ -1,9 +1,18 @@
+@import 'variables';
+
 .post-list-item {
   height: 120px;
 
   display: grid;
   grid-template-columns: 170px 1fr;
   column-gap: 30px;
+
+  @media (max-width: $tablet) {
+    height: 90px;
+
+    grid-template-columns: 130px 1fr;
+    column-gap: 20px;
+  }
 
   .image-container {
     height: 100%;
@@ -24,12 +33,17 @@
 
       img {
         height: 120px;
+        object-fit: cover;
 
-        transition: all 0.7s;
+        transition: transform, filter, 0.7s;
 
         &:hover {
           transform: scale(1.1);
           filter: brightness(1.2);
+        }
+
+        @media (max-width: $tablet) {
+          height: 90px;
         }
       }
     }
@@ -40,6 +54,8 @@
     flex-direction: column;
     justify-content: space-between;
 
+    overflow: hidden;
+
     .title {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
@@ -47,6 +63,10 @@
 
       &:hover {
         text-decoration: underline;
+      }
+
+      @media (max-width: $tablet) {
+        font-size: 1.1rem;
       }
     }
 
@@ -56,6 +76,17 @@
 
       &:hover {
         text-decoration: underline;
+      }
+
+      @media (max-width: $laptop) {
+        height: 20px;
+        max-height: 20px;
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        font-size: 0.75rem;
       }
     }
 
@@ -68,6 +99,10 @@
         font-family: 'Inter', sans-serif;
         font-weight: 300;
         font-size: 0.75rem;
+
+        @media (max-width: $tablet) {
+          font-size: 0.625rem;
+        }
       }
 
       .tag-list {
@@ -75,6 +110,10 @@
 
         display: flex;
         gap: 16px;
+
+        @media (max-width: 630px) {
+          display: none;
+        }
       }
     }
   }
