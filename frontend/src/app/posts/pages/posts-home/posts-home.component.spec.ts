@@ -6,7 +6,7 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
 import { PillComponent } from 'src/app/shared/components/pill/pill.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { PostsService } from '../../posts.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
 import { of } from 'rxjs';
 import { postsPageMock } from '../../postsPageMock';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { PostsService } from './posts.service';
-import { postsPageMock } from './postsPageMock';
+import { postsPageMock } from '../../posts/postsPageMock';
 
 describe('PostsService', () => {
   let service: PostsService;
@@ -27,7 +27,9 @@ describe('PostsService', () => {
       expect(page.content.length).toEqual(postsPageMock.content.length);
     });
 
-    const req = httpTestingController.expectOne('http://localhost:8080/posts?size=5&page=0');
+    const req = httpTestingController.expectOne(
+      'http://localhost:8080/posts?tag=&sort=createdAt,desc&size=5&page=0'
+    );
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);
   });

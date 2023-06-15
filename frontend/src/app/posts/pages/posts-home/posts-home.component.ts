@@ -1,5 +1,5 @@
 import { Component, effect, signal } from '@angular/core';
-import { PostsService } from '../../posts.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
 
