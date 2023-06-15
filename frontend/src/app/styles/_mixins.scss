@@ -1,5 +1,5 @@
 @mixin title-bold {
-  font-family: Inter;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
 }
 
@@ -12,4 +12,12 @@
   span {
     color: var(--blue);
   }
+}
+
+@mixin loading {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

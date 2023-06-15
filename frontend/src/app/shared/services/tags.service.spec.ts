@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { TagsService } from './tags.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { tagsMock } from 'src/app/posts/tagsMock';
+import { tagsMock } from 'src/app/models/tag/tagsMock';
 
 describe('TagsService', () => {
   let service: TagsService;

@@ -1,5 +1,5 @@
-import { Page } from '../models/page';
-import { PostReponse } from '../models/post/postResponse';
+import { Page } from '../page';
+import { PostReponse } from './postResponse';
 import { postsMock } from './postsMock';
 
 export const postsPageMock: Page<PostReponse> = {

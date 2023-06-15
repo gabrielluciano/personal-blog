@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { PostsService } from './posts.service';
-import { postsPageMock } from '../../posts/postsPageMock';
+import { postsPageMock } from '../../models/post/postsPageMock';
+import { postsMock } from 'src/app/models/post/postsMock';
 
 describe('PostsService', () => {
   let service: PostsService;
@@ -32,5 +33,18 @@ describe('PostsService', () => {
     );
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);
+  });
+
+  it('should return a PostReponse', () => {
+    service.findBySlug(postsMock[0].slug).subscribe((post) => {
+      expect(post).toBeTruthy();
+      expect(post.slug).toEqual(postsMock[0].slug);
+    });
+
+    const req = httpTestingController.expectOne(
+      `http://localhost:8080/posts/slug/${postsMock[0].slug}`
+    );
+    expect(req.request.method).toEqual('GET');
+    req.flush(postsMock[0]);
   });
 });

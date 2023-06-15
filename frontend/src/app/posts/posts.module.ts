@@ -10,6 +10,7 @@ import { PostListItemComponent } from './components/post-list-item/post-list-ite
 import { PostListComponent } from './components/post-list/post-list.component';
 import { SharedModule } from '../shared/shared.module';
 import { PostsTagComponent } from './pages/posts-tag/posts-tag.component';
+import { PostComponent } from './pages/post/post.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { PostsTagComponent } from './pages/posts-tag/posts-tag.component';
     PostListItemComponent,
     PostListComponent,
     PostsTagComponent,
+    PostComponent,
   ],
   imports: [CommonModule, MatProgressSpinnerModule, PostsRoutingModule, SharedModule],
 })

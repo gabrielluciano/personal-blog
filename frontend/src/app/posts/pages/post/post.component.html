@@ -1,0 +1,22 @@
+<article class="post" *ngIf="post; else loading">
+  <header class="header">
+    <h1 class="title">{{ post.title }}</h1>
+    <h3 class="subtitle">{{ post.subtitle }}</h3>
+    <div class="post-info">
+      <span class="author"
+        >Por <strong>{{ post.author.name }}</strong></span
+      >
+      <span>Criado em {{ post.createdAt | dateFormat }}</span>
+    </div>
+    <ul class="tags" *ngIf="post.tags">
+      <li *ngFor="let tag of post.tags">
+        <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
+      </li>
+    </ul>
+  </header>
+</article>
+<ng-template #loading>
+  <div class="loading">
+    <mat-spinner [diameter]="60" title="Posts loading spinner"></mat-spinner>
+  </div>
+</ng-template>

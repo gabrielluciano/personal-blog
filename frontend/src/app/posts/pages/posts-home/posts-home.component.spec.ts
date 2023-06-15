@@ -8,7 +8,7 @@ import { PillComponent } from 'src/app/shared/components/pill/pill.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PostsService } from 'src/app/shared/services/posts.service';
 import { of } from 'rxjs';
-import { postsPageMock } from '../../postsPageMock';
+import { postsPageMock } from '../../../models/post/postsPageMock';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFormatPipe } from 'src/app/shared/pipes/date-format.pipe';
 import { SharedModule } from 'src/app/shared/shared.module';

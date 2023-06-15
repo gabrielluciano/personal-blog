@@ -1,4 +1,4 @@
-import { PostReponse } from '../models/post/postResponse';
+import { PostReponse } from './postResponse';
 
 export const postsMock: PostReponse[] = [
   // Post 1

@@ -1,4 +1,4 @@
-import { TagResponse } from '../models/tag/tagResponse';
+import { TagResponse } from './tagResponse';
 
 export const tagsMock: TagResponse[] = [
   {
