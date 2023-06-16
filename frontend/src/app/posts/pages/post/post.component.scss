@@ -1,9 +1,8 @@
+@import 'variables';
 @import 'mixins';
 
 :host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @include page-host-style;
 }
 
 .post {
@@ -11,17 +10,28 @@
   max-width: 848px;
 
   padding: 0 16px;
-  margin-top: 48px;
 }
 
 .header {
   .title {
     @include title-bold;
     font-size: 2.25rem;
+
+    @media (max-width: $laptop) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: $tablet) {
+      font-size: 1.75rem;
+    }
+
+    @media (max-width: $mobile) {
+      font-size: 1.5rem;
+    }
   }
 
   .subtitle {
-    margin-top: 32px;
+    margin-top: 24px;
 
     font-size: 1rem;
     font-weight: 400;
@@ -42,6 +52,15 @@
     strong {
       font-weight: 500;
     }
+
+    @media (max-width: $mobile) {
+      flex-direction: column;
+      justify-content: initial;
+
+      .author {
+        margin-bottom: 8px;
+      }
+    }
   }
 
   .tags {
@@ -51,6 +70,62 @@
     gap: 16px;
 
     list-style: none;
+  }
+
+  .image-container {
+    height: 350px;
+    border-radius: 12px;
+    overflow: hidden;
+
+    margin: 48px 0;
+
+    position: relative;
+
+    img {
+      object-fit: cover;
+    }
+
+    @media (max-width: $tablet) {
+      height: 300px;
+    }
+
+    @media (max-width: $mobile) {
+      height: 240px;
+    }
+  }
+}
+
+.content {
+  p {
+    margin-bottom: 48px;
+
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 32px;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 20px;
   }
 }
 

@@ -8,15 +8,21 @@
       >
       <span>Criado em {{ post.createdAt | dateFormat }}</span>
     </div>
-    <ul class="tags" *ngIf="post.tags">
+    <ul class="tags" *ngIf="post.tags.length > 0">
       <li *ngFor="let tag of post.tags">
         <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
       </li>
     </ul>
+    <div class="image-container">
+      <img ngSrc="assets/computer-image-big.jpg" alt="Imagem do post" fill />
+    </div>
   </header>
+  <main class="content">
+    {{ post.content }}
+  </main>
 </article>
 <ng-template #loading>
   <div class="loading">
-    <mat-spinner [diameter]="60" title="Posts loading spinner"></mat-spinner>
+    <mat-spinner [diameter]="60" title="Carregando posts"></mat-spinner>
   </div>
 </ng-template>

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -21,6 +21,12 @@ import { PostComponent } from './pages/post/post.component';
     PostsTagComponent,
     PostComponent,
   ],
-  imports: [CommonModule, MatProgressSpinnerModule, PostsRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule,
+    PostsRoutingModule,
+    SharedModule,
+    NgOptimizedImage,
+  ],
 })
 export class PostsModule {}

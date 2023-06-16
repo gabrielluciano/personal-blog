@@ -5,6 +5,10 @@
   margin-top: 84px;
   width: 100%;
   max-width: 824px;
+
+  @media (max-width: $tablet) {
+    margin-top: 64px;
+  }
 }
 
 .post-list {

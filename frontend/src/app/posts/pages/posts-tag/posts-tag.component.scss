@@ -2,14 +2,10 @@
 @import 'mixins';
 
 :host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @include page-host-style;
 }
 
 .title {
-  margin-top: 48px;
-
   @include blog-logo;
 
   @media (max-width: $laptop) {
