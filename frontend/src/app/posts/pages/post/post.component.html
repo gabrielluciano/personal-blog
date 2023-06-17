@@ -14,7 +14,16 @@
       </li>
     </ul>
     <div class="image-container">
-      <img ngSrc="assets/computer-image-big.jpg" alt="Imagem do post" fill />
+      <img
+        ngSrc="assets/laptop-1000w.jpg"
+        srcset="
+          assets/laptop-500w.jpg   500w,
+          assets/laptop-800w.jpg   800w,
+          assets/laptop-1000w.jpg 1000w
+        "
+        alt="Imagem do post"
+        fill
+      />
     </div>
   </header>
   <main class="content">
