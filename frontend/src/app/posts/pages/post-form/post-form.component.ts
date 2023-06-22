@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
 
 @Component({
@@ -10,7 +11,7 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
 export class PostFormComponent implements OnInit {
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -23,5 +24,13 @@ export class PostFormComponent implements OnInit {
       tags: [[], [Validators.required]],
       content: [''],
     });
+  }
+
+  navigateToHome() {
+    this.router.navigate(['/']);
+  }
+
+  submit() {
+    console.log('Call API');
   }
 }

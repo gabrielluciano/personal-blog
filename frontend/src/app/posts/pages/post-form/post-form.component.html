@@ -93,4 +93,17 @@
       <mat-hint class="hint">The post content</mat-hint>
     </mat-form-field>
   </div>
+
+  <div class="buttons">
+    <button mat-flat-button color="accent" (click)="navigateToHome()">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      (click)="submit()"
+      [disabled]="!form.valid"
+    >
+      Save
+    </button>
+  </div>
 </form>

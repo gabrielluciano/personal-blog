@@ -59,4 +59,18 @@
       color: var(--gray);
     }
   }
+
+  .buttons {
+    margin: 32px 0;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+
+    button {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+  }
 }
