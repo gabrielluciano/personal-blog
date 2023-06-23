@@ -8,6 +8,11 @@ import { RouterModule } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
 import { PaginatorComponent } from './components/paginator/paginator.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,8 +21,17 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     DateFormatPipe,
     FooterComponent,
     PaginatorComponent,
+    LoginFormComponent,
   ],
-  imports: [CommonModule, RouterModule, MatPaginatorModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatInputModule,
+  ],
   exports: [HeaderComponent, FooterComponent, PillComponent, PaginatorComponent, DateFormatPipe],
   providers: [],
 })

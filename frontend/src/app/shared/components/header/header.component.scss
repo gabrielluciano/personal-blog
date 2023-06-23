@@ -15,6 +15,7 @@
 
 .app-header {
   width: 100%;
+  height: 100%;
   max-width: 1120px;
 
   padding: 0 16px;
@@ -36,28 +37,40 @@
   }
 
   .buttons {
+    height: 100%;
     display: flex;
+    align-items: center;
+
     gap: 30px;
 
     @media (max-width: $tablet) {
       gap: 24px;
     }
 
-    img {
-      filter: var(--white-filter);
+    .login-button {
+      @include button;
+    }
 
-      transition: all ease-in-out 0.3s;
+    .link {
+      display: flex;
+      align-items: center;
 
-      &.github-logo:hover {
-        filter: var(--github-color-filter);
-      }
+      img {
+        filter: var(--white-filter);
 
-      &.linkedin-logo:hover {
-        filter: var(--linkedin-color-filter);
-      }
+        transition: all ease-in-out 0.3s;
 
-      @media (max-width: $tablet) {
-        width: 24px;
+        &.github-logo:hover {
+          filter: var(--github-color-filter);
+        }
+
+        &.linkedin-logo:hover {
+          filter: var(--linkedin-color-filter);
+        }
+
+        @media (max-width: $tablet) {
+          width: 24px;
+        }
       }
     }
   }

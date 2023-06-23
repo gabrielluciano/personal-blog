@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -8,6 +9,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [MatDialogModule],
       declarations: [HeaderComponent],
     });
     fixture = TestBed.createComponent(HeaderComponent);
@@ -18,4 +20,15 @@ describe('HeaderComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call mat dialog open method', fakeAsync(() => {
+    spyOn(component.dialog, 'open');
+
+    const button = fixture.debugElement.nativeElement.querySelector('.login-button');
+    button.click();
+
+    tick();
+
+    expect(component.dialog.open).toHaveBeenCalled();
+  }));
 });
