@@ -13,7 +13,7 @@ export class HeaderComponent {
   openDialog() {
     this.dialog.open(LoginFormComponent, {
       width: '100%',
-      maxWidth: '616px',
+      maxWidth: '560px',
       panelClass: 'dialog',
     });
   }

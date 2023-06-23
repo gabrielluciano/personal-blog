@@ -25,7 +25,6 @@ export class LoginFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.form.value);
     this.dialogRef.close();
   }
 }

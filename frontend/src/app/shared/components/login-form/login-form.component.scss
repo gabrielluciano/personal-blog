@@ -9,7 +9,7 @@
   width: 100%;
   height: 100%;
 
-  padding: 48px 32px;
+  padding: 64px 32px;
 
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
   background-color: var(--black);
 
   .title {
-    margin-bottom: 48px;
+    margin-bottom: 64px;
 
     font-family: 'Inter', sans-serif;
     font-size: 2rem;
@@ -44,9 +44,14 @@
     justify-content: center;
     gap: 16px;
 
+    @media (max-width: $mobile) {
+      flex-direction: column-reverse;
+    }
+
     .button {
       @include button;
       min-width: 96px;
+      height: 48px;
     }
   }
 }
