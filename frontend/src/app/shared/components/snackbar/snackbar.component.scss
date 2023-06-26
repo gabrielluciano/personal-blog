@@ -1,0 +1,53 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+
+  padding-right: 8px;
+
+  border-radius: 8px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  background-color: var(--blue);
+
+  .message {
+    color: var(--white);
+  }
+}
+
+.container.error {
+  background-color: var(--red);
+
+  .message {
+    color: var(--white);
+  }
+}
+
+.container.success {
+  background-color: var(--green);
+
+  .message {
+    color: var(--white);
+  }
+}
+
+.container.warn {
+  background-color: var(--yellow);
+
+  .message {
+    color: var(--black);
+  }
+}
+
+.close-button {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--black);
+}

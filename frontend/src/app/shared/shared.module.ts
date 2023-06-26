@@ -11,8 +11,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FooterComponent,
     PaginatorComponent,
     LoginFormComponent,
+    SnackbarComponent,
   ],
   imports: [
     CommonModule,
@@ -31,6 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatSnackBarModule,
   ],
   exports: [HeaderComponent, FooterComponent, PillComponent, PaginatorComponent, DateFormatPipe],
   providers: [],

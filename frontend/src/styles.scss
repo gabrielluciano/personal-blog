@@ -25,3 +25,10 @@ a {
 .dialog {
   padding: 0 20px;
 }
+
+// Remove angular material snackbar background color
+
+.mdc-snackbar__surface {
+  background-color: inherit !important;
+  padding: 0 !important;
+}

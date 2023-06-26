@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
+import { handleError } from '../util/errorHandling';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +13,15 @@ export class AuthService {
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}
 
   login(email: string, password: string): Observable<string> {
-    return this.http.post(
-      this.API + 'login',
-      { email, password },
-      {
-        responseType: 'text',
-      }
-    );
+    return this.http
+      .post(
+        this.API + 'login',
+        { email, password },
+        {
+          responseType: 'text',
+        }
+      )
+      .pipe(catchError(handleError));
   }
 
   logout() {

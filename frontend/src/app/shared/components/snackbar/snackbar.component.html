@@ -1,0 +1,13 @@
+<div class="container" [ngClass]="data.style">
+  <span matSnackBarLabel class="message">{{ data.message }}</span>
+  <span matSnackBarActions>
+    <button
+      mat-button
+      matSnackBarAction
+      (click)="snackBarRef.dismissWithAction()"
+      class="close-button"
+    >
+      X
+    </button>
+  </span>
+</div>
