@@ -13,13 +13,20 @@
     </a>
 
     <button
+      *ngIf="authenticated; else loginButton"
       mat-flat-button
-      color="accent"
-      class="login-button"
+      color="primary"
+      class="button"
       type="button"
-      (click)="openDialog()"
+      (click)="logout()"
     >
-      Login
+      Sair
     </button>
+
+    <ng-template #loginButton>
+      <button mat-flat-button color="accent" class="button" type="button" (click)="openDialog()">
+        Login
+      </button>
+    </ng-template>
   </div>
 </header>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HeaderComponent } from '../header/header.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -11,7 +12,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class LoginFormComponent implements OnInit {
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<HeaderComponent>) {}
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<HeaderComponent>,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -25,6 +30,12 @@ export class LoginFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.dialogRef.close();
+    this.authService.login(this.form.value.email, this.form.value.password).subscribe({
+      next: (token) => {
+        localStorage.setItem('access_token', token);
+        this.dialogRef.close();
+      },
+      error: console.log,
+    });
   }
 }
