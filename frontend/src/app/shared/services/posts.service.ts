@@ -1,9 +1,9 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
-import { Observable, catchError, throwError } from 'rxjs';
-import { ErrorDetails } from 'src/app/models/errorDetails';
+import { Observable, catchError } from 'rxjs';
+import { handleError } from '../util/errorHandling';
 
 @Injectable({
   providedIn: 'root',
@@ -32,17 +32,12 @@ export class PostsService {
           .set('size', pageSize)
           .set('page', pageIndex),
       })
-      .pipe(catchError(this.handleError));
+      .pipe(catchError(handleError));
   }
 
   findBySlug(slug: string): Observable<PostReponse> {
     return this.http
       .get<PostReponse>(this.API + 'posts/slug/' + slug)
-      .pipe(catchError(this.handleError));
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    const errorDetails: Partial<ErrorDetails> = error.error;
-    return throwError(() => errorDetails);
+      .pipe(catchError(handleError));
   }
 }

@@ -6,7 +6,9 @@ import com.gabrielluciano.blog.dto.user.UserResponse;
 import com.gabrielluciano.blog.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,9 @@ public class UserController {
 
     @PostMapping("login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.login(loginRequest));
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<>(userService.login(loginRequest), headers, HttpStatus.OK);
     }
 
     @PutMapping("users/{id}/roles/editor")

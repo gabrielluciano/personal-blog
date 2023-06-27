@@ -4,12 +4,29 @@
   </a>
 
   <div class="buttons">
-    <a href="https://github.com/gabrielluciano" target="_blank">
+    <a href="https://github.com/gabrielluciano" target="_blank" class="link">
       <img src="assets/github-logo.svg" alt="Github" class="github-logo" />
     </a>
 
-    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank">
+    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank" class="link">
       <img src="assets/linkedin-logo.svg" alt="Linkedin" class="linkedin-logo" />
     </a>
+
+    <button
+      *ngIf="authenticated; else loginButton"
+      mat-flat-button
+      color="primary"
+      class="button"
+      type="button"
+      (click)="logout()"
+    >
+      Sair
+    </button>
+
+    <ng-template #loginButton>
+      <button mat-flat-button color="accent" class="button" type="button" (click)="openDialog()">
+        Login
+      </button>
+    </ng-template>
   </div>
 </header>
