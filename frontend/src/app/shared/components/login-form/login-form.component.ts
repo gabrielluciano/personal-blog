@@ -3,8 +3,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { HeaderComponent } from '../header/header.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { SnackbarComponent, SnackbarData } from '../snackbar/snackbar.component';
+import { MatSnackBar, } from '@angular/material/snack-bar';
+import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackbar.component';
 
 @Component({
   selector: 'app-login-form',
@@ -21,7 +21,7 @@ export class LoginFormComponent implements OnInit {
     public dialogRef: MatDialogRef<HeaderComponent>,
     private authService: AuthService,
     private _snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -41,22 +41,8 @@ export class LoginFormComponent implements OnInit {
         this.dialogRef.close();
       },
       error: (error) => {
-        this._snackBar.openFromComponent(SnackbarComponent, this.getSnackBarConfig(error.message));
+        this._snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(error.message, 'error'));
       },
     });
-  }
-
-  private getSnackBarConfig(message: string) {
-    const config: MatSnackBarConfig<SnackbarData> = {
-      duration: this.DURATION_IN_SECONDS * 1000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      data: {
-        message: message,
-        style: 'error',
-      },
-    };
-
-    return config;
   }
 }
