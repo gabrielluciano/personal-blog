@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { PostsTagComponent } from './posts-tag.component';
 import { TagsService } from 'src/app/shared/services/tags.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
-import { postsPageMock } from '../../../models/post/postsPageMock';
+import { postsPageMock } from '../../../models/post/postsMock';
 import { tagsMock } from '../../../models/tag/tagsMock';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PostListComponent } from '../../components/post-list/post-list.component';

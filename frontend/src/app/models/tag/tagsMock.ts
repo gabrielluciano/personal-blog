@@ -1,3 +1,4 @@
+import { Page } from '../page';
 import { TagResponse } from './tagResponse';
 
 export const tagsMock: TagResponse[] = [
@@ -32,3 +33,32 @@ export const tagsMock: TagResponse[] = [
     slug: 'machine-learning',
   },
 ];
+
+export const tagsPageMock: Page<TagResponse> = {
+  content: tagsMock,
+  pageable: {
+    sort: {
+      empty: true,
+      sorted: false,
+      unsorted: true,
+    },
+    offset: 0,
+    pageNumber: 0,
+    pageSize: tagsMock.length,
+    unpaged: false,
+    paged: true,
+  },
+  last: true,
+  totalPages: 1,
+  totalElements: tagsMock.length,
+  size: tagsMock.length,
+  number: 0,
+  sort: {
+    empty: true,
+    sorted: false,
+    unsorted: true,
+  },
+  first: true,
+  numberOfElements: tagsMock.length,
+  empty: false,
+};
