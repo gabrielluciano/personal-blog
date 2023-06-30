@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { HeaderComponent } from '../header/header.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { MatSnackBar, } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackbar.component';
 
 @Component({
@@ -21,7 +21,7 @@ export class LoginFormComponent implements OnInit {
     public dialogRef: MatDialogRef<HeaderComponent>,
     private authService: AuthService,
     private _snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -41,7 +41,10 @@ export class LoginFormComponent implements OnInit {
         this.dialogRef.close();
       },
       error: (error) => {
-        this._snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(error.message, 'error'));
+        this._snackBar.openFromComponent(
+          SnackbarComponent,
+          getSnackBarDefaultConfig(error.message, 'error')
+        );
       },
     });
   }

@@ -1,4 +1,4 @@
-<h1 class="title">Edição de Post</h1>
+<h1 class="title">Criação de Post</h1>
 <form class="form" [formGroup]="form">
   <div class="field">
     <h2 class="field-title">Title</h2>
@@ -70,9 +70,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Tags</mat-label>
       <mat-select multiple formControlName="tags">
-        <mat-option value="prog">Programação</mat-option>
-        <mat-option value="java">Java</mat-option>
-        <mat-option value="angular">Angular</mat-option>
+        <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
       </mat-select>
       <mat-hint class="hint">The post tags</mat-hint>
       <mat-error class="error">You must select at least one tag</mat-error>
@@ -95,12 +93,12 @@
   </div>
 
   <div class="buttons">
-    <button mat-flat-button color="accent" (click)="navigateToHome()">Cancel</button>
+    <button mat-flat-button color="accent" (click)="onCancel()">Cancel</button>
     <button
       mat-flat-button
       color="primary"
       type="submit"
-      (click)="submit()"
+      (click)="onSubmit()"
       [disabled]="!form.valid"
     >
       Save

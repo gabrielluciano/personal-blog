@@ -14,7 +14,7 @@ export class PostsService {
   readonly DEFAULT_PAGE_SIZE = 10;
   readonly DEFAULT_PAGE_INDEX = 0;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   list(pageSize: number, pageIndex: number, tagId?: number): Observable<Page<PostReponse>> {
     if (!pageSize && pageSize != 0) {
@@ -43,9 +43,7 @@ export class PostsService {
   }
 
   save(post: PostCreateRequest): Observable<PostReponse> {
-    return this.http
-      .post<PostReponse>(this.API + 'posts', post)
-      .pipe(catchError(handleError));
+    return this.http.post<PostReponse>(this.API + 'posts', post).pipe(catchError(handleError));
   }
 
   addTag(postId: number, tagId: number): Observable<void> {

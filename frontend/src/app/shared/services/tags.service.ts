@@ -13,7 +13,7 @@ import { Page } from 'src/app/models/page';
 export class TagsService {
   readonly API = 'http://localhost:8080/';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
   list(): Observable<Page<TagResponse>> {
     return this.http.get<Page<TagResponse>>(this.API + 'tags?size=100');

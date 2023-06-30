@@ -56,17 +56,15 @@ describe('PostsService', () => {
       metaTitle: postsMock[0].metaTitle,
       slug: postsMock[0].slug,
       subtitle: postsMock[0].subtitle,
-      content: postsMock[0].content
-    }
+      content: postsMock[0].content,
+    };
 
     service.save(postCreateRequest).subscribe((post) => {
       expect(post).toBeTruthy();
       expect(post.title).toEqual(postCreateRequest.title);
     });
 
-    const req = httpTestingController.expectOne(
-      `http://localhost:8080/posts`
-    );
+    const req = httpTestingController.expectOne(`http://localhost:8080/posts`);
     expect(req.request.method).toEqual('POST');
     req.flush(postsMock[0]);
   });
@@ -83,6 +81,6 @@ describe('PostsService', () => {
       `http://localhost:8080/posts/${postId}/tags/${tagId}`
     );
     expect(req.request.method).toEqual('PUT');
-    req.flush(null, { status: 204 });
+    req.flush(null, { status: 204, statusText: 'No Content' });
   });
 });
