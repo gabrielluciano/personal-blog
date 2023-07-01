@@ -1,0 +1,107 @@
+<h1 class="title">Criação de Post</h1>
+<form class="form" [formGroup]="form">
+  <div class="field">
+    <h2 class="field-title">Title</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input matInput type="text" name="title" formControlName="title" />
+      <mat-hint class="hint">The title of the post</mat-hint>
+      <mat-error class="error">Title is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Subtitle</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Subtitle</mat-label>
+      <input matInput type="text" name="subtitle" formControlName="subtitle" />
+      <mat-hint class="hint">The subtitle of the post</mat-hint>
+      <mat-error class="error">Subtitle is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Slug</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Slug</mat-label>
+      <input matInput type="text" name="slug" formControlName="slug" />
+      <mat-hint class="hint">The post slug to use in URLs</mat-hint>
+      <mat-error class="error">Invalid slug</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Meta title</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Meta title</mat-label>
+      <input matInput type="text" name="meta title" formControlName="metaTitle" />
+      <mat-hint class="hint">The meta title of the post</mat-hint>
+      <mat-error class="error">Meta title is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Meta description</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Meta description</mat-label>
+      <textarea
+        matInput
+        type="text"
+        name="meta description"
+        formControlName="metaDescription"
+      ></textarea>
+      <mat-hint class="hint">The meta description of the post</mat-hint>
+      <mat-error class="error">Meta description is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Image URL</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Image URL</mat-label>
+      <input matInput type="text" name="URL" formControlName="imageUrl" />
+      <mat-hint class="hint">The URL of the post's image</mat-hint>
+      <mat-error class="error">Image URL is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Tags</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Tags</mat-label>
+      <mat-select multiple formControlName="tags">
+        <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
+      </mat-select>
+      <mat-hint class="hint">The post tags</mat-hint>
+      <mat-error class="error">You must select at least one tag</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <h2 class="field-title">Content</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Content</mat-label>
+      <textarea
+        matInput
+        rows="15"
+        type="text"
+        name="meta description"
+        formControlName="content"
+      ></textarea>
+      <mat-hint class="hint">The post content</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="buttons">
+    <button mat-flat-button color="accent" (click)="onCancel()">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      (click)="onSubmit()"
+      [disabled]="!form.valid"
+    >
+      Save
+    </button>
+  </div>
+</form>

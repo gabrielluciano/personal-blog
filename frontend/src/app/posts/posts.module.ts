@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { PostsRoutingModule } from './posts-routing.module';
 import { PostsHomeComponent } from './pages/posts-home/posts-home.component';
@@ -11,6 +14,9 @@ import { PostListComponent } from './components/post-list/post-list.component';
 import { SharedModule } from '../shared/shared.module';
 import { PostsTagComponent } from './pages/posts-tag/posts-tag.component';
 import { PostComponent } from './pages/post/post.component';
+import { PostFormComponent } from './pages/post-form/post-form.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -20,10 +26,16 @@ import { PostComponent } from './pages/post/post.component';
     PostListComponent,
     PostsTagComponent,
     PostComponent,
+    PostFormComponent,
   ],
   imports: [
     CommonModule,
     MatProgressSpinnerModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
     PostsRoutingModule,
     SharedModule,
     NgOptimizedImage,

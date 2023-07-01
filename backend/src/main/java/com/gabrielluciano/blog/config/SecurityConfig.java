@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,8 +32,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf().disable()
-                .cors(conf -> conf.configurationSource(req -> new CorsConfiguration().applyPermitDefaultValues()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(conf -> conf.configurationSource(req -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.applyPermitDefaultValues();
+                    configuration.addAllowedMethod(HttpMethod.PUT);
+                    return configuration;
+                }))
                 .sessionManagement(conf -> conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(conf -> conf.authenticationEntryPoint(new JWTAuthenticationEntryPoint()))
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
@@ -35,6 +36,7 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
     ReactiveFormsModule,
     MatInputModule,
     MatSnackBarModule,
+    MatIconModule,
   ],
   exports: [HeaderComponent, FooterComponent, PillComponent, PaginatorComponent, DateFormatPipe],
   providers: [],

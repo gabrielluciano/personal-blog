@@ -28,5 +28,9 @@
         Login
       </button>
     </ng-template>
+
+    <a routerLink="/posts/new" class="new-post-button" *ngIf="authenticated">
+      <mat-icon fontIcon="add" options></mat-icon>
+    </a>
   </div>
 </header>

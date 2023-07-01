@@ -1,3 +1,4 @@
+import { Page } from '../page';
 import { PostReponse } from './postResponse';
 
 export const postsMock: PostReponse[] = [
@@ -172,3 +173,32 @@ export const postsMock: PostReponse[] = [
     },
   },
 ];
+
+export const postsPageMock: Page<PostReponse> = {
+  content: postsMock,
+  pageable: {
+    sort: {
+      empty: true,
+      sorted: false,
+      unsorted: true,
+    },
+    offset: 0,
+    pageNumber: 0,
+    pageSize: postsMock.length,
+    unpaged: false,
+    paged: true,
+  },
+  last: true,
+  totalPages: 1,
+  totalElements: postsMock.length,
+  size: postsMock.length,
+  number: 0,
+  sort: {
+    empty: true,
+    sorted: false,
+    unsorted: true,
+  },
+  first: true,
+  numberOfElements: postsMock.length,
+  empty: false,
+};

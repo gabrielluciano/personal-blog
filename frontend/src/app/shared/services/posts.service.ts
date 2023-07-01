@@ -4,6 +4,7 @@ import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { Observable, catchError } from 'rxjs';
 import { handleError } from '../util/errorHandling';
+import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +40,13 @@ export class PostsService {
     return this.http
       .get<PostReponse>(this.API + 'posts/slug/' + slug)
       .pipe(catchError(handleError));
+  }
+
+  save(post: PostCreateRequest): Observable<PostReponse> {
+    return this.http.post<PostReponse>(this.API + 'posts', post).pipe(catchError(handleError));
+  }
+
+  addTag(postId: number, tagId: number): Observable<void> {
+    return this.http.put<void>(`${this.API}posts/${postId}/tags/${tagId}`, null);
   }
 }

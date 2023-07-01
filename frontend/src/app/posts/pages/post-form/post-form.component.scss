@@ -1,0 +1,76 @@
+@import 'variables';
+@import 'mixins';
+
+:host {
+  @include page-host-style;
+}
+
+.title {
+  @include blog-logo;
+
+  @media (max-width: $laptop) {
+    font-size: 1.75rem;
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 1.5rem;
+  }
+}
+
+.form {
+  max-width: 848px;
+  width: 100%;
+
+  padding: 0 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  .field {
+    margin-top: 48px;
+
+    display: flex;
+    flex-direction: column;
+
+    .field-title {
+      margin-bottom: 16px;
+
+      font-size: 1.5rem;
+
+      @media (max-width: $laptop) {
+        font-size: 1.375rem;
+      }
+
+      @media (max-width: $mobile) {
+        margin-bottom: 12px;
+
+        font-size: 1rem;
+      }
+    }
+
+    .hint,
+    .error {
+      margin-top: 4px;
+
+      font-size: 14px;
+    }
+
+    .hint {
+      color: var(--gray);
+    }
+  }
+
+  .buttons {
+    margin: 32px 0;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+
+    button {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+  }
+}
