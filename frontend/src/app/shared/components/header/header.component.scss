@@ -49,6 +49,10 @@
 
     .button {
       @include button;
+
+      @media (max-width: $tablet) {
+        display: none;
+      }
     }
 
     .link {
@@ -71,6 +75,30 @@
         @media (max-width: $tablet) {
           width: 24px;
         }
+      }
+    }
+
+    .new-post-button {
+      width: 34px;
+      height: 34px;
+      border-radius: 17px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background-color: var(--white);
+
+      color: var(--black);
+
+      transition: opacity ease-in 0.3s;
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      @media (max-width: $tablet) {
+        display: none;
       }
     }
   }
