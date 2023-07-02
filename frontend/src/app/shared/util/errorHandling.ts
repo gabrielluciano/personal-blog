@@ -9,7 +9,7 @@ export function handleError(error: HttpErrorResponse) {
   let errorDetails: Partial<ErrorDetails>;
 
   if (error.error) {
-    errorDetails = error.error;
+    errorDetails = JSON.parse(error.error.toString());
   } else {
     errorDetails = createErrorDetails(error);
   }

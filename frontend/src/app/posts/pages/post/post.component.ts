@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostReponse } from 'src/app/models/post/postResponse';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
 
 @Component({
@@ -10,19 +11,22 @@ import { PostsService } from 'src/app/shared/services/posts.service';
 })
 export class PostComponent implements OnInit {
   post!: PostReponse;
+  editor = false;
 
   constructor(
     private postsService: PostsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const slug = this.route.snapshot.params['slug'];
     this.findBySlug(slug);
+    this.setEditor();
   }
 
-  findBySlug(slug: string) {
+  private findBySlug(slug: string) {
     this.postsService.findBySlug(slug).subscribe({
       next: (post) => (this.post = post),
       error: (error) => {
@@ -30,5 +34,9 @@ export class PostComponent implements OnInit {
         this.router.navigate(['/']);
       },
     });
+  }
+
+  private async setEditor() {
+    this.editor = await this.authService.isEditor();
   }
 }

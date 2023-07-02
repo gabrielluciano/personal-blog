@@ -13,6 +13,7 @@ import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackba
 })
 export class LoginFormComponent implements OnInit {
   readonly DURATION_IN_SECONDS = 10;
+  readonly SUCCESSFUL_LOGIN_MESSAGE = 'Successful login!';
 
   form!: FormGroup;
 
@@ -38,14 +39,17 @@ export class LoginFormComponent implements OnInit {
     this.authService.login(this.form.value.email, this.form.value.password).subscribe({
       next: (token) => {
         localStorage.setItem('access_token', token);
+        this._snackBar.openFromComponent(
+          SnackbarComponent,
+          getSnackBarDefaultConfig(this.SUCCESSFUL_LOGIN_MESSAGE, 'success')
+        );
         this.dialogRef.close();
       },
-      error: (error) => {
+      error: (error) =>
         this._snackBar.openFromComponent(
           SnackbarComponent,
           getSnackBarDefaultConfig(error.message, 'error')
-        );
-      },
+        ),
     });
   }
 }
