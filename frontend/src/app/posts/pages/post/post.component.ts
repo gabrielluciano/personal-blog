@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostReponse } from 'src/app/models/post/postResponse';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
+
+type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 
 @Component({
   selector: 'app-post',
@@ -17,13 +21,26 @@ export class PostComponent implements OnInit {
     private postsService: PostsService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     const slug = this.route.snapshot.params['slug'];
     this.findBySlug(slug);
     this.setEditor();
+  }
+
+  openDialog(operation: CrudOperation) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'dialog',
+      data: {
+        message: this.getDialogMessage(operation),
+      },
+    });
+    dialogRef.afterClosed().subscribe((isConfirm) => {
+      if (isConfirm) this.callOperationMethod(operation);
+    });
   }
 
   private findBySlug(slug: string) {
@@ -38,5 +55,54 @@ export class PostComponent implements OnInit {
 
   private async setEditor() {
     this.editor = await this.authService.isEditor();
+  }
+
+  private callOperationMethod(operation: CrudOperation) {
+    switch (operation) {
+      case 'edit':
+        this.editPost();
+        break;
+      case 'delete':
+        this.deletePost();
+        break;
+      case 'publish':
+        this.publishPost();
+        break;
+      case 'unpublish':
+        this.unpublishPost();
+    }
+  }
+
+  private getDialogMessage(operation: CrudOperation) {
+    switch (operation) {
+      case 'edit':
+        return 'Deseja editar o post?';
+      case 'delete':
+        return 'Deseja excluir o post?';
+      case 'publish':
+        return 'Deseja publicar o post?';
+      case 'unpublish':
+        return 'Deseja despublicar o post?';
+    }
+  }
+
+  private editPost() {
+    // TODO: Call edit component
+    console.log('edit!');
+  }
+
+  private deletePost() {
+    // TODO: Call api delete method
+    console.log('delete!');
+  }
+
+  private publishPost() {
+    // TODO: Call api publish post method
+    console.log('publish!');
+  }
+
+  private unpublishPost() {
+    // TODO: Call api unpublish post method
+    console.log('unpublish!');
   }
 }

@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
     PaginatorComponent,
     LoginFormComponent,
     SnackbarComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     CommonModule,

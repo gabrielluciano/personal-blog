@@ -22,6 +22,7 @@
           title="Edit post"
           aria-label="Edit post"
           class="icon edit"
+          (click)="openDialog('edit')"
         ></mat-icon>
         <mat-icon
           fontIcon="publish"
@@ -29,6 +30,7 @@
           aria-label="Publish post"
           class="icon publish"
           *ngIf="!post.published"
+          (click)="openDialog('publish')"
         ></mat-icon>
         <mat-icon
           fontIcon="unpublished"
@@ -36,12 +38,14 @@
           aria-label="Unpublish post"
           class="icon unpublish"
           *ngIf="post.published"
+          (click)="openDialog('unpublish')"
         ></mat-icon>
         <mat-icon
           fontIcon="delete"
           title="Delete post"
           aria-label="Delete post"
           class="icon delete"
+          (click)="openDialog('delete')"
         ></mat-icon>
       </div>
     </div>
