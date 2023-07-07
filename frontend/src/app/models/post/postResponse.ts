@@ -13,7 +13,7 @@ export interface PostReponse {
   published: boolean;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
   tags: TagResponse[];
   author: UserResponse;
 }
