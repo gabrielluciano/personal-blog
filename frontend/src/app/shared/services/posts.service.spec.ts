@@ -83,4 +83,37 @@ describe('PostsService', () => {
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
+
+  it('should return status 204 when post is deleted', () => {
+    const id = 1;
+    service.delete(id).subscribe((result) => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}`);
+    expect(req.request.method).toEqual('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('should return status 204 when post is published', () => {
+    const id = 1;
+    service.publish(id).subscribe((result) => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}/publish`);
+    expect(req.request.method).toEqual('PUT');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('should return status 204 when post is unpublished', () => {
+    const id = 1;
+    service.unpublish(id).subscribe((result) => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}/unpublish`);
+    expect(req.request.method).toEqual('PUT');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
 });

@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  SnackbarComponent,
+  SnackbarData,
+  getSnackBarDefaultConfig,
+} from 'src/app/shared/components/snackbar/snackbar.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
 
@@ -22,7 +28,8 @@ export class PostComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +45,7 @@ export class PostComponent implements OnInit {
         message: this.getDialogMessage(operation),
       },
     });
+
     dialogRef.afterClosed().subscribe((isConfirm) => {
       if (isConfirm) this.callOperationMethod(operation);
     });
@@ -92,17 +100,36 @@ export class PostComponent implements OnInit {
   }
 
   private deletePost() {
-    // TODO: Call api delete method
-    console.log('delete!');
+    this.postsService.delete(this.post.id).subscribe({
+      next: () => {
+        this.showSnackBar('Post excluído com sucesso', 'success');
+        this.router.navigate(['/']);
+      },
+      error: (error) => this.showSnackBar(error.message, 'error'),
+    });
   }
 
   private publishPost() {
-    // TODO: Call api publish post method
-    console.log('publish!');
+    this.postsService.publish(this.post.id).subscribe({
+      next: () => {
+        this.showSnackBar('Post publicado com sucesso', 'success');
+        this.router.navigate(['/']);
+      },
+      error: (error) => this.showSnackBar(error.message, 'error'),
+    });
   }
 
   private unpublishPost() {
-    // TODO: Call api unpublish post method
-    console.log('unpublish!');
+    this.postsService.unpublish(this.post.id).subscribe({
+      next: () => {
+        this.showSnackBar('Post despublicado com sucesso', 'success');
+        this.router.navigate(['/']);
+      },
+      error: (error) => this.showSnackBar(error.message, 'error'),
+    });
+  }
+
+  private showSnackBar(message: string, style: SnackbarData['style']) {
+    this._snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(message, style));
   }
 }

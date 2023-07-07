@@ -49,4 +49,20 @@ export class PostsService {
   addTag(postId: number, tagId: number): Observable<void> {
     return this.http.put<void>(`${this.API}posts/${postId}/tags/${tagId}`, null);
   }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(this.API + 'posts/' + id).pipe(catchError(handleError));
+  }
+
+  publish(id: number): Observable<void> {
+    return this.http
+      .put<void>(`${this.API}posts/${id}/publish`, null)
+      .pipe(catchError(handleError));
+  }
+
+  unpublish(id: number): Observable<void> {
+    return this.http
+      .put<void>(`${this.API}posts/${id}/unpublish`, null)
+      .pipe(catchError(handleError));
+  }
 }
