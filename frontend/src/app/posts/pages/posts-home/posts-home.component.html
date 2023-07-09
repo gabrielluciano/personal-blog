@@ -1,6 +1,16 @@
 <app-hero></app-hero>
-<app-post-list
-  [postsPage]="postsPage"
-  [pageSize]="pageSize"
-  [pageIndex]="pageIndex"
-></app-post-list>
+<div class="post-list">
+  <mat-slide-toggle
+    color="primary"
+    class="toggle"
+    [checked]="drafts()"
+    (change)="onSlideChange()"
+    *ngIf="editor"
+    >Ver drafts</mat-slide-toggle
+  >
+  <app-post-list
+    [postsPage]="postsPage"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+  ></app-post-list>
+</div>

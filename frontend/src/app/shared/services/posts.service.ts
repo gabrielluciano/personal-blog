@@ -16,7 +16,12 @@ export class PostsService {
 
   constructor(private http: HttpClient) {}
 
-  list(pageSize: number, pageIndex: number, tagId?: number): Observable<Page<PostReponse>> {
+  list(
+    pageSize: number,
+    pageIndex: number,
+    tagId: number | null,
+    drafts = false
+  ): Observable<Page<PostReponse>> {
     if (!pageSize && pageSize != 0) {
       pageSize = this.DEFAULT_PAGE_SIZE;
     }
@@ -31,7 +36,8 @@ export class PostsService {
           .set('tag', tagId || '')
           .set('sort', 'createdAt,desc')
           .set('size', pageSize)
-          .set('page', pageIndex),
+          .set('page', pageIndex)
+          .set('drafts', drafts),
       })
       .pipe(catchError(handleError));
   }

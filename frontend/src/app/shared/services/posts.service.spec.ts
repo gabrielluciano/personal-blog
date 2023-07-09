@@ -23,13 +23,13 @@ describe('PostsService', () => {
   });
 
   it('should return a Page of PostReponse', () => {
-    service.list(5, 0).subscribe((page) => {
+    service.list(5, 0, null).subscribe((page) => {
       expect(page).toBeTruthy();
       expect(page.content.length).toEqual(postsPageMock.content.length);
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:8080/posts?tag=&sort=createdAt,desc&size=5&page=0'
+      'http://localhost:8080/posts?tag=&sort=createdAt,desc&size=5&page=0&drafts=false'
     );
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);

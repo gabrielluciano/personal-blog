@@ -18,6 +18,7 @@ import { PostFormComponent } from './pages/post-form/post-form.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatSelectModule,
     MatIconModule,
+    MatSlideToggleModule,
     ReactiveFormsModule,
     PostsRoutingModule,
     SharedModule,
