@@ -217,6 +217,54 @@ class PostRepositoryTest {
     }
 
     @Test
+    @DisplayName("findBySlug returns optional of published post with specific slug when successful")
+    void findBySlug_ReturnsOptionalOfPublishedPostWithSpecificSlug_WhenSuccessful() {
+        String slug = "some-slug";
+        Post postToBeSaved = PostCreator.createPublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", slug, author);
+
+        Post expectedPost = postRepository.save(postToBeSaved);
+
+        Optional<Post> optionalPost = postRepository.findBySlug(slug);
+
+        assertThat(optionalPost)
+                .isNotNull()
+                .isPresent()
+                .contains(expectedPost);
+    }
+
+    @Test
+    @DisplayName("findBySlug returns optional of unpublished post with specific slug when successful")
+    void findBySlug_ReturnsOptionalOfUnpublishedPostWithSpecificSlug_WhenSuccessful() {
+        String slug = "some-slug";
+        Post postToBeSaved = PostCreator.createUnpublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", slug, author);
+
+        Post expectedPost = postRepository.save(postToBeSaved);
+
+        Optional<Post> optionalPost = postRepository.findBySlug(slug);
+
+        assertThat(optionalPost)
+                .isNotNull()
+                .isPresent()
+                .contains(expectedPost);
+    }
+
+    @Test
+    @DisplayName("findBySlug returns optional empty when post is not found")
+    void findBySlug_ReturnsOptionalEmpty_WhenPostIsNotFound() {
+        String slug = "non-existent-slug";
+        Post postToBeSaved = PostCreator
+                .createPublishedPostWithTitleSlugAndAuthorToBeSaved("Some title", "some-slug", author);
+
+        postRepository.save(postToBeSaved);
+
+        Optional<Post> optionalPost = postRepository.findBySlug(slug);
+
+        assertThat(optionalPost)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
     @DisplayName("findFirstByTitleIgnoreCaseOrSlugIgnoreCase returns optional of post when post with same title is found")
     void findFirstByTitleIgnoreCaseOrSlugIgnoreCase_ReturnsOptionalOfPost_WhenPostWithSameTitleIsFound() {
         String expectedTitle = "Some post";

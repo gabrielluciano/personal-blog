@@ -7,6 +7,7 @@ import com.gabrielluciano.blog.exceptions.ConstraintViolationException;
 import com.gabrielluciano.blog.exceptions.ResourceNotFoundException;
 import com.gabrielluciano.blog.mappers.PostMapper;
 import com.gabrielluciano.blog.models.Post;
+import com.gabrielluciano.blog.models.Role;
 import com.gabrielluciano.blog.models.Tag;
 import com.gabrielluciano.blog.models.User;
 import com.gabrielluciano.blog.repositories.PostRepository;
@@ -45,7 +46,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse findBySlug(String slug) {
-        Post post = findBySlugOrThrowResourceNotFoundException(slug);
+        User user = getUserFromAuthenticationContext();
+        Post post;
+        if (user != null && user.getRoles().contains(Role.EDITOR)) {
+            post = findPostBySlugOrThrowResourceNotFoundException(slug);
+        } else {
+            post = findPublishedPostBySlugOrThrowResourceNotFoundException(slug);
+        }
         return PostMapper.INSTANCE.postToPostResponse(post);
     }
 
@@ -118,7 +125,12 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException(Tag.class, id));
     }
 
-    private Post findBySlugOrThrowResourceNotFoundException(String slug) {
+    private Post findPostBySlugOrThrowResourceNotFoundException(String slug) {
+        return postRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException(Post.class, slug));
+    }
+
+    private Post findPublishedPostBySlugOrThrowResourceNotFoundException(String slug) {
         return postRepository.findByPublishedIsTrueAndSlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException(Post.class, slug));
     }
@@ -167,8 +179,7 @@ public class PostServiceImpl implements PostService {
 
     private User getUserFromAuthenticationContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
             return securityUser.getUser();
         }
         return null;
