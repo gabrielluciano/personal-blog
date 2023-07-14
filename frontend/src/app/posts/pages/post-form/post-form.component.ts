@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ErrorDetails } from 'src/app/models/errorDetails';
-import { PostReponse } from 'src/app/models/post/postResponse';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
 import {
   SnackbarComponent,
@@ -22,36 +21,46 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
 })
 export class PostFormComponent implements OnInit {
   readonly SUCCESSFUL_POST_CREATION_MESSAGE = 'Post created successfully';
+  readonly SUCCESSFUL_POST_UPDATE_MESSAGE = 'Post updated successfully';
+  isEdit = false;
+  postId: null | number = null;
+  initialIDsOfPostTags: number[] = [];
   form!: FormGroup;
   tags!: TagResponse[];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private postsService: PostsService,
     private tagsService: TagsService,
     private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+    this.isEdit = this.route.snapshot.data['edit'];
+    this.getAllTags();
     this.createForm();
-    this.getTags();
   }
 
-  onCancel() {
+  redirectToHome() {
     this.router.navigate(['/']);
   }
 
   async onSubmit() {
-    const post = { ...this.form.value };
-    delete post['tags'];
-
     try {
-      await this.savePostAndTags(post);
+      await this.saveOrUpdatePostAndTags();
       // eslint-disable-next-line
     } catch (error: any) {
       this.handleSumissionError(error);
     }
+  }
+
+  private getAllTags() {
+    this.tagsService.list().subscribe({
+      next: (tags) => (this.tags = tags.content),
+      error: (error) => this.showSnackBar(error.message, 'error'),
+    });
   }
 
   private createForm() {
@@ -65,33 +74,72 @@ export class PostFormComponent implements OnInit {
       tags: [[], [Validators.required]],
       content: [''],
     });
+
+    if (this.isEdit) this.findPostBySlugAndSetItsDataAndId();
   }
 
-  private getTags() {
-    this.tagsService.list().subscribe({
-      next: (tags) => (this.tags = tags.content),
-      error: (error) => this.showSnackBar(error.message, 'error'),
+  private findPostBySlugAndSetItsDataAndId() {
+    this.postsService.findBySlug(this.route.snapshot.params['slug']).subscribe({
+      next: (post) => {
+        this.postId = post.id;
+        this.initialIDsOfPostTags = post.tags.map((tag) => tag.id);
+        this.form.controls['title'].setValue(post.title);
+        this.form.controls['subtitle'].setValue(post.subtitle);
+        this.form.controls['slug'].setValue(post.slug);
+        this.form.controls['metaTitle'].setValue(post.metaTitle);
+        this.form.controls['metaDescription'].setValue(post.metaDescription);
+        this.form.controls['imageUrl'].setValue(post.imageUrl);
+        this.form.controls['tags'].setValue(this.initialIDsOfPostTags);
+        this.form.controls['content'].setValue(post.content);
+      },
+      error: (error) => {
+        this.showSnackBar(error.message, 'error');
+        this.redirectToHome();
+      },
     });
   }
 
-  private async savePostAndTags(post: PostReponse) {
-    const savedPost = await firstValueFrom(this.postsService.save(post));
-    await this.addTags(savedPost.id);
-    this.showSnackBar(this.SUCCESSFUL_POST_CREATION_MESSAGE, 'success');
-    this.onCancel();
+  private async saveOrUpdatePostAndTags() {
+    if (this.isEdit) {
+      await this.updatePostAndTags();
+    } else {
+      await this.savePostAndTags();
+    }
+    this.redirectToHome();
   }
 
-  private async addTags(postId: number) {
-    const tags: number[] = this.form.value.tags;
-    if (tags) {
-      // Call the API endpoint for each tag id and convert the observers responses to promises
-      const promises = tags.map(async (tagId) => {
-        await firstValueFrom(this.postsService.addTag(postId, tagId));
-      });
-      // Will resolve only when all requests are resolved
-      return Promise.all(promises);
+  private async updatePostAndTags() {
+    const post = this.getPostFromForm();
+    if (this.postId) {
+      await firstValueFrom(this.postsService.update(post, this.postId));
+      await this.updatePostTags(this.postId);
+      this.showSnackBar(this.SUCCESSFUL_POST_UPDATE_MESSAGE, 'success');
     }
-    return Promise.resolve();
+  }
+
+  private async savePostAndTags() {
+    const post = this.getPostFromForm();
+    const savedPost = await firstValueFrom(this.postsService.save(post));
+    await this.updatePostTags(savedPost.id);
+    this.showSnackBar(this.SUCCESSFUL_POST_CREATION_MESSAGE, 'success');
+  }
+
+  private getPostFromForm() {
+    const post = { ...this.form.value };
+    delete post['tags'];
+    return post;
+  }
+
+  private async updatePostTags(postId: number) {
+    const currentIDsOfPostTags: number[] = this.form.value.tags;
+    const tagsIDsToAdd = currentIDsOfPostTags.filter(
+      (id) => !this.initialIDsOfPostTags.includes(id)
+    );
+    const tagsIDsToRemove = this.initialIDsOfPostTags.filter(
+      (id) => !currentIDsOfPostTags.includes(id)
+    );
+    await this.postsService.addTags(postId, tagsIDsToAdd);
+    await this.postsService.removeTags(postId, tagsIDsToRemove);
   }
 
   private handleSumissionError(error: ErrorDetails) {

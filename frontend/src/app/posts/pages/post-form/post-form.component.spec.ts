@@ -29,9 +29,14 @@ describe('PostFormComponent', () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(() => {
-    postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', ['save', 'addTag']);
+    postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', [
+      'save',
+      'addTags',
+      'removeTags',
+    ]);
     postsServiceSpy.save.and.returnValue(of(postsMock[0]));
-    postsServiceSpy.addTag.and.returnValue(of(void 0));
+    postsServiceSpy.addTags.and.returnValue(Promise.resolve());
+    postsServiceSpy.removeTags.and.returnValue(Promise.resolve());
 
     tagsServiceSpy = jasmine.createSpyObj<TagsService>('TagsService', ['list']);
     tagsServiceSpy.list.and.returnValue(of(tagsPageMock));
@@ -92,7 +97,7 @@ describe('PostFormComponent', () => {
     tick();
 
     expect(postsServiceSpy.save).toHaveBeenCalled();
-    expect(postsServiceSpy.addTag).toHaveBeenCalledTimes(2);
+    expect(postsServiceSpy.addTags).toHaveBeenCalledTimes(1);
     expect(snackBarSpy.openFromComponent).toHaveBeenCalled();
     expect(routerNavigateSpy).toHaveBeenCalledWith(['/']);
   }));
