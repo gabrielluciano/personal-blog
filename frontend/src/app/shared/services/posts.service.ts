@@ -2,9 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
-import { Observable, catchError } from 'rxjs';
+import { Observable, catchError, firstValueFrom } from 'rxjs';
 import { handleError } from '../util/errorHandling';
 import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
+import { PostUpdateRequest } from 'src/app/models/post/postUpdateRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -52,8 +53,24 @@ export class PostsService {
     return this.http.post<PostReponse>(this.API + 'posts', post).pipe(catchError(handleError));
   }
 
+  update(post: PostUpdateRequest, id: number): Observable<void> {
+    return this.http.put<void>(this.API + 'posts/' + id, post).pipe(catchError(handleError));
+  }
+
   addTag(postId: number, tagId: number): Observable<void> {
     return this.http.put<void>(`${this.API}posts/${postId}/tags/${tagId}`, null);
+  }
+
+  removeTag(postId: number, tagId: number): Observable<void> {
+    return this.http.delete<void>(`${this.API}posts/${postId}/tags/${tagId}`);
+  }
+
+  async addTags(postId: number, tagIDs: number[]): Promise<void> {
+    await this.runRequestsInParallelForEachTagId<void>(this.addTag.bind(this), postId, tagIDs);
+  }
+
+  async removeTags(postId: number, tagIDs: number[]): Promise<void> {
+    await this.runRequestsInParallelForEachTagId<void>(this.removeTag.bind(this), postId, tagIDs);
   }
 
   delete(id: number): Observable<void> {
@@ -70,5 +87,17 @@ export class PostsService {
     return this.http
       .put<void>(`${this.API}posts/${id}/unpublish`, null)
       .pipe(catchError(handleError));
+  }
+
+  private async runRequestsInParallelForEachTagId<T>(
+    // eslint-disable-next-line
+    fn: (...params: any[]) => Observable<T>,
+    postId: number,
+    tagsIDs: number[]
+  ) {
+    // Call the function fn for each tag id and convert the observers responses to promises
+    const promises = tagsIDs.map(async (tagId) => await firstValueFrom(fn(postId, tagId)));
+    // Will resolve only when all requests are finished (resolved)
+    return Promise.all(promises);
   }
 }

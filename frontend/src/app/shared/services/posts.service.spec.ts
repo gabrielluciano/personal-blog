@@ -5,6 +5,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { PostsService } from './posts.service';
 import { postsMock, postsPageMock } from 'src/app/models/post/postsMock';
 import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
+import { PostUpdateRequest } from 'src/app/models/post/postUpdateRequest';
 
 describe('PostsService', () => {
   let service: PostsService;
@@ -69,6 +70,26 @@ describe('PostsService', () => {
     req.flush(postsMock[0]);
   });
 
+  it('should return a 204 when Post is updated', () => {
+    const postUpdateRequest: PostUpdateRequest = {
+      title: postsMock[0].title,
+      imageUrl: postsMock[0].imageUrl,
+      metaDescription: postsMock[0].metaDescription,
+      metaTitle: postsMock[0].metaTitle,
+      slug: postsMock[0].slug,
+      subtitle: postsMock[0].subtitle,
+      content: postsMock[0].content,
+    };
+
+    service.update(postUpdateRequest, postsMock[0].id).subscribe((result) => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${postsMock[0].id}`);
+    expect(req.request.method).toEqual('PUT');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
   it('should return status 204 when tag is added to Post', () => {
     const postId = 1;
     const tagId = 1;
@@ -82,6 +103,51 @@ describe('PostsService', () => {
     );
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('should return status 204 when tag is removed from Post', () => {
+    const postId = 1;
+    const tagId = 1;
+
+    service.removeTag(postId, tagId).subscribe((result) => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpTestingController.expectOne(
+      `http://localhost:8080/posts/${postId}/tags/${tagId}`
+    );
+    expect(req.request.method).toEqual('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('should resolve the promise with void value when multiple tags are added to post', async () => {
+    const postId = 1;
+
+    const result = service.addTags(postId, [1, 2]);
+
+    const req1 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${1}`);
+    const req2 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${2}`);
+    expect(req1.request.method).toEqual('PUT');
+    expect(req2.request.method).toEqual('PUT');
+    req1.flush(null, { status: 204, statusText: 'No Content' });
+    req2.flush(null, { status: 204, statusText: 'No Content' });
+
+    await expectAsync(result).toBeResolved();
+  });
+
+  it('should resolve the promise with void value when multiple tags are removed from post', async () => {
+    const postId = 1;
+
+    const result = service.removeTags(postId, [1, 2]);
+
+    const req1 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${1}`);
+    const req2 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${2}`);
+    expect(req1.request.method).toEqual('DELETE');
+    expect(req2.request.method).toEqual('DELETE');
+    req1.flush(null, { status: 204, statusText: 'No Content' });
+    req2.flush(null, { status: 204, statusText: 'No Content' });
+
+    await expectAsync(result).toBeResolved();
   });
 
   it('should return status 204 when post is deleted', () => {
