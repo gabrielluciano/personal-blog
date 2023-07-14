@@ -18,5 +18,9 @@
     position: fixed;
     bottom: 0;
     right: 0;
+
+    @media (max-width: $tablet) {
+      display: none;
+    }
   }
 }
