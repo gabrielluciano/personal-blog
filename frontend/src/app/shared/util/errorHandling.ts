@@ -8,9 +8,9 @@ const UNAUTHORIZED_ERROR_MESSAGE = 'Invalid credentials to perform this operatio
 export function handleError(error: HttpErrorResponse) {
   let errorDetails: Partial<ErrorDetails>;
 
-  if (error.error) {
-    errorDetails = error.error;
-  } else {
+  try {
+    errorDetails = JSON.parse(error.error.toString());
+  } catch (_) {
     errorDetails = createErrorDetails(error);
   }
 

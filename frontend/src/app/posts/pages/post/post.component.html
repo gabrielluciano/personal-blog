@@ -8,11 +8,47 @@
       >
       <span>Criado em {{ post.createdAt | dateFormat }}</span>
     </div>
-    <ul class="tags" *ngIf="post.tags.length > 0">
-      <li *ngFor="let tag of post.tags">
-        <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
-      </li>
-    </ul>
+    <div class="tags-crud-container">
+      <div>
+        <ul class="tags" *ngIf="post.tags.length > 0">
+          <li *ngFor="let tag of post.tags">
+            <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
+          </li>
+        </ul>
+      </div>
+      <div class="crud" *ngIf="editor">
+        <mat-icon
+          fontIcon="edit"
+          title="Edit post"
+          aria-label="Edit post"
+          class="icon edit"
+          (click)="openDialog('edit')"
+        ></mat-icon>
+        <mat-icon
+          fontIcon="publish"
+          title="Publish post"
+          aria-label="Publish post"
+          class="icon publish"
+          *ngIf="!post.published"
+          (click)="openDialog('publish')"
+        ></mat-icon>
+        <mat-icon
+          fontIcon="unpublished"
+          title="Unpublish post"
+          aria-label="Unpublish post"
+          class="icon unpublish"
+          *ngIf="post.published"
+          (click)="openDialog('unpublish')"
+        ></mat-icon>
+        <mat-icon
+          fontIcon="delete"
+          title="Delete post"
+          aria-label="Delete post"
+          class="icon delete"
+          (click)="openDialog('delete')"
+        ></mat-icon>
+      </div>
+    </div>
     <div class="image-container">
       <img
         ngSrc="assets/laptop-1000w.jpg"

@@ -336,8 +336,8 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("findBySlug returns post response when successful")
-    void findBySlug_ReturnsPostResponse_WhenSuccessful() {
+    @DisplayName("findBySlug returns published post response when and user is not authenticated")
+    void findBySlug_ReturnsPublishedPostResponse_WhenSuccessfulAndUserIsNotAuthenticated() {
         String expectedSlug = "some-post";
 
         Post expectedPost = postRepository.save(PostCreator
@@ -345,6 +345,78 @@ class PostControllerIT {
 
         ResponseEntity<PostResponse> responseEntity = restTemplate
                 .getForEntity("/posts/slug/{slug}", PostResponse.class, expectedSlug);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId())
+                .isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getTitle())
+                .isEqualTo(expectedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("findBySlug returns published post response when successful and user is editor")
+    void findBySlug_ReturnsPublishedPostResponse_WhenSuccessfulAndUserIsEditor() {
+        String expectedSlug = "some-post";
+
+        Post expectedPost = postRepository.save(PostCreator
+                .createPublishedPostWithTitleAndSlugToBeSaved("Expected Title", expectedSlug));
+
+        ResponseEntity<PostResponse> responseEntity = restTemplate.exchange("/posts/slug/{slug}", HttpMethod.GET,
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), PostResponse.class, expectedSlug);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(responseEntity.getBody()).isNotNull();
+
+        assertThat(responseEntity.getBody().getId())
+                .isEqualTo(expectedPost.getId());
+
+        assertThat(responseEntity.getBody().getTitle())
+                .isEqualTo(expectedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("findBySlug returns error details and status 404 Not Found when post is not published and user is not authenticated")
+    void findBySlug_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotPublishedAndUserIsNotAuthenticated() {
+        String expectedSlug = "some-post";
+
+        postRepository.save(PostCreator.createUnpublishedPostWithTitleAndSlugToBeSaved("Expected Title", expectedSlug));
+
+        ResponseEntity<ErrorDetails> responseEntity = restTemplate
+                .getForEntity("/posts/slug/{slug}", ErrorDetails.class, expectedSlug);
+
+        assertThat(responseEntity).isNotNull();
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .isInstanceOf(ErrorDetails.class);
+
+        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/slug/" + expectedSlug);
+
+        assertThat(responseEntity.getBody().getMessage())
+                .isEqualTo("Could not find resource of type Post with identifier: " + expectedSlug);
+    }
+
+    @Test
+    @DisplayName("findBySlug returns unpublished post response when successful and user is editor")
+    void findBySlug_ReturnsUnpublishedPostResponse_WhenSuccessfulAndUserIsEditor() {
+        String expectedSlug = "some-post";
+
+        Post expectedPost = postRepository.save(PostCreator
+                .createUnpublishedPostWithTitleAndSlugToBeSaved("Expected Title", expectedSlug));
+
+        ResponseEntity<PostResponse> responseEntity = restTemplate.exchange("/posts/slug/{slug}", HttpMethod.GET,
+                new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), PostResponse.class, expectedSlug);
 
         assertThat(responseEntity).isNotNull();
 

@@ -37,6 +37,7 @@ public class SecurityConfig {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.applyPermitDefaultValues();
                     configuration.addAllowedMethod(HttpMethod.PUT);
+                    configuration.addAllowedMethod(HttpMethod.DELETE);
                     return configuration;
                 }))
                 .sessionManagement(conf -> conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

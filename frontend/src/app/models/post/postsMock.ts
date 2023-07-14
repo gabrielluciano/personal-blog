@@ -46,10 +46,10 @@ export const postsMock: PostReponse[] = [
     metaDescription: 'Meta Description 2',
     slug: 'post-2',
     imageUrl: 'assets/laptop-500w.jpg',
-    published: true,
+    published: false,
     createdAt: '2023-06-03T08:00:00Z',
     updatedAt: '2023-06-04T13:45:00Z',
-    publishedAt: '2023-06-04T14:00:00Z',
+    publishedAt: null,
     tags: [
       {
         id: 1,

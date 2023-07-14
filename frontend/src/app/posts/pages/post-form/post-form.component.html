@@ -1,4 +1,5 @@
-<h1 class="title">Criação de Post</h1>
+<h1 class="title" *ngIf="!isEdit">Criação de Post</h1>
+<h1 class="title" *ngIf="isEdit">Edição de Post</h1>
 <form class="form" [formGroup]="form">
   <div class="field">
     <h2 class="field-title">Title</h2>
@@ -93,7 +94,7 @@
   </div>
 
   <div class="buttons">
-    <button mat-flat-button color="accent" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="accent" (click)="redirectToHome()">Cancel</button>
     <button
       mat-flat-button
       color="primary"

@@ -20,7 +20,9 @@
       </a>
     </main>
     <footer class="footer">
-      <span class="publish-date">{{ post.publishedAt | dateFormat }}</span>
+      <span class="publish-date" *ngIf="post.publishedAt; else updateDate">{{
+        post.publishedAt | dateFormat
+      }}</span>
       <ul class="tag-list" *ngIf="post.tags">
         <li *ngFor="let tag of post.tags">
           <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
@@ -29,3 +31,6 @@
     </footer>
   </div>
 </article>
+<ng-template #updateDate>
+  <span class="publish-date">{{ post.updatedAt | dateFormat }}</span>
+</ng-template>
