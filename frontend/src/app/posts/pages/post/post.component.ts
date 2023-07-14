@@ -95,8 +95,7 @@ export class PostComponent implements OnInit {
   }
 
   private editPost() {
-    // TODO: Call edit component
-    console.log('edit!');
+    this.router.navigate([`/posts/${this.post.slug}/edit`]);
   }
 
   private deletePost() {

@@ -8,8 +8,14 @@ import { authGuard } from '../shared/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: PostsHomeComponent },
-  { path: 'new', component: PostFormComponent, canActivate: [authGuard] },
+  { path: 'new', component: PostFormComponent, canActivate: [authGuard], data: { edit: false } },
   { path: ':slug', component: PostComponent },
+  {
+    path: ':slug/edit',
+    component: PostFormComponent,
+    canActivate: [authGuard],
+    data: { edit: true },
+  },
   { path: 'tag/:tagId/:tagSlug', component: PostsTagComponent },
 ];
 
