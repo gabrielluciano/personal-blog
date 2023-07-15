@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { JwtModule } from '@auth0/angular-jwt';
+import { environment as env } from 'src/environments/environment';
 
 function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -19,7 +20,7 @@ describe('AppComponent', () => {
         JwtModule.forRoot({
           config: {
             tokenGetter,
-            allowedDomains: ['localhost:8080'],
+            allowedDomains: env.angularJwtAllowedDomains,
           },
         }),
       ],

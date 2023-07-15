@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { JwtToken } from 'src/app/models/jwtToken';
+import { environment as env } from 'src/environments/environment';
 
 describe('AuthService', () => {
   const JWT_VALIDATION_REGEX = /^(ey([a-zA-Z0-9-_])*.){2}[a-zA-Z0-9-_]*/g;
@@ -37,7 +38,7 @@ describe('AuthService', () => {
       expect(token).toBeTruthy();
       expect(token).toMatch(JWT_VALIDATION_REGEX);
 
-      const req = httpTestingController.expectOne('http://localhost:8080/login');
+      const req = httpTestingController.expectOne(env.apiUrl + 'login');
       expect(req.request.method).toEqual('POST');
       req.flush(JWT_TOKEN);
     });

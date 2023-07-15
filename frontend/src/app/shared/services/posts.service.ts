@@ -6,12 +6,12 @@ import { Observable, catchError, firstValueFrom } from 'rxjs';
 import { handleError } from '../util/errorHandling';
 import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
 import { PostUpdateRequest } from 'src/app/models/post/postUpdateRequest';
+import { environment as env } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService {
-  readonly API = 'http://localhost:8080/';
   readonly DEFAULT_PAGE_SIZE = 10;
   readonly DEFAULT_PAGE_INDEX = 0;
 
@@ -32,7 +32,7 @@ export class PostsService {
     }
 
     return this.http
-      .get<Page<PostReponse>>(this.API + 'posts', {
+      .get<Page<PostReponse>>(env.apiUrl + 'posts', {
         params: new HttpParams()
           .set('tag', tagId || '')
           .set('sort', 'createdAt,desc')
@@ -45,24 +45,24 @@ export class PostsService {
 
   findBySlug(slug: string): Observable<PostReponse> {
     return this.http
-      .get<PostReponse>(this.API + 'posts/slug/' + slug)
+      .get<PostReponse>(env.apiUrl + 'posts/slug/' + slug)
       .pipe(catchError(handleError));
   }
 
   save(post: PostCreateRequest): Observable<PostReponse> {
-    return this.http.post<PostReponse>(this.API + 'posts', post).pipe(catchError(handleError));
+    return this.http.post<PostReponse>(env.apiUrl + 'posts', post).pipe(catchError(handleError));
   }
 
   update(post: PostUpdateRequest, id: number): Observable<void> {
-    return this.http.put<void>(this.API + 'posts/' + id, post).pipe(catchError(handleError));
+    return this.http.put<void>(env.apiUrl + 'posts/' + id, post).pipe(catchError(handleError));
   }
 
   addTag(postId: number, tagId: number): Observable<void> {
-    return this.http.put<void>(`${this.API}posts/${postId}/tags/${tagId}`, null);
+    return this.http.put<void>(`${env.apiUrl}posts/${postId}/tags/${tagId}`, null);
   }
 
   removeTag(postId: number, tagId: number): Observable<void> {
-    return this.http.delete<void>(`${this.API}posts/${postId}/tags/${tagId}`);
+    return this.http.delete<void>(`${env.apiUrl}posts/${postId}/tags/${tagId}`);
   }
 
   async addTags(postId: number, tagIDs: number[]): Promise<void> {
@@ -74,18 +74,18 @@ export class PostsService {
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(this.API + 'posts/' + id).pipe(catchError(handleError));
+    return this.http.delete<void>(env.apiUrl + 'posts/' + id).pipe(catchError(handleError));
   }
 
   publish(id: number): Observable<void> {
     return this.http
-      .put<void>(`${this.API}posts/${id}/publish`, null)
+      .put<void>(`${env.apiUrl}posts/${id}/publish`, null)
       .pipe(catchError(handleError));
   }
 
   unpublish(id: number): Observable<void> {
     return this.http
-      .put<void>(`${this.API}posts/${id}/unpublish`, null)
+      .put<void>(`${env.apiUrl}posts/${id}/unpublish`, null)
       .pipe(catchError(handleError));
   }
 

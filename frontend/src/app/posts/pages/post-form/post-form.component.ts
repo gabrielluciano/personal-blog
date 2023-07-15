@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import msg from 'src/app/i18n/pt/msg';
 import { ErrorDetails } from 'src/app/models/errorDetails';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
 import {
@@ -20,8 +21,6 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
   styleUrls: ['./post-form.component.scss'],
 })
 export class PostFormComponent implements OnInit {
-  readonly SUCCESSFUL_POST_CREATION_MESSAGE = 'Post created successfully';
-  readonly SUCCESSFUL_POST_UPDATE_MESSAGE = 'Post updated successfully';
   isEdit = false;
   postId: null | number = null;
   initialIDsOfPostTags: number[] = [];
@@ -113,7 +112,7 @@ export class PostFormComponent implements OnInit {
     if (this.postId) {
       await firstValueFrom(this.postsService.update(post, this.postId));
       await this.updatePostTags(this.postId);
-      this.showSnackBar(this.SUCCESSFUL_POST_UPDATE_MESSAGE, 'success');
+      this.showSnackBar(msg.SUCCESS_UPDATE_POST_MSG, 'success');
     }
   }
 
@@ -121,7 +120,7 @@ export class PostFormComponent implements OnInit {
     const post = this.getPostFromForm();
     const savedPost = await firstValueFrom(this.postsService.save(post));
     await this.updatePostTags(savedPost.id);
-    this.showSnackBar(this.SUCCESSFUL_POST_CREATION_MESSAGE, 'success');
+    this.showSnackBar(msg.SUCCESS_SAVE_POST_MSG, 'success');
   }
 
   private getPostFromForm() {

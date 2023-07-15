@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackbar.component';
+import { SUCCESS_LOGIN_MSG } from 'src/app/i18n/pt/msg';
 
 @Component({
   selector: 'app-login-form',
@@ -13,7 +14,6 @@ import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackba
 })
 export class LoginFormComponent implements OnInit {
   readonly DURATION_IN_SECONDS = 10;
-  readonly SUCCESSFUL_LOGIN_MESSAGE = 'Successful login!';
 
   form!: FormGroup;
 
@@ -41,7 +41,7 @@ export class LoginFormComponent implements OnInit {
         localStorage.setItem('access_token', token);
         this._snackBar.openFromComponent(
           SnackbarComponent,
-          getSnackBarDefaultConfig(this.SUCCESSFUL_LOGIN_MESSAGE, 'success')
+          getSnackBarDefaultConfig(SUCCESS_LOGIN_MSG, 'success')
         );
         this.dialogRef.close();
       },

@@ -6,6 +6,7 @@ import { PostsService } from './posts.service';
 import { postsMock, postsPageMock } from 'src/app/models/post/postsMock';
 import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
 import { PostUpdateRequest } from 'src/app/models/post/postUpdateRequest';
+import { environment as env } from 'src/environments/environment';
 
 describe('PostsService', () => {
   let service: PostsService;
@@ -30,7 +31,7 @@ describe('PostsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:8080/posts?tag=&sort=createdAt,desc&size=5&page=0&drafts=false'
+      `${env.apiUrl}posts?tag=&sort=createdAt,desc&size=5&page=0&drafts=false`
     );
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);
@@ -42,9 +43,7 @@ describe('PostsService', () => {
       expect(post.slug).toEqual(postsMock[0].slug);
     });
 
-    const req = httpTestingController.expectOne(
-      `http://localhost:8080/posts/slug/${postsMock[0].slug}`
-    );
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/slug/${postsMock[0].slug}`);
     expect(req.request.method).toEqual('GET');
     req.flush(postsMock[0]);
   });
@@ -65,7 +64,7 @@ describe('PostsService', () => {
       expect(post.title).toEqual(postCreateRequest.title);
     });
 
-    const req = httpTestingController.expectOne(`http://localhost:8080/posts`);
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts`);
     expect(req.request.method).toEqual('POST');
     req.flush(postsMock[0]);
   });
@@ -85,7 +84,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${postsMock[0].id}`);
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${postsMock[0].id}`);
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
@@ -98,9 +97,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(
-      `http://localhost:8080/posts/${postId}/tags/${tagId}`
-    );
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${tagId}`);
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
@@ -113,9 +110,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(
-      `http://localhost:8080/posts/${postId}/tags/${tagId}`
-    );
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${tagId}`);
     expect(req.request.method).toEqual('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
@@ -125,8 +120,8 @@ describe('PostsService', () => {
 
     const result = service.addTags(postId, [1, 2]);
 
-    const req1 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${1}`);
-    const req2 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${2}`);
+    const req1 = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${1}`);
+    const req2 = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${2}`);
     expect(req1.request.method).toEqual('PUT');
     expect(req2.request.method).toEqual('PUT');
     req1.flush(null, { status: 204, statusText: 'No Content' });
@@ -140,8 +135,8 @@ describe('PostsService', () => {
 
     const result = service.removeTags(postId, [1, 2]);
 
-    const req1 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${1}`);
-    const req2 = httpTestingController.expectOne(`http://localhost:8080/posts/${postId}/tags/${2}`);
+    const req1 = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${1}`);
+    const req2 = httpTestingController.expectOne(`${env.apiUrl}posts/${postId}/tags/${2}`);
     expect(req1.request.method).toEqual('DELETE');
     expect(req2.request.method).toEqual('DELETE');
     req1.flush(null, { status: 204, statusText: 'No Content' });
@@ -156,7 +151,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}`);
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${id}`);
     expect(req.request.method).toEqual('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
@@ -167,7 +162,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}/publish`);
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${id}/publish`);
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });
@@ -178,7 +173,7 @@ describe('PostsService', () => {
       expect(result).toBeNull();
     });
 
-    const req = httpTestingController.expectOne(`http://localhost:8080/posts/${id}/unpublish`);
+    const req = httpTestingController.expectOne(`${env.apiUrl}posts/${id}/unpublish`);
     expect(req.request.method).toEqual('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
   });

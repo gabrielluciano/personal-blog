@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import msg, { SUCCESS_PUBLISH_POST_MSG } from 'src/app/i18n/pt/msg';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -84,13 +85,13 @@ export class PostComponent implements OnInit {
   private getDialogMessage(operation: CrudOperation) {
     switch (operation) {
       case 'edit':
-        return 'Deseja editar o post?';
+        return msg.WANT_EDIT_POST_MSG;
       case 'delete':
-        return 'Deseja excluir o post?';
+        return msg.WANT_DELETE_POST_MSG;
       case 'publish':
-        return 'Deseja publicar o post?';
+        return msg.WANT_PUBLISH_POST_MSG;
       case 'unpublish':
-        return 'Deseja despublicar o post?';
+        return msg.WANT_UNPUBLISH_POST_MSG;
     }
   }
 
@@ -101,7 +102,7 @@ export class PostComponent implements OnInit {
   private deletePost() {
     this.postsService.delete(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar('Post excluído com sucesso', 'success');
+        this.showSnackBar(msg.SUCCESS_DELETE_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
       error: (error) => this.showSnackBar(error.message, 'error'),
@@ -111,7 +112,7 @@ export class PostComponent implements OnInit {
   private publishPost() {
     this.postsService.publish(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar('Post publicado com sucesso', 'success');
+        this.showSnackBar(SUCCESS_PUBLISH_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
       error: (error) => this.showSnackBar(error.message, 'error'),
@@ -121,7 +122,7 @@ export class PostComponent implements OnInit {
   private unpublishPost() {
     this.postsService.unpublish(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar('Post despublicado com sucesso', 'success');
+        this.showSnackBar(msg.SUCCESS_UNPUBLISH_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
       error: (error) => this.showSnackBar(error.message, 'error'),

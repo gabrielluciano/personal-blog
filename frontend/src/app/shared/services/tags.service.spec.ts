@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { TagsService } from './tags.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { tagsMock, tagsPageMock } from 'src/app/models/tag/tagsMock';
+import { environment as env } from 'src/environments/environment';
 
 describe('TagsService', () => {
   let service: TagsService;
@@ -26,7 +27,7 @@ describe('TagsService', () => {
       expect(tag.id).toEqual(tagsMock[0].id);
     });
 
-    const req = httpTestingController.expectOne('http://localhost:8080/tags/1');
+    const req = httpTestingController.expectOne(env.apiUrl + 'tags/1');
     expect(req.request.method).toEqual('GET');
     req.flush(tagsMock[0]);
   });
@@ -37,7 +38,7 @@ describe('TagsService', () => {
       expect(page.content.length).toEqual(tagsPageMock.content.length);
     });
 
-    const req = httpTestingController.expectOne('http://localhost:8080/tags?size=100');
+    const req = httpTestingController.expectOne(env.apiUrl + 'tags?size=100');
     expect(req.request.method).toEqual('GET');
     req.flush(tagsPageMock);
   });

@@ -19,31 +19,31 @@
       <div class="crud" *ngIf="editor">
         <mat-icon
           fontIcon="edit"
-          title="Edit post"
-          aria-label="Edit post"
+          title="Editar post"
+          aria-label="Editar post"
           class="icon edit"
           (click)="openDialog('edit')"
         ></mat-icon>
         <mat-icon
           fontIcon="publish"
-          title="Publish post"
-          aria-label="Publish post"
+          title="Publicar post"
+          aria-label="Publicar post"
           class="icon publish"
           *ngIf="!post.published"
           (click)="openDialog('publish')"
         ></mat-icon>
         <mat-icon
           fontIcon="unpublished"
-          title="Unpublish post"
-          aria-label="Unpublish post"
+          title="Despublicar post"
+          aria-label="Despublicar post"
           class="icon unpublish"
           *ngIf="post.published"
           (click)="openDialog('unpublish')"
         ></mat-icon>
         <mat-icon
           fontIcon="delete"
-          title="Delete post"
-          aria-label="Delete post"
+          title="Excluir post"
+          aria-label="Excluir post"
           class="icon delete"
           (click)="openDialog('delete')"
         ></mat-icon>

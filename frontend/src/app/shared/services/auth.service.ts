@@ -4,19 +4,18 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, catchError } from 'rxjs';
 import { handleError } from '../util/errorHandling';
 import { JwtToken } from 'src/app/models/jwtToken';
+import { environment as env } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  readonly API = 'http://localhost:8080/';
-
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}
 
   login(email: string, password: string): Observable<string> {
     return this.http
       .post(
-        this.API + 'login',
+        env.apiUrl + 'login',
         { email, password },
         {
           responseType: 'text',
