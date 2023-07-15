@@ -11,6 +11,8 @@ export const SUCCESS_UNPUBLISH_POST_MSG = 'Post despublicado com sucesso';
 
 export const SUCCESS_LOGIN_MSG = 'Login realizado com sucesso!';
 
+export const UNAUTHORIZED_ERROR_MSG = 'Credenciais inválidas para realizar esta operação';
+
 export default {
   WANT_EDIT_POST_MSG,
   WANT_DELETE_POST_MSG,
@@ -24,4 +26,6 @@ export default {
   SUCCESS_UNPUBLISH_POST_MSG,
 
   SUCCESS_LOGIN_MSG,
+
+  UNAUTHORIZED_ERROR_MSG,
 };
