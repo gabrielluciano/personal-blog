@@ -6,11 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import msg from 'src/app/i18n/pt/msg';
 import { ErrorDetails } from 'src/app/models/errorDetails';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
-import {
-  SnackbarComponent,
-  SnackbarData,
-  getSnackBarDefaultConfig,
-} from 'src/app/shared/components/snackbar/snackbar.component';
+import { showSnackBar } from 'src/app/shared/components/snackbar/snackbar.component';
 import { PostsService } from 'src/app/shared/services/posts.service';
 import { TagsService } from 'src/app/shared/services/tags.service';
 import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
@@ -58,7 +54,7 @@ export class PostFormComponent implements OnInit {
   private getAllTags() {
     this.tagsService.list().subscribe({
       next: (tags) => (this.tags = tags.content),
-      error: (error) => this.showSnackBar(error.message, 'error'),
+      error: (error) => showSnackBar(this._snackBar, error.message, 'error'),
     });
   }
 
@@ -92,7 +88,7 @@ export class PostFormComponent implements OnInit {
         this.form.controls['content'].setValue(post.content);
       },
       error: (error) => {
-        this.showSnackBar(error.message, 'error');
+        showSnackBar(this._snackBar, error.message, 'error');
         this.redirectToHome();
       },
     });
@@ -112,7 +108,7 @@ export class PostFormComponent implements OnInit {
     if (this.postId) {
       await firstValueFrom(this.postsService.update(post, this.postId));
       await this.updatePostTags(this.postId);
-      this.showSnackBar(msg.SUCCESS_UPDATE_POST_MSG, 'success');
+      showSnackBar(this._snackBar, msg.SUCCESS_UPDATE_POST_MSG, 'success');
     }
   }
 
@@ -120,7 +116,7 @@ export class PostFormComponent implements OnInit {
     const post = this.getPostFromForm();
     const savedPost = await firstValueFrom(this.postsService.save(post));
     await this.updatePostTags(savedPost.id);
-    this.showSnackBar(msg.SUCCESS_SAVE_POST_MSG, 'success');
+    showSnackBar(this._snackBar, msg.SUCCESS_SAVE_POST_MSG, 'success');
   }
 
   private getPostFromForm() {
@@ -142,10 +138,6 @@ export class PostFormComponent implements OnInit {
   }
 
   private handleSumissionError(error: ErrorDetails) {
-    this.showSnackBar(error.message, 'error');
-  }
-
-  private showSnackBar(message: string, style: SnackbarData['style']) {
-    this._snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(message, style));
+    showSnackBar(this._snackBar, error.message, 'error');
   }
 }

@@ -5,7 +5,7 @@
     class="toggle"
     [checked]="drafts()"
     (change)="onSlideChange()"
-    *ngIf="editor"
+    *ngIf="editor$ | async"
     >Ver drafts</mat-slide-toggle
   >
   <app-post-list

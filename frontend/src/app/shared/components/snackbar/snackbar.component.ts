@@ -1,5 +1,10 @@
 import { Component, Inject, inject } from '@angular/core';
-import { MatSnackBarRef, MAT_SNACK_BAR_DATA, MatSnackBarConfig } from '@angular/material/snack-bar';
+import {
+  MatSnackBarRef,
+  MAT_SNACK_BAR_DATA,
+  MatSnackBarConfig,
+  MatSnackBar,
+} from '@angular/material/snack-bar';
 
 const DURATION_IN_SECONDS = 10;
 
@@ -20,6 +25,10 @@ export function getSnackBarDefaultConfig(message: string, style: SnackbarData['s
   };
 
   return config;
+}
+
+export function showSnackBar(snackBar: MatSnackBar, message: string, style: SnackbarData['style']) {
+  snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(message, style));
 }
 
 @Component({
