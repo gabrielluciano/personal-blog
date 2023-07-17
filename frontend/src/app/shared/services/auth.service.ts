@@ -28,7 +28,17 @@ export class AuthService {
     localStorage.removeItem('access_token');
   }
 
-  async isAuthenticated() {
+  async getDecodedToken(token?: string) {
+    const isAuthenticated = await this.isAuthenticated();
+    if (isAuthenticated) {
+      return token
+        ? this.jwtHelper.decodeToken<JwtToken>(token)
+        : this.jwtHelper.decodeToken<JwtToken>();
+    }
+    return null;
+  }
+
+  private async isAuthenticated() {
     try {
       if (await this.jwtHelper.isTokenExpired()) {
         this.logout();
@@ -38,15 +48,5 @@ export class AuthService {
     } catch (error) {
       return false;
     }
-  }
-
-  async isEditor() {
-    const isAuthenticated = await this.isAuthenticated();
-
-    if (isAuthenticated) {
-      const token = await this.jwtHelper.decodeToken<JwtToken>();
-      return token ? token.roles.includes('EDITOR') : false;
-    }
-    return false;
   }
 }
