@@ -4,8 +4,12 @@ import { HeaderComponent } from '../header/header.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackbarComponent, getSnackBarDefaultConfig } from '../snackbar/snackbar.component';
+import { showSnackBar } from '../snackbar/snackbar.component';
 import { SUCCESS_LOGIN_MSG } from 'src/app/i18n/pt/msg';
+import { Store } from '@ngrx/store';
+import { login } from '../../state/auth/auth.actions';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AppState } from '../../state/app.state';
 
 @Component({
   selector: 'app-login-form',
@@ -13,15 +17,14 @@ import { SUCCESS_LOGIN_MSG } from 'src/app/i18n/pt/msg';
   styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent implements OnInit {
-  readonly DURATION_IN_SECONDS = 10;
-
   form!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<HeaderComponent>,
     private authService: AuthService,
-    private _snackBar: MatSnackBar
+    private store: Store<AppState>,
+    private _snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<HeaderComponent>
   ) {}
 
   ngOnInit(): void {
@@ -37,19 +40,22 @@ export class LoginFormComponent implements OnInit {
 
   onSubmit() {
     this.authService.login(this.form.value.email, this.form.value.password).subscribe({
-      next: (token) => {
-        localStorage.setItem('access_token', token);
-        this._snackBar.openFromComponent(
-          SnackbarComponent,
-          getSnackBarDefaultConfig(SUCCESS_LOGIN_MSG, 'success')
-        );
-        this.dialogRef.close();
-      },
-      error: (error) =>
-        this._snackBar.openFromComponent(
-          SnackbarComponent,
-          getSnackBarDefaultConfig(error.message, 'error')
-        ),
+      next: this.handleSucessfulLogin.bind(this),
+      error: this.handleLoginError.bind(this),
     });
+  }
+
+  private async handleSucessfulLogin(token: string) {
+    localStorage.setItem('access_token', token);
+    const decodedToken = await this.authService.getDecodedToken(token);
+    if (decodedToken) {
+      this.store.dispatch(login({ token: decodedToken }));
+    }
+    showSnackBar(this._snackBar, SUCCESS_LOGIN_MSG, 'success');
+    this.dialogRef.close();
+  }
+
+  private async handleLoginError(error: HttpErrorResponse) {
+    showSnackBar(this._snackBar, error.message, 'error');
   }
 }

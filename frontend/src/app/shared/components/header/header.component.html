@@ -13,7 +13,7 @@
     </a>
 
     <button
-      *ngIf="authenticated; else loginButton"
+      *ngIf="authenticated$ | async; else loginButton"
       mat-flat-button
       color="primary"
       class="button"
@@ -29,7 +29,7 @@
       </button>
     </ng-template>
 
-    <a routerLink="/posts/new" class="new-post-button" *ngIf="authenticated">
+    <a routerLink="/posts/new" class="new-post-button" *ngIf="authenticated$ | async">
       <mat-icon fontIcon="add" options></mat-icon>
     </a>
   </div>

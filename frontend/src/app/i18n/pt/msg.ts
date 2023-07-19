@@ -10,6 +10,7 @@ export const SUCCESS_PUBLISH_POST_MSG = 'Post publicado com sucesso';
 export const SUCCESS_UNPUBLISH_POST_MSG = 'Post despublicado com sucesso';
 
 export const SUCCESS_LOGIN_MSG = 'Login realizado com sucesso!';
+export const SUCCESS_LOGOUT_MSG = 'Logout realizado com sucesso!';
 
 export const UNAUTHORIZED_ERROR_MSG = 'Credenciais inválidas para realizar esta operação';
 
@@ -26,6 +27,7 @@ export default {
   SUCCESS_UNPUBLISH_POST_MSG,
 
   SUCCESS_LOGIN_MSG,
+  SUCCESS_LOGOUT_MSG,
 
   UNAUTHORIZED_ERROR_MSG,
 };

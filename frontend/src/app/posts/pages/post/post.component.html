@@ -16,7 +16,7 @@
           </li>
         </ul>
       </div>
-      <div class="crud" *ngIf="editor">
+      <div class="crud" *ngIf="editor$ | async">
         <mat-icon
           fontIcon="edit"
           title="Editar post"

@@ -1,24 +1,25 @@
 import { TestBed } from '@angular/core/testing';
-
-import { authGuard } from './auth.guard';
-import { AuthService } from '../services/auth.service';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { editorGuard } from './auth.guard';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { AppState } from '../state/app.state';
+import { initialState } from '../state/auth/auth.reducer';
 
-describe('authGuard', () => {
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
+describe('editorGuard', () => {
+  let store: MockStore<AppState>;
   let router: Router;
+  const initialAppState: AppState = { auth: initialState };
 
-  const executeGuard = () => TestBed.runInInjectionContext(() => authGuard());
+  const executeGuard = () => TestBed.runInInjectionContext(() => editorGuard());
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['isEditor']);
-
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
-      providers: [{ provide: AuthService, useValue: authServiceSpy }],
+      providers: [provideMockStore({ initialState: initialAppState })],
     });
 
+    store = TestBed.inject(MockStore);
     router = TestBed.inject(Router);
   });
 
@@ -26,16 +27,39 @@ describe('authGuard', () => {
     expect(executeGuard).toBeTruthy();
   });
 
-  it('should return true when user is an editor', async () => {
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(true));
-    await expectAsync(executeGuard()).toBeResolvedTo(true);
+  it('should return an Observable of false when user is not authenticated', () => {
+    const routerNavigateSpy = spyOn(router, 'navigate');
+    executeGuard().subscribe((value) => {
+      expect(value).toBeFalsy();
+    });
+    expect(routerNavigateSpy).toHaveBeenCalledOnceWith(['/']);
   });
 
-  it('should return true when user is an editor', async () => {
+  it('should return an Observable of false when user is authenticated but is not an editor', () => {
+    store.setState({
+      auth: {
+        isAuthenticated: true,
+        isEditor: false,
+        isAdmin: false,
+      },
+    });
     const routerNavigateSpy = spyOn(router, 'navigate');
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(false));
+    executeGuard().subscribe((value) => {
+      expect(value).toBeFalsy();
+    });
+    expect(routerNavigateSpy).toHaveBeenCalledOnceWith(['/']);
+  });
 
-    await expectAsync(executeGuard()).toBeResolvedTo(false);
-    expect(routerNavigateSpy).toHaveBeenCalledWith(['/']);
+  it('should return an Observable of true when user is authenticated and is an editor', () => {
+    store.setState({
+      auth: {
+        isAuthenticated: true,
+        isEditor: true,
+        isAdmin: false,
+      },
+    });
+    executeGuard().subscribe((value) => {
+      expect(value).toBeTruthy();
+    });
   });
 });

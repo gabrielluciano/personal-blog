@@ -37,11 +37,11 @@ describe('AuthService', () => {
     service.login('email', 'password').subscribe((token) => {
       expect(token).toBeTruthy();
       expect(token).toMatch(JWT_VALIDATION_REGEX);
-
-      const req = httpTestingController.expectOne(env.apiUrl + 'login');
-      expect(req.request.method).toEqual('POST');
-      req.flush(JWT_TOKEN);
     });
+
+    const req = httpTestingController.expectOne(env.apiUrl + 'login');
+    expect(req.request.method).toEqual('POST');
+    req.flush(JWT_TOKEN);
   });
 
   it('should remove access token from localStorage', () => {
@@ -50,51 +50,34 @@ describe('AuthService', () => {
     expect(localStorage.getItem('access_token')).toBeNull();
   });
 
-  it('should return false when isAuthenticated is called and access_token doesnt exist', async () => {
+  it('should return null when getDecodedToken is called and access_token doesnt exist', async () => {
     jwtHelper.isTokenExpired.and.throwError("token doesn't not exist");
-    const returnValue = await service.isAuthenticated();
+    const returnValue = await service.getDecodedToken();
     expect(jwtHelper.isTokenExpired).toHaveBeenCalled();
-    expect(returnValue).toBeFalsy();
+    expect(returnValue).toBeNull();
   });
 
-  it('should return false when isAuthenticated is called and access_token is expired', async () => {
+  it('should return null when getDecodedToken is called and access_token is expired', async () => {
     jwtHelper.isTokenExpired.and.returnValue(Promise.resolve(true));
-    const returnValue = await service.isAuthenticated();
+    const returnValue = await service.getDecodedToken();
     expect(jwtHelper.isTokenExpired).toHaveBeenCalled();
-    expect(returnValue).toBeFalsy();
+    expect(returnValue).toBeNull();
   });
 
-  it('should return true when isAuthenticated is called and access_token is valid', async () => {
-    jwtHelper.isTokenExpired.and.returnValue(Promise.resolve(false));
-    const returnValue = await service.isAuthenticated();
-    expect(jwtHelper.isTokenExpired).toHaveBeenCalled();
-    expect(returnValue).toBeTruthy();
-  });
-
-  const isEditorTest = (roles: JwtToken['roles'], expected: boolean) => {
-    return async () => {
-      jwtHelper.isTokenExpired.and.returnValue(Promise.resolve(false));
-      jwtHelper.decodeToken.and.returnValue({
-        id: 1,
-        email: 'email@email.com',
-        iat: Date.now() / 1000,
-        exp: Date.now() / 1000 + 600,
-        roles: roles,
-      });
-
-      const returnValue = await service.isEditor();
-      expect(jwtHelper.isTokenExpired).toHaveBeenCalled();
-      expect(jwtHelper.decodeToken).toHaveBeenCalled();
-      expect(returnValue).toBe(expected);
+  it('should return jwtToken when getDecodedToken is called and user is authenticated', async () => {
+    const token: JwtToken = {
+      id: 1,
+      email: 'email@email.com',
+      iat: Date.now() / 1000,
+      exp: Date.now() / 1000 + 600,
+      roles: ['EDITOR', 'ADMIN', 'USER'],
     };
-  };
 
-  it(
-    'should return true when isEditor is called and user is an editor',
-    isEditorTest(['EDITOR', 'ADMIN', 'USER'], true)
-  );
-  it(
-    'should return false when isEditor is called and user is not an editor',
-    isEditorTest(['USER'], false)
-  );
+    jwtHelper.isTokenExpired.and.returnValue(Promise.resolve(false));
+    jwtHelper.decodeToken.and.returnValue(token);
+
+    const returnValue = await service.getDecodedToken();
+    expect(jwtHelper.isTokenExpired).toHaveBeenCalled();
+    expect(returnValue).toBe(token);
+  });
 });

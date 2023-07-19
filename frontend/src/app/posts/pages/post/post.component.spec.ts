@@ -6,7 +6,6 @@ import { of, throwError } from 'rxjs';
 import { postsMock } from 'src/app/models/post/postsMock';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AuthService } from 'src/app/shared/services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
@@ -17,15 +16,19 @@ import {
   getSnackBarDefaultConfig,
 } from 'src/app/shared/components/snackbar/snackbar.component';
 import { ErrorDetails } from 'src/app/models/errorDetails';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { AppState } from 'src/app/shared/state/app.state';
+import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 
 describe('PostComponent', () => {
   let component: PostComponent;
   let fixture: ComponentFixture<PostComponent>;
+  let store: MockStore<AppState>;
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ConfirmDialogComponent>>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  const initialAppState: AppState = { auth: initialState };
 
   const errorDetailsMock: Partial<ErrorDetails> = {
     message: 'Ops we had an error!',
@@ -39,8 +42,6 @@ describe('PostComponent', () => {
       'unpublish',
     ]);
     postsServiceSpy.findBySlug.and.returnValue(of(postsMock[0]));
-
-    authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['isEditor']);
     dialogSpy = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<ConfirmDialogComponent>>('MatDialogRef', [
       'afterClosed',
@@ -52,14 +53,15 @@ describe('PostComponent', () => {
       imports: [BrowserAnimationsModule, RouterTestingModule, SharedModule, MatIconModule],
       declarations: [PostComponent],
       providers: [
+        provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
     });
     fixture = TestBed.createComponent(PostComponent);
     component = fixture.componentInstance;
+    store = TestBed.inject(MockStore);
     fixture.detectChanges();
   });
 
@@ -72,18 +74,24 @@ describe('PostComponent', () => {
     expect(component.post.id).toBe(postsMock[0].id);
   });
 
-  it('should set editor to true when user is an editor', fakeAsync(() => {
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(true));
-    component.ngOnInit();
-    tick();
-    expect(component.editor).toBeTruthy();
+  it('should set editor$ to Observable of false when user is not an editor', fakeAsync(() => {
+    component.editor$.subscribe((value) => {
+      expect(value).toBeFalsy();
+    });
   }));
 
-  it('should set editor to false when user is not an editor', fakeAsync(() => {
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(false));
-    component.ngOnInit();
+  it('should set editor$ to Observable of true when user is an editor', fakeAsync(() => {
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     tick();
-    expect(component.editor).toBeFalsy();
+    component.editor$.subscribe((value) => {
+      expect(value).toBeTruthy();
+    });
   }));
 
   it('should call postsService delete method and call snackbar with success when delete dialog is confirmed', () => {
@@ -92,7 +100,13 @@ describe('PostComponent', () => {
     dialogRefSpy.afterClosed.and.returnValue(of(true));
 
     // This is neccessary for the delete button to be available
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const deleteButton = fixture.elementRef.nativeElement.querySelector(
@@ -114,7 +128,13 @@ describe('PostComponent', () => {
     dialogRefSpy.afterClosed.and.returnValue(of(true));
 
     // This is neccessary for the delete button to be available
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const deleteButton = fixture.elementRef.nativeElement.querySelector(
@@ -137,7 +157,13 @@ describe('PostComponent', () => {
 
     // This is neccessary for the publish button to be available
     component.post = postsMock[1];
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const publishButton = fixture.elementRef.nativeElement.querySelector(
@@ -160,7 +186,13 @@ describe('PostComponent', () => {
 
     // This is neccessary for the publish button to be available
     component.post = postsMock[1];
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const publishButton = fixture.elementRef.nativeElement.querySelector(
@@ -182,7 +214,13 @@ describe('PostComponent', () => {
     dialogRefSpy.afterClosed.and.returnValue(of(true));
 
     // This is neccessary for the unpublish button to be available
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const unpublishButton = fixture.elementRef.nativeElement.querySelector(
@@ -204,7 +242,13 @@ describe('PostComponent', () => {
     dialogRefSpy.afterClosed.and.returnValue(of(true));
 
     // This is neccessary for the unpublish button to be available
-    component.editor = true;
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     fixture.detectChanges();
 
     const unpublishButton = fixture.elementRef.nativeElement.querySelector(

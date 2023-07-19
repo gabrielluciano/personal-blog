@@ -12,20 +12,22 @@ import { postsPageMock } from '../../../models/post/postsMock';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DateFormatPipe } from 'src/app/shared/pipes/date-format.pipe';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AuthService } from 'src/app/shared/services/auth.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { AppState } from 'src/app/shared/state/app.state';
+import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
   let fixture: ComponentFixture<PostsHomeComponent>;
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let store: MockStore<AppState>;
+  const initialAppState: AppState = { auth: initialState };
 
   beforeEach(() => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', {
       list: of(postsPageMock),
     });
-    authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['isEditor']);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, BrowserAnimationsModule, SharedModule, MatSlideToggleModule],
@@ -38,12 +40,13 @@ describe('PostsHomeComponent', () => {
         DateFormatPipe,
       ],
       providers: [
+        provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy },
       ],
     });
     fixture = TestBed.createComponent(PostsHomeComponent);
     component = fixture.componentInstance;
+    store = TestBed.inject(MockStore);
     fixture.detectChanges();
   });
 
@@ -56,34 +59,67 @@ describe('PostsHomeComponent', () => {
     expect(component.postsPage.numberOfElements).toBe(postsPageMock.content.length);
   });
 
-  it('should set editor to true when user is an editor', fakeAsync(() => {
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(true));
-    component.ngOnInit();
-    tick();
-    expect(component.editor).toBeTruthy();
+  it('should set editor$ to Observable of false when user is not an editor', fakeAsync(() => {
+    component.editor$.subscribe((value) => {
+      expect(value).toBeFalsy();
+    });
   }));
 
-  it('should set editor to false when user is not an editor', fakeAsync(() => {
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(false));
-    component.ngOnInit();
+  it('should set editor$ to Observable of true when user is an editor', fakeAsync(() => {
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
     tick();
-    expect(component.editor).toBeFalsy();
+    component.editor$.subscribe((value) => {
+      expect(value).toBeTruthy();
+    });
   }));
 
-  it('should call slideChange method when toggle button is clicked', fakeAsync(() => {
-    const slideChangeSpy = spyOn(component, 'onSlideChange');
-    authServiceSpy.isEditor.and.returnValue(Promise.resolve(true));
-    component.ngOnInit();
+  it('should call slideChange method when toggle button is clicked', () => {
+    store.setState({
+      auth: {
+        ...initialAppState.auth,
+        isAuthenticated: true,
+        isEditor: true,
+      },
+    });
+    fixture.detectChanges();
+
+    expect(component.drafts()).toBeFalsy();
+
+    const button = fixture.elementRef.nativeElement.querySelector('mat-slide-toggle button');
+    button.click();
+
+    fixture.detectChanges();
+
+    expect(component.drafts()).toBeTruthy();
+    expect(postsServiceSpy.list).toHaveBeenCalledTimes(2);
+    expect(postsServiceSpy.list).toHaveBeenCalledWith(10, 0, null, true);
+  });
+
+  it('should call list method when pageSize value change', fakeAsync(() => {
+    const pageSizeValue = 5;
+    component.pageSize.set(pageSizeValue);
 
     tick();
     fixture.detectChanges();
 
-    expect(component.drafts()).toBeFalsy();
-    const button = fixture.elementRef.nativeElement.querySelector('mat-slide-toggle button');
-    button.click();
+    expect(postsServiceSpy.list).toHaveBeenCalledTimes(2);
+    expect(postsServiceSpy.list).toHaveBeenCalledWith(pageSizeValue, 0, null, false);
+  }));
+
+  it('should call list method when pageIndex value change', fakeAsync(() => {
+    const pageIndexValue = 5;
+    component.pageIndex.set(pageIndexValue);
 
     tick();
+    fixture.detectChanges();
 
-    expect(slideChangeSpy).toHaveBeenCalled();
+    expect(postsServiceSpy.list).toHaveBeenCalledTimes(2);
+    expect(postsServiceSpy.list).toHaveBeenCalledWith(10, pageIndexValue, null, false);
   }));
 });

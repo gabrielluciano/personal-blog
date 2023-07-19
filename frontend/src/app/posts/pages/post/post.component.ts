@@ -2,16 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import msg, { SUCCESS_PUBLISH_POST_MSG } from 'src/app/i18n/pt/msg';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import {
-  SnackbarComponent,
-  SnackbarData,
-  getSnackBarDefaultConfig,
-} from 'src/app/shared/components/snackbar/snackbar.component';
-import { AuthService } from 'src/app/shared/services/auth.service';
+import { showSnackBar } from 'src/app/shared/components/snackbar/snackbar.component';
 import { PostsService } from 'src/app/shared/services/posts.service';
+import { AppState } from 'src/app/shared/state/app.state';
+import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
 
 type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 
@@ -22,21 +21,22 @@ type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 })
 export class PostComponent implements OnInit {
   post!: PostReponse;
-  editor = false;
+  editor$: Observable<boolean>;
 
   constructor(
     private postsService: PostsService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService,
+    private store: Store<AppState>,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.editor$ = store.select(selectAuthIsEditor);
+  }
 
   ngOnInit(): void {
     const slug = this.route.snapshot.params['slug'];
     this.findBySlug(slug);
-    this.setEditor();
   }
 
   openDialog(operation: CrudOperation) {
@@ -60,10 +60,6 @@ export class PostComponent implements OnInit {
         this.router.navigate(['/']);
       },
     });
-  }
-
-  private async setEditor() {
-    this.editor = await this.authService.isEditor();
   }
 
   private callOperationMethod(operation: CrudOperation) {
@@ -102,34 +98,30 @@ export class PostComponent implements OnInit {
   private deletePost() {
     this.postsService.delete(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar(msg.SUCCESS_DELETE_POST_MSG, 'success');
+        showSnackBar(this._snackBar, msg.SUCCESS_DELETE_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
-      error: (error) => this.showSnackBar(error.message, 'error'),
+      error: (error) => showSnackBar(this._snackBar, error.message, 'error'),
     });
   }
 
   private publishPost() {
     this.postsService.publish(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar(SUCCESS_PUBLISH_POST_MSG, 'success');
+        showSnackBar(this._snackBar, SUCCESS_PUBLISH_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
-      error: (error) => this.showSnackBar(error.message, 'error'),
+      error: (error) => showSnackBar(this._snackBar, error.message, 'error'),
     });
   }
 
   private unpublishPost() {
     this.postsService.unpublish(this.post.id).subscribe({
       next: () => {
-        this.showSnackBar(msg.SUCCESS_UNPUBLISH_POST_MSG, 'success');
+        showSnackBar(this._snackBar, msg.SUCCESS_UNPUBLISH_POST_MSG, 'success');
         this.router.navigate(['/']);
       },
-      error: (error) => this.showSnackBar(error.message, 'error'),
+      error: (error) => showSnackBar(this._snackBar, error.message, 'error'),
     });
-  }
-
-  private showSnackBar(message: string, style: SnackbarData['style']) {
-    this._snackBar.openFromComponent(SnackbarComponent, getSnackBarDefaultConfig(message, style));
   }
 }
