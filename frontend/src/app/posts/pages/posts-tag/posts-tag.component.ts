@@ -1,19 +1,23 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, signal, effect, WritableSignal, OnDestroy } from '@angular/core';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { PostsService } from 'src/app/shared/services/posts.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TagsService } from 'src/app/shared/services/tags.service';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-posts-tag',
   templateUrl: './posts-tag.component.html',
   styleUrls: ['./posts-tag.component.scss'],
 })
-export class PostsTagComponent {
+export class PostsTagComponent implements OnDestroy {
+  private destroy$ = new Subject<void>();
+
   postsPage!: Page<PostReponse>;
   tag!: TagResponse;
+  tagId: WritableSignal<number | null> = signal(null);
   pageSize = signal(10);
   pageIndex = signal(0);
 
@@ -23,19 +27,26 @@ export class PostsTagComponent {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    const tagId = +this.route.snapshot.params['tagId'];
-    this.findTagByIdOrRedirectToHome(tagId);
+    this.getTagIdFromRouteAndLoadTag();
 
     effect(() => {
-      this.list(this.pageSize(), this.pageIndex(), tagId);
+      this.list(this.pageSize(), this.pageIndex(), this.tagId());
     });
   }
 
-  list(pageSize: number, pageIndex: number, tagId: number) {
+  private getTagIdFromRouteAndLoadTag() {
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
+      const tagId = +params['tagId'];
+      this.tagId.set(tagId);
+      this.findTagByIdOrRedirectToHome(tagId);
+    });
+  }
+
+  private list(pageSize: number, pageIndex: number, tagId: number | null) {
     this.postsService.list(pageSize, pageIndex, tagId).subscribe((page) => (this.postsPage = page));
   }
 
-  findTagByIdOrRedirectToHome(tagId: number) {
+  private findTagByIdOrRedirectToHome(tagId: number) {
     this.tagsService.findById(tagId).subscribe({
       next: (tag) => (this.tag = tag),
       error: (error) => {
@@ -43,5 +54,10 @@ export class PostsTagComponent {
         this.router.navigate(['/']);
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
