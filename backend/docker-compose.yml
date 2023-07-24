@@ -1,17 +1,28 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
-    image: postgres:latest
-    container_name: personalblog
+    image: postgres:15.3
+    container_name: personalblog_db
     restart: on-failure
     environment:
+      POSTGRES_DB: personalblog
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespw
-    ports:
-      - "5432:5432"
     volumes:
       - personalblog_data:/var/lib/postgresql/data
+
+  backend:
+    image: personalblog
+    container_name: personalblog_backend
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      API_SECRET: secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://personalblog_db:5432/personalblog?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgrespw
 
 volumes:
   personalblog_data:
