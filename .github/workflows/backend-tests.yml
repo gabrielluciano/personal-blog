@@ -1,28 +1,30 @@
-name: Personal Blog Maven CI
+name: Personal Blog Backend Test CI
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
 env:
   API_SECRET: secret
+  APP_FOLDER: backend
 
 jobs:
-  backend-tests:
-
+  build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+
     - name: Run unit tests
-      run: cd ./backend && mvn -B test
+      working-directory: ${{ env.APP_FOLDER }}
+      run: mvn -B test
+
     - name: Run integration tests
-      run: cd ./backend && mvn test -B -P integration-tests
+      working-directory: ${{ env.APP_FOLDER }}
+      run: mvn test -B -P integration-tests
