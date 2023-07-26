@@ -1,4 +1,5 @@
 version: "3.8"
+name: personalblog_backend
 
 services:
   db:
@@ -6,23 +7,28 @@ services:
     container_name: personalblog_db
     restart: on-failure
     environment:
-      POSTGRES_DB: personalblog
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespw
+      POSTGRES_DB: "${PB_DB_NAME}"
+      POSTGRES_USER: "${PB_DB_USER}"
+      POSTGRES_PASSWORD: "${PB_DB_PASSWORD}"
     volumes:
       - personalblog_data:/var/lib/postgresql/data
 
-  backend:
+  spring:
     image: personalblog
-    container_name: personalblog_backend
+    container_name: personalblog_spring
     restart: on-failure
     ports:
       - "8080:8080"
     environment:
-      API_SECRET: secret
-      SPRING_DATASOURCE_URL: jdbc:postgresql://personalblog_db:5432/personalblog?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgrespw
+      API_SECRET: "${PB_API_SECRET}"
+      SPRING_DATASOURCE_URL: "${PB_DATASOURCE_URL}"
+      SPRING_DATASOURCE_USERNAME: "${PB_DB_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${PB_DB_PASSWORD}"
 
 volumes:
   personalblog_data:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "${PB_DB_STORAGE}"

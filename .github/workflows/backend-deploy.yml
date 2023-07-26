@@ -1,0 +1,46 @@
+name: Personal Blog Backend Test and Deploy CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  API_SECRET: secret
+  APP_FOLDER: backend
+  AWS_REGION: us-east-2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+        role-session-name: Github-Action-Role
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run unit tests
+      working-directory: ${{ env.APP_FOLDER }}
+      run: mvn -B test
+
+    - name: Run integration tests
+      working-directory: ${{ env.APP_FOLDER }}
+      run: mvn test -B -P integration-tests
+
+    - name: Build and Package
+      working-directory: ${{ env.APP_FOLDER }}
+      run: mvn clean package -PskipTests
+
+    - name: Upload Artifact to s3
+      working-directory: ${{ env.APP_FOLDER }}/target
+      run: aws s3 cp *.jar s3://${{ secrets.PROD_S3_BUCKET }}/
