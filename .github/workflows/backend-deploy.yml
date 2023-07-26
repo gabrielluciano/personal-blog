@@ -42,7 +42,7 @@ jobs:
 
     - name: Build and Package
       working-directory: ${{ env.APP_FOLDER }}
-      run: mvn clean package -PskipTests
+      run: mvn clean package -DskipTests
 
     - name: Upload Artifact to s3
       working-directory: ${{ env.APP_FOLDER }}/target
