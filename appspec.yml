@@ -7,16 +7,16 @@ hooks:
   ApplicationStop:
     - location: aws/scripts/application-stop.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
   BeforeInstall:
     - location: aws/scripts/before-install.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
   AfterInstall:
     - location: aws/scripts/after-install.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
   ApplicationStart:
     - location: aws/scripts/application-start.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
