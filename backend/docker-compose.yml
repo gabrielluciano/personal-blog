@@ -2,17 +2,6 @@ version: "3.8"
 name: personalblog_backend
 
 services:
-  db:
-    image: postgres:15.3
-    container_name: personalblog_db
-    restart: on-failure
-    environment:
-      POSTGRES_DB: "${PB_DB_NAME}"
-      POSTGRES_USER: "${PB_DB_USER}"
-      POSTGRES_PASSWORD: "${PB_DB_PASSWORD}"
-    volumes:
-      - personalblog_data:/var/lib/postgresql/data
-
   spring:
     image: personalblog
     container_name: personalblog_spring
@@ -24,11 +13,3 @@ services:
       SPRING_DATASOURCE_URL: "${PB_DATASOURCE_URL}"
       SPRING_DATASOURCE_USERNAME: "${PB_DB_USER}"
       SPRING_DATASOURCE_PASSWORD: "${PB_DB_PASSWORD}"
-
-volumes:
-  personalblog_data:
-    driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "${PB_DB_STORAGE}"
