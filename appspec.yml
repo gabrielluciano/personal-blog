@@ -1,0 +1,22 @@
+version: 0.0
+os: linux
+files:
+  - source: /aws
+    destination: /usr/local/codedeployresources
+hooks:
+  ApplicationStop:
+    - location: aws/scripts/application-stop.sh
+      timeout: 300
+      runas: ubuntu
+  BeforeInstall:
+    - location: aws/scripts/before-install.sh
+      timeout: 300
+      runas: ubuntu
+  AfterInstall:
+    - location: aws/scripts/after-install.sh
+      timeout: 300
+      runas: ubuntu
+  ApplicationStart:
+    - location: aws/scripts/application-start.sh
+      timeout: 300
+      runas: ubuntu
