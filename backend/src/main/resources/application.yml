@@ -23,4 +23,4 @@ logging:
         SQL: DEBUG
 
 api:
-  secret: ${API_SECRET}
+  secret: secret
