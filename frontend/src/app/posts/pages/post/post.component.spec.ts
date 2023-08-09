@@ -51,7 +51,13 @@ describe('PostComponent', () => {
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
 
     TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, RouterTestingModule, SharedModule, MatIconModule, NgOptimizedImage],
+      imports: [
+        BrowserAnimationsModule,
+        RouterTestingModule,
+        SharedModule,
+        MatIconModule,
+        NgOptimizedImage,
+      ],
       declarations: [PostComponent],
       providers: [
         provideMockStore({ initialState: initialAppState }),
