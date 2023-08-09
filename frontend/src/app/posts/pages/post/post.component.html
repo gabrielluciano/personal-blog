@@ -51,14 +51,15 @@
     </div>
     <div class="image-container">
       <img
-        ngSrc="assets/laptop-1000w.jpg"
+        ngSrc="{{ post.imageUrl }}-1000w.webp"
         srcset="
-          assets/laptop-500w.jpg   500w,
-          assets/laptop-800w.jpg   800w,
-          assets/laptop-1000w.jpg 1000w
+          {{ post.imageUrl }}-500w.webp   500w,
+          {{ post.imageUrl }}-800w.webp   800w,
+          {{ post.imageUrl }}-1000w.webp 1000w
         "
         alt="Imagem do post"
         fill
+        priority
       />
     </div>
   </header>

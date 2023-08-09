@@ -19,6 +19,7 @@ import { ErrorDetails } from 'src/app/models/errorDetails';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
+import { NgOptimizedImage } from '@angular/common';
 
 describe('PostComponent', () => {
   let component: PostComponent;
@@ -50,7 +51,7 @@ describe('PostComponent', () => {
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
 
     TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, RouterTestingModule, SharedModule, MatIconModule],
+      imports: [BrowserAnimationsModule, RouterTestingModule, SharedModule, MatIconModule, NgOptimizedImage],
       declarations: [PostComponent],
       providers: [
         provideMockStore({ initialState: initialAppState }),
