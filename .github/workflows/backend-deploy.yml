@@ -3,7 +3,11 @@ name: Personal Blog Backend Test and Deploy CI
 on:
   push:
     branches: ["main"]
-
+    paths:
+      - "backend/**"
+      - "aws/**"
+      - "appspec.yml"
+      
 env:
   API_SECRET: secret
   APP_FOLDER: backend
