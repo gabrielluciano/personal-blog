@@ -1,4 +1,5 @@
 export const environment = {
-  apiUrl: 'http://localhost:8080/',
-  angularJwtAllowedDomains: ['localhost:8080'],
+  production: true,
+  apiUrl: 'https://api.blog.gabrielluciano.com/',
+  angularJwtAllowedDomains: ['api.blog.gabrielluciano.com'],
 };
