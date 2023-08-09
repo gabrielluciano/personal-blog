@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -29,7 +30,9 @@ export class PostComponent implements OnInit {
     private router: Router,
     private store: Store<AppState>,
     private dialog: MatDialog,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private meta: Meta,
+    private title: Title
   ) {
     this.editor$ = store.select(selectAuthIsEditor);
   }
@@ -54,7 +57,11 @@ export class PostComponent implements OnInit {
 
   private findBySlug(slug: string) {
     this.postsService.findBySlug(slug).subscribe({
-      next: (post) => (this.post = post),
+      next: (post) => {
+        this.post = post;
+        this.meta.addTag({ name: 'description', content: post.metaDescription });
+        this.title.setTitle(post.metaTitle);
+      },
       error: (error) => {
         console.warn(error);
         this.router.navigate(['/']);
