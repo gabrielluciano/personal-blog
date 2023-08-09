@@ -1,0 +1,19 @@
+spring:
+  ssl:
+    bundle:
+      pem:
+        server:
+          keystore:
+            certificate: /etc/letsencrypt/live/api.blog.gabrielluciano.com/fullchain.pem
+            private-key: /etc/letsencrypt/live/api.blog.gabrielluciano.com/privkey.pem
+
+server:
+  port: 443
+  ssl:
+    bundle: server
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: INFO
