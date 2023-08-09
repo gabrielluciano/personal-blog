@@ -6,8 +6,10 @@ services:
     image: personalblog
     container_name: personalblog_spring
     restart: on-failure
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "8080:8080"
+      - "443:443"
     environment:
       API_SECRET: "${PB_API_SECRET}"
       SPRING_DATASOURCE_URL: "${PB_DATASOURCE_URL}"
