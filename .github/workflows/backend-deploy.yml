@@ -7,6 +7,7 @@ on:
       - "backend/**"
       - "aws/**"
       - "appspec.yml"
+  workflow_dispatch:
       
 env:
   API_SECRET: secret

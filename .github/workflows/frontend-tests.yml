@@ -3,6 +3,7 @@ name: Personal Blog Frontend Test CI
 on:
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 env:
   APP_FOLDER: frontend
