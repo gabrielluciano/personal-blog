@@ -17,6 +17,7 @@ import { LoginFormComponent } from './components/login-form/login-form.component
 import { ReactiveFormsModule } from '@angular/forms';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MarkdownDirective } from './directives/markdown.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     LoginFormComponent,
     SnackbarComponent,
     ConfirmDialogComponent,
+    MarkdownDirective,
   ],
   imports: [
     CommonModule,
@@ -40,7 +42,14 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     MatSnackBarModule,
     MatIconModule,
   ],
-  exports: [HeaderComponent, FooterComponent, PillComponent, PaginatorComponent, DateFormatPipe],
+  exports: [
+    HeaderComponent,
+    FooterComponent,
+    PillComponent,
+    PaginatorComponent,
+    DateFormatPipe,
+    MarkdownDirective,
+  ],
   providers: [],
 })
 export class SharedModule {}
