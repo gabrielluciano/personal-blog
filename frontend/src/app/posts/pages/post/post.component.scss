@@ -135,7 +135,7 @@
   }
 }
 
-.content {
+:host ::ng-deep main.content {
   p {
     margin-bottom: 48px;
 
@@ -151,7 +151,8 @@
   h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    margin-bottom: 48px;
+    margin-bottom: 64px;
+    padding-top: 16px;
   }
 
   h2 {
@@ -166,6 +167,45 @@
   h5,
   h6 {
     font-size: 20px;
+  }
+
+  img {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  pre {
+    margin-bottom: 48px;
+    -webkit-box-shadow: 7px 7px 12px 0px rgba(0, 0, 0, 0.64);
+    -moz-box-shadow: 7px 7px 12px 0px rgba(0, 0, 0, 0.64);
+    box-shadow: 7px 7px 12px 0px rgba(0, 0, 0, 0.64);
+  }
+
+  pre,
+  code {
+    border-radius: 6px;
+  }
+
+  ul {
+    padding-left: 32px;
+    margin-bottom: 48px;
+
+    li {
+      list-style-position: inside;
+      margin-bottom: 24px;
+
+      line-height: 32px;
+      text-indent: -24px;
+    }
+  }
+
+  a {
+    color: var(--blue);
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

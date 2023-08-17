@@ -63,9 +63,7 @@
       />
     </div>
   </header>
-  <main class="content">
-    {{ post.content }}
-  </main>
+  <main class="content" [appMarkdown]="post.content"></main>
 </article>
 <ng-template #loading>
   <div class="loading">
