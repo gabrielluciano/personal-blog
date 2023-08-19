@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -9,6 +8,7 @@ import msg, { SUCCESS_PUBLISH_POST_MSG } from 'src/app/i18n/pt/msg';
 import { PostReponse } from 'src/app/models/post/postResponse';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { showSnackBar } from 'src/app/shared/components/snackbar/snackbar.component';
+import { MetaService } from 'src/app/shared/services/meta.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
@@ -31,8 +31,7 @@ export class PostComponent implements OnInit {
     private store: Store<AppState>,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar,
-    private meta: Meta,
-    private title: Title
+    private metaService: MetaService
   ) {
     this.editor$ = store.select(selectAuthIsEditor);
   }
@@ -59,8 +58,11 @@ export class PostComponent implements OnInit {
     this.postsService.findBySlug(slug).subscribe({
       next: (post) => {
         this.post = post;
-        this.meta.addTag({ name: 'description', content: post.metaDescription });
-        this.title.setTitle(post.metaTitle);
+        this.metaService.setMetaInfo({
+          title: post.metaTitle,
+          description: post.metaDescription,
+          imageUrl: post.imageUrl + '-500w.webp',
+        });
       },
       error: (error) => {
         console.warn(error);

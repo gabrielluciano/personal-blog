@@ -20,12 +20,14 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 import { NgOptimizedImage } from '@angular/common';
+import { MetaService } from 'src/app/shared/services/meta.service';
 
 describe('PostComponent', () => {
   let component: PostComponent;
   let fixture: ComponentFixture<PostComponent>;
   let store: MockStore<AppState>;
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
+  let metaServiceSpy: jasmine.SpyObj<MetaService>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ConfirmDialogComponent>>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
@@ -43,6 +45,7 @@ describe('PostComponent', () => {
       'unpublish',
     ]);
     postsServiceSpy.findBySlug.and.returnValue(of(postsMock[0]));
+    metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
     dialogSpy = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<ConfirmDialogComponent>>('MatDialogRef', [
       'afterClosed',
@@ -62,6 +65,7 @@ describe('PostComponent', () => {
       providers: [
         provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
+        { provide: MetaService, useValue: metaServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
@@ -79,6 +83,15 @@ describe('PostComponent', () => {
   it('should fetch PostResponse', () => {
     expect(component).toBeTruthy();
     expect(component.post.id).toBe(postsMock[0].id);
+  });
+
+  it('should call meta service after fetch post', () => {
+    expect(component.post.id).toBe(postsMock[0].id);
+    expect(metaServiceSpy.setMetaInfo).toHaveBeenCalledWith({
+      title: postsMock[0].metaTitle,
+      description: postsMock[0].metaDescription,
+      imageUrl: postsMock[0].imageUrl + '-500w.webp',
+    });
   });
 
   it('should set editor$ to Observable of false when user is not an editor', fakeAsync(() => {

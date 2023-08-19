@@ -16,11 +16,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
+import { MetaService } from 'src/app/shared/services/meta.service';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
   let fixture: ComponentFixture<PostsHomeComponent>;
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
+  let metaServiceSpy: jasmine.SpyObj<MetaService>;
   let store: MockStore<AppState>;
   const initialAppState: AppState = { auth: initialState };
 
@@ -28,6 +30,7 @@ describe('PostsHomeComponent', () => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', {
       list: of(postsPageMock),
     });
+    metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, BrowserAnimationsModule, SharedModule, MatSlideToggleModule],
@@ -42,6 +45,7 @@ describe('PostsHomeComponent', () => {
       providers: [
         provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
+        { provide: MetaService, useValue: metaServiceSpy },
       ],
     });
     fixture = TestBed.createComponent(PostsHomeComponent);
@@ -52,6 +56,15 @@ describe('PostsHomeComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call meta service', () => {
+    expect(metaServiceSpy.setMetaInfo).toHaveBeenCalledWith({
+      title: 'gabrielluciano.com',
+      description:
+        'Bem vindo ao blog gabrielluciano.com. Aqui compartilho um pouco da minha paixão por tecnologia com você',
+      imageUrl: 'assets/gabrielluciano-img.png',
+    });
   });
 
   it('should fetch Page of PostResponse', () => {
