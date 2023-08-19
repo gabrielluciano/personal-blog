@@ -13,6 +13,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
+import { MetaService } from 'src/app/shared/services/meta.service';
 
 describe('PostsTagComponent', () => {
   let component: PostsTagComponent;
@@ -21,6 +22,7 @@ describe('PostsTagComponent', () => {
 
   let postsServiceSpy: jasmine.SpyObj<PostsService>;
   let tagsServiceSpy: jasmine.SpyObj<TagsService>;
+  let metaServiceSpy: jasmine.SpyObj<MetaService>;
 
   async function createComponent(id: number) {
     harness = await RouterTestingHarness.create();
@@ -30,6 +32,7 @@ describe('PostsTagComponent', () => {
   beforeEach(async () => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', ['list']);
     tagsServiceSpy = jasmine.createSpyObj<TagsService>('TagsService', ['findById']);
+    metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
 
     TestBed.configureTestingModule({
       imports: [
@@ -43,6 +46,7 @@ describe('PostsTagComponent', () => {
       providers: [
         { provide: PostsService, useValue: postsServiceSpy },
         { provide: TagsService, useValue: tagsServiceSpy },
+        { provide: MetaService, useValue: metaServiceSpy },
       ],
     });
     router = TestBed.inject(Router);
@@ -53,6 +57,17 @@ describe('PostsTagComponent', () => {
     tagsServiceSpy.findById.and.returnValue(of(tagsMock[0]));
     await createComponent(1);
     expect(component).toBeTruthy();
+  });
+
+  it('should call meta service after load tag', async () => {
+    postsServiceSpy.list.and.returnValue(of(postsPageMock));
+    tagsServiceSpy.findById.and.returnValue(of(tagsMock[0]));
+    await createComponent(1);
+    expect(metaServiceSpy.setMetaInfo).toHaveBeenCalledWith({
+      title: 'Posts sobre ' + tagsMock[0].name,
+      description: tagsMock[0].description,
+      imageUrl: 'assets/gabrielluciano-img.png',
+    });
   });
 
   it('should load tag and posts by tag id', async () => {

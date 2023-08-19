@@ -6,6 +6,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TagsService } from 'src/app/shared/services/tags.service';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
 import { Subject, takeUntil } from 'rxjs';
+import { MetaService } from 'src/app/shared/services/meta.service';
 
 @Component({
   selector: 'app-posts-tag',
@@ -25,7 +26,8 @@ export class PostsTagComponent implements OnDestroy {
     private postsService: PostsService,
     private tagsService: TagsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private metaService: MetaService
   ) {
     this.getTagIdFromRouteAndLoadTag();
 
@@ -48,7 +50,14 @@ export class PostsTagComponent implements OnDestroy {
 
   private findTagByIdOrRedirectToHome(tagId: number) {
     this.tagsService.findById(tagId).subscribe({
-      next: (tag) => (this.tag = tag),
+      next: (tag) => {
+        this.tag = tag;
+        this.metaService.setMetaInfo({
+          title: 'Posts sobre ' + tag.name,
+          description: tag.description,
+          imageUrl: 'assets/gabrielluciano-img.png',
+        });
+      },
       error: (error) => {
         console.warn(error);
         this.router.navigate(['/']);
