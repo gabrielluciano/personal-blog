@@ -61,7 +61,7 @@ export class PostComponent implements OnInit {
         this.metaService.setMetaInfo({
           title: post.metaTitle,
           description: post.metaDescription,
-          imageUrl: post.imageUrl + '-500w.webp',
+          imageUrl: post.imageUrl + '-500w.png',
         });
       },
       error: (error) => {

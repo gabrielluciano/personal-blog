@@ -14,6 +14,7 @@ import { PostListItemComponent } from '../../components/post-list-item/post-list
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MetaService } from 'src/app/shared/services/meta.service';
+import { environment as env } from 'src/environments/environment';
 
 describe('PostsTagComponent', () => {
   let component: PostsTagComponent;
@@ -66,7 +67,7 @@ describe('PostsTagComponent', () => {
     expect(metaServiceSpy.setMetaInfo).toHaveBeenCalledWith({
       title: 'Posts sobre ' + tagsMock[0].name,
       description: tagsMock[0].description,
-      imageUrl: 'assets/gabrielluciano-img.png',
+      imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
     });
   });
 

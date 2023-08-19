@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
 import { MetaInfo, MetaService } from 'src/app/shared/services/meta.service';
+import { environment as env } from 'src/environments/environment';
 
 @Component({
   selector: 'app-posts-home',
@@ -18,7 +19,7 @@ export class PostsHomeComponent {
     title: 'gabrielluciano.com',
     description:
       'Bem vindo ao blog gabrielluciano.com. Aqui compartilho um pouco da minha paixão por tecnologia com você',
-    imageUrl: 'assets/gabrielluciano-img.png',
+    imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
   };
 
   postsPage!: Page<PostReponse>;

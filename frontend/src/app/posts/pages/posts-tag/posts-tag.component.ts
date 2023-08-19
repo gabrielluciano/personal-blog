@@ -7,6 +7,7 @@ import { TagsService } from 'src/app/shared/services/tags.service';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
 import { Subject, takeUntil } from 'rxjs';
 import { MetaService } from 'src/app/shared/services/meta.service';
+import { environment as env } from 'src/environments/environment';
 
 @Component({
   selector: 'app-posts-tag',
@@ -55,7 +56,7 @@ export class PostsTagComponent implements OnDestroy {
         this.metaService.setMetaInfo({
           title: 'Posts sobre ' + tag.name,
           description: tag.description,
-          imageUrl: 'assets/gabrielluciano-img.png',
+          imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
         });
       },
       error: (error) => {

@@ -17,6 +17,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 import { MetaService } from 'src/app/shared/services/meta.service';
+import { environment as env } from 'src/environments/environment';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
@@ -63,7 +64,7 @@ describe('PostsHomeComponent', () => {
       title: 'gabrielluciano.com',
       description:
         'Bem vindo ao blog gabrielluciano.com. Aqui compartilho um pouco da minha paixão por tecnologia com você',
-      imageUrl: 'assets/gabrielluciano-img.png',
+      imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
     });
   });
 

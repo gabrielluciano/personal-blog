@@ -90,7 +90,7 @@ describe('PostComponent', () => {
     expect(metaServiceSpy.setMetaInfo).toHaveBeenCalledWith({
       title: postsMock[0].metaTitle,
       description: postsMock[0].metaDescription,
-      imageUrl: postsMock[0].imageUrl + '-500w.webp',
+      imageUrl: postsMock[0].imageUrl + '-500w.png',
     });
   });
 
