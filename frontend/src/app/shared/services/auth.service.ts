@@ -5,12 +5,17 @@ import { Observable, catchError } from 'rxjs';
 import { handleError } from '../util/errorHandling';
 import { JwtToken } from 'src/app/models/jwtToken';
 import { environment as env } from 'src/environments/environment';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}
+  constructor(
+    private http: HttpClient,
+    private jwtHelper: JwtHelperService,
+    private storageService: StorageService
+  ) {}
 
   login(email: string, password: string): Observable<string> {
     return this.http
@@ -25,7 +30,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('access_token');
+    this.storageService.removeItem('access_token');
   }
 
   async getDecodedToken(token?: string) {

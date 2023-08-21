@@ -12,7 +12,10 @@ import { StoreModule } from '@ngrx/store';
 import { authReducer } from './shared/state/auth/auth.reducer';
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  if (typeof localStorage == 'object') {
+    return localStorage.getItem('access_token');
+  }
+  return null;
 }
 
 @NgModule({

@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { login } from '../../state/auth/auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AppState } from '../../state/app.state';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-login-form',
@@ -24,7 +25,8 @@ export class LoginFormComponent implements OnInit {
     private authService: AuthService,
     private store: Store<AppState>,
     private _snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<HeaderComponent>
+    private dialogRef: MatDialogRef<HeaderComponent>,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class LoginFormComponent implements OnInit {
   }
 
   private async handleSucessfulLogin(token: string) {
-    localStorage.setItem('access_token', token);
+    this.storageService.setItem('access_token', token);
     const decodedToken = await this.authService.getDecodedToken(token);
     if (decodedToken) {
       this.store.dispatch(login({ token: decodedToken }));
