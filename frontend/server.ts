@@ -7,6 +7,12 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppServerModule } from './src/main.server';
 
+const STATIC_FILES_BROWSER_MAX_AGE = 365 * 24 * 3600; // d * h * s
+const STATIC_FILES_SERVER_MAX_AGE = 30 * 24 * 3600; // d * h * s
+
+const PAGE_BROWSER_MAX_AGE = 0; // s
+const PAGE_SERVER_MAX_AGE = 1.5 * 3600; // h * s
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
@@ -32,9 +38,19 @@ export function app(): express.Express {
   server.get(
     '*.*',
     express.static(distFolder, {
-      maxAge: '1y',
+      setHeaders: function (res) {
+        res.set(
+          'Cache-control',
+          `max-age=${STATIC_FILES_BROWSER_MAX_AGE}, s-maxage=${STATIC_FILES_SERVER_MAX_AGE}`
+        );
+      },
     })
   );
+
+  server.use((req, res, next) => {
+    res.set('Cache-control', `max-age=${PAGE_BROWSER_MAX_AGE}, s-maxage=${PAGE_SERVER_MAX_AGE}`);
+    next();
+  });
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
