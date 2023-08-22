@@ -32,9 +32,16 @@ export function app(): express.Express {
   server.get(
     '*.*',
     express.static(distFolder, {
-      maxAge: '1y',
+      setHeaders: function (res) {
+        res.set('Cache-control', 'max-age=604800, s-maxage=2592000');
+      },
     })
   );
+
+  server.use((req, res, next) => {
+    res.set('Cache-control', 'max-age=0, s-maxage=5400');
+    next();
+  });
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
