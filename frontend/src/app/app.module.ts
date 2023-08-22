@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,7 +12,10 @@ import { StoreModule } from '@ngrx/store';
 import { authReducer } from './shared/state/auth/auth.reducer';
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  if (typeof localStorage == 'object') {
+    return localStorage.getItem('access_token');
+  }
+  return null;
 }
 
 @NgModule({
@@ -31,7 +34,7 @@ export function tokenGetter() {
     }),
     StoreModule.forRoot({ auth: authReducer }),
   ],
-  providers: [],
+  providers: [provideClientHydration()],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

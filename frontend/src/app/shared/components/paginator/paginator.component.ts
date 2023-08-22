@@ -1,4 +1,5 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, HostListener, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
@@ -8,6 +9,9 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class PaginatorComponent extends MatPaginator implements OnInit {
   readonly MOBILE_BREAKPOINT = 480;
+
+  // eslint-disable-next-line
+  platformId: any = inject(PLATFORM_ID);
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
@@ -20,6 +24,8 @@ export class PaginatorComponent extends MatPaginator implements OnInit {
   }
 
   setHidePageSize(): void {
-    this.hidePageSize = window.innerWidth <= this.MOBILE_BREAKPOINT;
+    if (isPlatformBrowser(this.platformId)) {
+      this.hidePageSize = window.innerWidth <= this.MOBILE_BREAKPOINT;
+    }
   }
 }

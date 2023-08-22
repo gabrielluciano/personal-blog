@@ -15,6 +15,7 @@ import { AppState } from '../../state/app.state';
 import { initialState } from '../../state/auth/auth.reducer';
 import { login } from '../../state/auth/auth.actions';
 import { JwtToken } from 'src/app/models/jwtToken';
+import { StorageService } from '../../services/storage.service';
 
 describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
@@ -25,6 +26,7 @@ describe('LoginFormComponent', () => {
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<HeaderComponent>>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let storageServiceSpy: jasmine.SpyObj<StorageService>;
 
   const initialAppState: AppState = { auth: initialState };
   const errorDetailsMock: Partial<ErrorDetails> = {
@@ -37,6 +39,7 @@ describe('LoginFormComponent', () => {
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<HeaderComponent>>('MatDialogRef', ['close']);
     authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['login', 'getDecodedToken']);
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
+    storageServiceSpy = jasmine.createSpyObj<StorageService>('StorageService', ['setItem']);
 
     TestBed.configureTestingModule({
       imports: [BrowserAnimationsModule, MatDialogModule, MatInputModule, ReactiveFormsModule],
@@ -46,6 +49,7 @@ describe('LoginFormComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: StorageService, useValue: storageServiceSpy },
       ],
     });
     fixture = TestBed.createComponent(LoginFormComponent);
@@ -74,12 +78,13 @@ describe('LoginFormComponent', () => {
     };
     authServiceSpy.login.and.returnValue(of('token'));
     authServiceSpy.getDecodedToken.and.returnValue(Promise.resolve(decodedToken));
+
     const storeDispatchSpy = spyOn(store, 'dispatch');
 
     component.onSubmit();
     await fixture.whenStable();
 
-    expect(localStorage.getItem('access_token')).toEqual('token');
+    expect(storageServiceSpy.setItem).toHaveBeenCalledWith('access_token', 'token');
     expect(storeDispatchSpy).toHaveBeenCalledWith(login({ token: decodedToken }));
     expect(snackBarSpy.openFromComponent).toHaveBeenCalled();
     expect(dialogRefSpy.close).toHaveBeenCalled();

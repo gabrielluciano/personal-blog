@@ -38,6 +38,12 @@
         "prettier"
       ],
       "rules": {}
+    },
+    {
+      "files": ["api/*.js"],
+      "parserOptions": {
+        "ecmaVersion": "latest"
+      }
     }
   ]
 }
