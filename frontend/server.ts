@@ -7,8 +7,8 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppServerModule } from './src/main.server';
 
-const STATIC_FILES_BROWSER_MAX_AGE = 90 * 24 * 3600; // d * h * s
-const STATIC_FILES_SERVER_MAX_AGE = 7 * 24 * 3600; // d * h * s
+const STATIC_FILES_BROWSER_MAX_AGE = 365 * 24 * 3600; // d * h * s
+const STATIC_FILES_SERVER_MAX_AGE = 30 * 24 * 3600; // d * h * s
 
 const PAGE_BROWSER_MAX_AGE = 0; // s
 const PAGE_SERVER_MAX_AGE = 1.5 * 3600; // h * s
