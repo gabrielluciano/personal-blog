@@ -23,6 +23,7 @@
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
+		<app.profiles>prod</app.profiles>
 	</properties>
 
 	<dependencies>
@@ -111,6 +112,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<profiles>
+						<profile>${app.profiles}</profile>
+					</profiles>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
