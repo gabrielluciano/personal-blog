@@ -87,6 +87,7 @@ O Frontend é uma aplicação construída em Angular 16, disponível em <a href=
 - [![Github Actions][GithubActions]][GithubActions-url]
 - [![AWS][AWS]][Aws-url]
 - [![Vercel][Vercel]][Vercel-url]
+- E outros!
 
 <p align="right">(<a href="#readme-top">voltar ao topo</a>)</p>
 

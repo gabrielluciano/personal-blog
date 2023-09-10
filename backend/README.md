@@ -35,7 +35,7 @@
 <h3 align="center">Personal Blog Backend</h3>
 
   <p align="center">
-    Este é o projeto do backend do meu blog pessoal desenvolvido com Spring Boot.
+    Este é o projeto do backend do meu blog pessoal, desenvolvido em Spring Boot.
     <br />
     <a href="https://github.com/gabrielluciano/personal-blog/tree/main/backend/README.md"><strong>Explore the docs »</strong></a>
     <br />
@@ -75,7 +75,7 @@
 
 ## Sobre o Projeto
 
-Este é o projeto do backend do meu blog pessoal desenvolvido com Spring Boot.
+Este é o projeto do backend do meu blog pessoal, desenvolvido em Spring Boot.
 
 Trata-se de uma API construída com Spring Boot e PostgreSQL utilizando JPA, que inclui funcionalidades para criação e edição de posts, tags e gerenciamento de usuários. Além disso, inclui várias outras funcionalidades, como autenticação jwt com Spring Security, testes automatizados e deploy automático para a AWS utilizando github actions e CodeDeploy. Veja o restante desta documentação para mais detalhes!
 
@@ -89,6 +89,7 @@ Trata-se de uma API construída com Spring Boot e PostgreSQL utilizando JPA, que
 - [![Docker][Docker]][Docker-url]
 - [![Github Actions][GithubActions]][GithubActions-url]
 - [![AWS][AWS]][Aws-url]
+- E outros!
 
 <p align="right">(<a href="#readme-top">voltar ao topo</a>)</p>
 
