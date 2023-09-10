@@ -167,9 +167,9 @@ Para executar o projeto, você deve ter o Node JS na versão v16 ou v18 instalad
 
 5. Inicie a aplicação em modo de desenvolvimento
 
-    ```sh
-    ng serve
-    ```
+   ```sh
+   ng serve
+   ```
 
 6. (Opcional) Inicie a aplicação em modo de desenvolvimento utilizando Server-Side Rendering com Angular Universal
 
@@ -227,13 +227,13 @@ Para executar o projeto, você deve ter o Node JS na versão v16 ou v18 instalad
 
 - Para gerar o build do projeto em modo de produção, primeiro certifique-se de editar a URL do frontend e backend no arquivo `src/environments/environment.ts` de maneira similar ao que foi realizado no setup.
 
-- Para buildar o projeto utilize o comando 
+- Para buildar o projeto utilize o comando
 
   ```sh
   ng build
   ```
 
-- Para buildar a versão com SSR utilize 
+- Para buildar a versão com SSR utilize
 
   ```sh
   npm run build:ssr
