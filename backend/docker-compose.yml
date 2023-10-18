@@ -3,7 +3,7 @@ name: personalblog_database
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:15.4
     container_name: personalblog
     restart: on-failure
     environment:

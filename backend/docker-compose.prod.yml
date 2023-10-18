@@ -20,13 +20,14 @@ services:
 
   database:
     image: postgres:15.4
+    restart: on-failure
     environment:
       POSTGRES_DB: "${PB_DB_NAME}"
       POSTGRES_USER: "${PB_DB_USER}"
       POSTGRES_PASSWORD: "${PB_DB_PASSWORD}"
     volumes:
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
       - personalblog_data:/var/lib/postgresql/data
     command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
     deploy:
@@ -37,6 +38,9 @@ services:
 
   proxy:
     image: nginx:1.25.2
+    restart: on-failure
+    depends_on:
+      - api
     ports:
       - "80:80"
       - "443:443"
