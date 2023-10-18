@@ -146,7 +146,7 @@ Para executar o projeto, você deve ter o Java JDK na versão 17, o gerenciador 
    ```
 3. Inicie o banco de dados utilizando docker compose
    ```sh
-   docker compose -f docker-compose-db.yml up -d
+   docker compose up -d
    ```
 4. Inicie a aplicação em modo de desenvolvimento. Caso a flag `local` não seja especificada, a aplicação utilizará as prorpriedades de produção, que incluem procurar por variáveis de ambiente e certificado SSL, o que pode gerar erro caso a aplicação não encontre esse arquivos.
    ```sh

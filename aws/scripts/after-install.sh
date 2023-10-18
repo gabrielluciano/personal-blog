@@ -3,6 +3,8 @@ set -xe
 
 cd /app/personal-blog
 
-aws s3 cp "s3://$PROD_S3_BUCKET/Dockerfile" ./Dockerfile
-aws s3 cp "s3://$PROD_S3_BUCKET/docker-compose.yml" ./docker-compose.yml
-aws s3 cp "s3://$PROD_S3_BUCKET/app.jar" ./target/app.jar
+aws s3 cp "s3://$PROD_S3_BUCKET/bundle.tar.gz" ./bundle.tar.gz
+
+tar -zxvf bundle.tar.gz
+
+rm -rf bundle.tar.gz

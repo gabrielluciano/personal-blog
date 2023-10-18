@@ -3,6 +3,4 @@ set -xe
 
 cd /app/personal-blog
 
-docker build -t personalblog .
-
-docker compose up -d
+docker compose -f docker-compose.prod.yml up -d --build
