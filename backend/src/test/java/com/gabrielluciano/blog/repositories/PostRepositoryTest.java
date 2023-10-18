@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class PostRepositoryTest {
 
     @Autowired

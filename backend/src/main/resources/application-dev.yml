@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/personalblog
+    username: postgres
+    password: postgrespw
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+
+api:
+  secret: secret

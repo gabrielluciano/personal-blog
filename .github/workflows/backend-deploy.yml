@@ -47,7 +47,7 @@ jobs:
 
       - name: Build and Package
         working-directory: ${{ env.APP_FOLDER }}
-        run: mvn clean package -DskipTests -Dspring-boot.run.profiles=prod
+        run: mvn clean package -DskipTests
 
       - name: Create tgz bundle for deployment
         working-directory: .

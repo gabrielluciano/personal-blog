@@ -148,9 +148,9 @@ Para executar o projeto, você deve ter o Java JDK na versão 17, o gerenciador 
    ```sh
    docker compose up -d
    ```
-4. Inicie a aplicação em modo de desenvolvimento. Caso a flag `local` não seja especificada, a aplicação utilizará as prorpriedades de produção, que incluem procurar por variáveis de ambiente e certificado SSL, o que pode gerar erro caso a aplicação não encontre esse arquivos.
+4. Inicie a aplicação em modo de desenvolvimento.
    ```sh
-   mvn spring-boot:run -D"spring-boot.run.profiles"=local
+   mvn spring-boot:run -D"spring-boot.run.profiles"=dev
    ```
 5. Teste o funcionamento da aplicação
    ```sh
