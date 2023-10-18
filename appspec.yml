@@ -3,6 +3,8 @@ os: linux
 files:
   - source: /aws
     destination: /usr/local/codedeployresources
+  - source: /backend
+    destination: /app/personal-blog
 hooks:
   ApplicationStop:
     - location: aws/scripts/application-stop.sh

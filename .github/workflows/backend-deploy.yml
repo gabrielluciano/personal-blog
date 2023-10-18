@@ -50,10 +50,10 @@ jobs:
         run: mvn clean package -DskipTests -Dspring-boot.run.profiles=prod
 
       - name: Create tgz bundle for deployment
-        working-directory: ${{ env.APP_FOLDER }}
+        working-directory: .
         run: |
-          mv target/*.jar target/app.jar
-          tar -czvf bundle.tar.gz Dockerfile docker-compose.prod.yml nginx.conf postgresql.conf ddl.sql target/app.jar
+          mv ${{ env.APP_FOLDER }}/target/*.jar ${{ env.APP_FOLDER }}/target/app.jar
+          tar -czvf bundle.tar.gz aws appspec.yml ${{ env.APP_FOLDER }}/Dockerfile ${{ env.APP_FOLDER }}/docker-compose.prod.yml ${{ env.APP_FOLDER }}/nginx.conf ${{ env.APP_FOLDER }}/postgresql.conf ${{ env.APP_FOLDER }}/ddl.sql ${{ env.APP_FOLDER }}/target/app.jar
 
       - name: Upload Bundle to s3
         working-directory: ${{ env.APP_FOLDER }}
