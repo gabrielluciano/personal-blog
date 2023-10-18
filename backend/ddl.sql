@@ -13,8 +13,9 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
+
 --
--- Name: posts; Type: TABLE; Schema: public; Owner: spring-user
+-- Name: posts; Type: TABLE; Schema: public; Owner: "spring-user"
 --
 
 CREATE TABLE public.posts (
@@ -35,22 +36,11 @@ CREATE TABLE public.posts (
 );
 
 
-ALTER TABLE public.posts OWNER TO spring-user;
+ALTER TABLE public.posts OWNER TO "spring-user";
+
 
 --
--- Name: posts_tags; Type: TABLE; Schema: public; Owner: spring-user
---
-
-CREATE TABLE public.posts_tags (
-    post_id bigint NOT NULL,
-    tags_id bigint NOT NULL
-);
-
-
-ALTER TABLE public.posts_tags OWNER TO spring-user;
-
---
--- Name: sequence_post; Type: SEQUENCE; Schema: public; Owner: spring-user
+-- Name: sequence_post; Type: SEQUENCE; Schema: public; Owner: "spring-user"
 --
 
 CREATE SEQUENCE public.sequence_post
@@ -61,38 +51,19 @@ CREATE SEQUENCE public.sequence_post
     CACHE 1;
 
 
-ALTER TABLE public.sequence_post OWNER TO spring-user;
+ALTER TABLE public.sequence_post OWNER TO "spring-user";
+
 
 --
--- Name: sequence_tag; Type: SEQUENCE; Schema: public; Owner: spring-user
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
 --
 
-CREATE SEQUENCE public.sequence_tag
-    START WITH 1
-    INCREMENT BY 50
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
 
-
-ALTER TABLE public.sequence_tag OWNER TO spring-user;
 
 --
--- Name: sequence_user; Type: SEQUENCE; Schema: public; Owner: spring-user
---
-
-CREATE SEQUENCE public.sequence_user
-    START WITH 1
-    INCREMENT BY 50
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.sequence_user OWNER TO spring-user;
-
---
--- Name: tags; Type: TABLE; Schema: public; Owner: spring-user
+-- Name: tags; Type: TABLE; Schema: public; Owner: "spring-user"
 --
 
 CREATE TABLE public.tags (
@@ -104,10 +75,50 @@ CREATE TABLE public.tags (
 );
 
 
-ALTER TABLE public.tags OWNER TO spring-user;
+ALTER TABLE public.tags OWNER TO "spring-user";
+
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: spring-user
+-- Name: sequence_tag; Type: SEQUENCE; Schema: public; Owner: "spring-user"
+--
+
+CREATE SEQUENCE public.sequence_tag
+    START WITH 1
+    INCREMENT BY 50
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sequence_tag OWNER TO "spring-user";
+
+
+--
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tags uk_sn0d91hxu700qcw0n4pebp5vc; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT uk_sn0d91hxu700qcw0n4pebp5vc UNIQUE (slug);
+
+
+--
+-- Name: tags uk_t48xdq560gs3gap9g7jg36kgc; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT uk_t48xdq560gs3gap9g7jg36kgc UNIQUE (name);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: "spring-user"
 --
 
 CREATE TABLE public.users (
@@ -120,58 +131,26 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO spring-user;
-
---
--- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: spring-user
---
-
-ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+ALTER TABLE public.users OWNER TO "spring-user";
 
 
 --
--- Name: posts_tags posts_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: spring-user
+-- Name: sequence_user; Type: SEQUENCE; Schema: public; Owner: "spring-user"
 --
 
-ALTER TABLE ONLY public.posts_tags
-    ADD CONSTRAINT posts_tags_pkey PRIMARY KEY (post_id, tags_id);
+CREATE SEQUENCE public.sequence_user
+    START WITH 1
+    INCREMENT BY 50
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
---
--- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: spring-user
---
-
-ALTER TABLE ONLY public.tags
-    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
-
-
---
--- Name: users uk_6dotkott2kjsp8vw4d0m25fb7; Type: CONSTRAINT; Schema: public; Owner: spring-user
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT uk_6dotkott2kjsp8vw4d0m25fb7 UNIQUE (email);
+ALTER TABLE public.sequence_user OWNER TO "spring-user";
 
 
 --
--- Name: tags uk_sn0d91hxu700qcw0n4pebp5vc; Type: CONSTRAINT; Schema: public; Owner: spring-user
---
-
-ALTER TABLE ONLY public.tags
-    ADD CONSTRAINT uk_sn0d91hxu700qcw0n4pebp5vc UNIQUE (slug);
-
-
---
--- Name: tags uk_t48xdq560gs3gap9g7jg36kgc; Type: CONSTRAINT; Schema: public; Owner: spring-user
---
-
-ALTER TABLE ONLY public.tags
-    ADD CONSTRAINT uk_t48xdq560gs3gap9g7jg36kgc UNIQUE (name);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: spring-user
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
 --
 
 ALTER TABLE ONLY public.users
@@ -179,7 +158,36 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: posts fk6xvn0811tkyo3nfjk2xvqx6ns; Type: FK CONSTRAINT; Schema: public; Owner: spring-user
+-- Name: users uk_6dotkott2kjsp8vw4d0m25fb7; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT uk_6dotkott2kjsp8vw4d0m25fb7 UNIQUE (email);
+
+
+--
+-- Name: posts_tags; Type: TABLE; Schema: public; Owner: "spring-user"
+--
+
+CREATE TABLE public.posts_tags (
+    post_id bigint NOT NULL,
+    tags_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.posts_tags OWNER TO "spring-user";
+
+
+--
+-- Name: posts_tags posts_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: "spring-user"
+--
+
+ALTER TABLE ONLY public.posts_tags
+    ADD CONSTRAINT posts_tags_pkey PRIMARY KEY (post_id, tags_id);
+
+
+--
+-- Name: posts fk6xvn0811tkyo3nfjk2xvqx6ns; Type: FK CONSTRAINT; Schema: public; Owner: "spring-user"
 --
 
 ALTER TABLE ONLY public.posts
@@ -187,7 +195,7 @@ ALTER TABLE ONLY public.posts
 
 
 --
--- Name: posts_tags fk79lx4quime8ct09nbmmf6wuao; Type: FK CONSTRAINT; Schema: public; Owner: spring-user
+-- Name: posts_tags fk79lx4quime8ct09nbmmf6wuao; Type: FK CONSTRAINT; Schema: public; Owner: "spring-user"
 --
 
 ALTER TABLE ONLY public.posts_tags
@@ -195,7 +203,7 @@ ALTER TABLE ONLY public.posts_tags
 
 
 --
--- Name: posts_tags fkcreclgob71ibo58gsm6l5wp6; Type: FK CONSTRAINT; Schema: public; Owner: spring-user
+-- Name: posts_tags fkcreclgob71ibo58gsm6l5wp6; Type: FK CONSTRAINT; Schema: public; Owner: "spring-user"
 --
 
 ALTER TABLE ONLY public.posts_tags

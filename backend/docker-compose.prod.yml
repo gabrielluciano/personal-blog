@@ -6,7 +6,7 @@ services:
     build: .
     restart: on-failure
     depends_on:
-      - postgres
+      - database
     environment:
       API_SECRET: "${PB_API_SECRET}"
       SPRING_DATASOURCE_URL: "${PB_DATASOURCE_URL}"
@@ -15,8 +15,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: '0.25GB'
-          cpus: '0.3'
+          memory: '0.3GB'
 
   database:
     image: postgres:15.4
@@ -33,8 +32,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: '0.25GB'
-          cpus: '0.3'
+          memory: '0.15GB'
 
   proxy:
     image: nginx:1.25.2
@@ -51,7 +49,6 @@ services:
       resources:
         limits:
           memory: '0.07GB'
-          cpus: '0.1'
 
 volumes:
   personalblog_data:
