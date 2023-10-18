@@ -47,14 +47,18 @@ jobs:
 
       - name: Build and Package
         working-directory: ${{ env.APP_FOLDER }}
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests -Dspring-boot.run.profiles=prod
 
-      - name: Upload Artifact to s3
+      - name: Create tgz bundle for deployment
         working-directory: ${{ env.APP_FOLDER }}
         run: |
-          aws s3 cp target/*.jar s3://${{ secrets.PROD_S3_BUCKET }}/app.jar
-          aws s3 cp Dockerfile s3://${{ secrets.PROD_S3_BUCKET }}/
-          aws s3 cp docker-compose.yml s3://${{ secrets.PROD_S3_BUCKET }}/
+          mv target/*.jar target/app.jar
+          tar -czvf bundle.tar.gz Dockerfile docker-compose.prod.yml target/app.jar
+
+      - name: Upload Bundle to s3
+        working-directory: ${{ env.APP_FOLDER }}
+        run: |
+          aws s3 cp bundle.tar s3://${{ secrets.PROD_S3_BUCKET }}/bundle.tar
 
   deploy:
     needs: build
@@ -70,6 +74,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
           role-session-name: Github-Action-Role
-      - run: |
-          commit_hash=`git rev-parse HEAD`
-          aws deploy create-deployment --application-name PersonalBlog --deployment-group-name PersonalBlogDeployGroup --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures
+
+      - name: Create Deployment with AWS CodeDeploy
+        run: |
+          aws deploy create-deployment --application-name PersonalBlog --deployment-group-name PersonalBlogDeployGroup --s3-location bucket=${{ secrets.PROD_S3_BUCKET }},key=bundle,bundleType=tgz --ignore-application-stop-failures
