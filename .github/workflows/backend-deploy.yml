@@ -53,7 +53,7 @@ jobs:
         working-directory: ${{ env.APP_FOLDER }}
         run: |
           mv target/*.jar target/app.jar
-          tar -czvf bundle.tar.gz Dockerfile docker-compose.prod.yml target/app.jar
+          tar -czvf bundle.tar.gz Dockerfile docker-compose.prod.yml nginx.conf postgresql.conf ddl.sql target/app.jar
 
       - name: Upload Bundle to s3
         working-directory: ${{ env.APP_FOLDER }}
