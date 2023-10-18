@@ -58,7 +58,7 @@ jobs:
       - name: Upload Bundle to s3
         working-directory: ${{ env.APP_FOLDER }}
         run: |
-          aws s3 cp bundle.tar s3://${{ secrets.PROD_S3_BUCKET }}/bundle.tar
+          aws s3 cp bundle.tar.gz s3://${{ secrets.PROD_S3_BUCKET }}/bundle.tar.gz
 
   deploy:
     needs: build
