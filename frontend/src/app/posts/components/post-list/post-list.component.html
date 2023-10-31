@@ -1,5 +1,5 @@
 <section>
-  <div class="post-list" *ngIf="postsPage; else loading">
+  <div *ngIf="postsPage; else loading">
     <app-post-list-item *ngFor="let post of postsPage.content" [post]="post"></app-post-list-item>
     <app-paginator
       (page)="onPageEvent($event)"
@@ -10,7 +10,7 @@
     ></app-paginator>
   </div>
   <ng-template #loading>
-    <div class="loading">
+    <div>
       <mat-spinner [diameter]="60" title="Carregando posts"></mat-spinner>
     </div>
   </ng-template>

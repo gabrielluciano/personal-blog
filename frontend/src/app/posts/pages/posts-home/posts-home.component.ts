@@ -12,7 +12,6 @@ import { environment as env } from 'src/environments/environment';
 @Component({
   selector: 'app-posts-home',
   templateUrl: './posts-home.component.html',
-  styleUrls: ['./posts-home.component.scss'],
 })
 export class PostsHomeComponent {
   readonly META_INFO: MetaInfo = {

@@ -14,7 +14,6 @@ import { selectAuthIsAuthenticated } from '../../state/auth/auth.selectors';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
   authenticated$: Observable<boolean>;

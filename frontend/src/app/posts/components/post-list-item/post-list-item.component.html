@@ -1,29 +1,27 @@
-<article class="post-list-item" *ngIf="post">
-  <div class="image-container">
+<article *ngIf="post">
+  <div>
     <a routerLink="/posts/{{ post.slug }}" title="Link para o post">
       <img src="{{ post.imageUrl }}-500w.webp" alt="Imagem do post" />
     </a>
   </div>
-  <div class="content">
+  <div>
     <header>
       <a routerLink="/posts/{{ post.slug }}">
-        <h2 class="title">
+        <h2>
           {{ post.title }}
         </h2>
       </a>
     </header>
     <main>
       <a routerLink="/posts/{{ post.slug }}">
-        <p class="subtitle">
+        <p>
           {{ post.subtitle }}
         </p>
       </a>
     </main>
-    <footer class="footer">
-      <span class="publish-date" *ngIf="post.publishedAt; else updateDate">{{
-        post.publishedAt | dateFormat
-      }}</span>
-      <ul class="tag-list" *ngIf="post.tags">
+    <footer>
+      <span *ngIf="post.publishedAt; else updateDate">{{ post.publishedAt | dateFormat }}</span>
+      <ul *ngIf="post.tags">
         <li *ngFor="let tag of post.tags">
           <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
         </li>
@@ -32,5 +30,5 @@
   </div>
 </article>
 <ng-template #updateDate>
-  <span class="publish-date">{{ post.updatedAt | dateFormat }}</span>
+  <span>{{ post.updatedAt | dateFormat }}</span>
 </ng-template>

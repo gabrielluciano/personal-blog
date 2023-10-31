@@ -1,8 +1,7 @@
 <app-hero></app-hero>
-<div class="post-list">
+<div>
   <mat-slide-toggle
     color="primary"
-    class="toggle"
     [checked]="drafts()"
     (change)="onSlideChange()"
     *ngIf="editor$ | async"

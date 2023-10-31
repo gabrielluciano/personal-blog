@@ -1,48 +1,48 @@
-<h1 class="title" *ngIf="!isEdit">Criação de Post</h1>
-<h1 class="title" *ngIf="isEdit">Edição de Post</h1>
-<form class="form" [formGroup]="form">
-  <div class="field">
-    <h2 class="field-title">Título</h2>
+<h1 *ngIf="!isEdit">Criação de Post</h1>
+<h1 *ngIf="isEdit">Edição de Post</h1>
+<form [formGroup]="form">
+  <div>
+    <h2>Título</h2>
     <mat-form-field appearance="outline">
       <mat-label>Título</mat-label>
       <input matInput type="text" name="title" formControlName="title" />
-      <mat-hint class="hint">Título do post</mat-hint>
-      <mat-error class="error">Título é obrigatório</mat-error>
+      <mat-hint>Título do post</mat-hint>
+      <mat-error>Título é obrigatório</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Subtítulo</h2>
+  <div>
+    <h2>Subtítulo</h2>
     <mat-form-field appearance="outline">
       <mat-label>Subtítulo</mat-label>
       <input matInput type="text" name="subtitle" formControlName="subtitle" />
-      <mat-hint class="hint">Subtítulo do post</mat-hint>
-      <mat-error class="error">Subtítulo é obrigatório</mat-error>
+      <mat-hint>Subtítulo do post</mat-hint>
+      <mat-error>Subtítulo é obrigatório</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Slug</h2>
+  <div>
+    <h2>Slug</h2>
     <mat-form-field appearance="outline">
       <mat-label>Slug</mat-label>
       <input matInput type="text" name="slug" formControlName="slug" />
-      <mat-hint class="hint">Slug do post para uso em URL</mat-hint>
-      <mat-error class="error">Slug inválido</mat-error>
+      <mat-hint>Slug do post para uso em URL</mat-hint>
+      <mat-error>Slug inválido</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Meta título</h2>
+  <div>
+    <h2>Meta título</h2>
     <mat-form-field appearance="outline">
       <mat-label>Meta título</mat-label>
       <input matInput type="text" name="meta title" formControlName="metaTitle" />
-      <mat-hint class="hint">Meta título do post</mat-hint>
-      <mat-error class="error">Meta título é obrigatório</mat-error>
+      <mat-hint>Meta título do post</mat-hint>
+      <mat-error>Meta título é obrigatório</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Meta descrição</h2>
+  <div>
+    <h2>Meta descrição</h2>
     <mat-form-field appearance="outline">
       <mat-label>Meta descrição</mat-label>
       <textarea
@@ -51,35 +51,35 @@
         name="meta description"
         formControlName="metaDescription"
       ></textarea>
-      <mat-hint class="hint">Meta descrição do post</mat-hint>
-      <mat-error class="error">Meta descrição é obrigatória</mat-error>
+      <mat-hint>Meta descrição do post</mat-hint>
+      <mat-error>Meta descrição é obrigatória</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">URL da imagem</h2>
+  <div>
+    <h2>URL da imagem</h2>
     <mat-form-field appearance="outline">
       <mat-label>URL da imagem</mat-label>
       <input matInput type="text" name="URL" formControlName="imageUrl" />
-      <mat-hint class="hint">URL da imagem do post</mat-hint>
-      <mat-error class="error">URL da imagem é obrigatória</mat-error>
+      <mat-hint>URL da imagem do post</mat-hint>
+      <mat-error>URL da imagem é obrigatória</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Tags</h2>
+  <div>
+    <h2>Tags</h2>
     <mat-form-field appearance="outline">
       <mat-label>Tags</mat-label>
       <mat-select multiple formControlName="tags">
         <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
       </mat-select>
-      <mat-hint class="hint">Tags relativas ao post</mat-hint>
-      <mat-error class="error">Ao menos uma tag deve ser selecionada</mat-error>
+      <mat-hint>Tags relativas ao post</mat-hint>
+      <mat-error>Ao menos uma tag deve ser selecionada</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Conteúdo</h2>
+  <div>
+    <h2>Conteúdo</h2>
     <mat-form-field appearance="outline">
       <mat-label>Conteúdo</mat-label>
       <textarea
@@ -89,11 +89,11 @@
         name="meta description"
         formControlName="content"
       ></textarea>
-      <mat-hint class="hint">O conteúdo do post</mat-hint>
+      <mat-hint>O conteúdo do post</mat-hint>
     </mat-form-field>
   </div>
 
-  <div class="buttons">
+  <div>
     <button mat-flat-button color="accent" (click)="redirectToHome()">Cancelar</button>
     <button
       mat-flat-button

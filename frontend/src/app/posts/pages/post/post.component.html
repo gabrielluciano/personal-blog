@@ -1,34 +1,32 @@
-<article class="post" *ngIf="post; else loading">
-  <header class="header">
-    <h1 class="title">{{ post.title }}</h1>
-    <h2 class="subtitle">{{ post.subtitle }}</h2>
-    <div class="post-info">
-      <span class="author"
+<article *ngIf="post; else loading">
+  <header>
+    <h1>{{ post.title }}</h1>
+    <h2>{{ post.subtitle }}</h2>
+    <div>
+      <span
         >Por <strong>{{ post.author.name }}</strong></span
       >
       <span>Criado em {{ post.createdAt | dateFormat }}</span>
     </div>
-    <div class="tags-crud-container">
+    <div>
       <div>
-        <ul class="tags" *ngIf="post.tags.length > 0">
+        <ul *ngIf="post.tags.length > 0">
           <li *ngFor="let tag of post.tags">
             <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
           </li>
         </ul>
       </div>
-      <div class="crud" *ngIf="editor$ | async">
+      <div *ngIf="editor$ | async">
         <mat-icon
           fontIcon="edit"
           title="Editar post"
           aria-label="Editar post"
-          class="icon edit"
           (click)="openDialog('edit')"
         ></mat-icon>
         <mat-icon
           fontIcon="publish"
           title="Publicar post"
           aria-label="Publicar post"
-          class="icon publish"
           *ngIf="!post.published"
           (click)="openDialog('publish')"
         ></mat-icon>
@@ -36,7 +34,6 @@
           fontIcon="unpublished"
           title="Despublicar post"
           aria-label="Despublicar post"
-          class="icon unpublish"
           *ngIf="post.published"
           (click)="openDialog('unpublish')"
         ></mat-icon>
@@ -44,12 +41,11 @@
           fontIcon="delete"
           title="Excluir post"
           aria-label="Excluir post"
-          class="icon delete"
           (click)="openDialog('delete')"
         ></mat-icon>
       </div>
     </div>
-    <div class="image-container">
+    <div>
       <img
         ngSrc="{{ post.imageUrl }}-1000w.webp"
         srcset="
@@ -63,10 +59,10 @@
       />
     </div>
   </header>
-  <main class="content" [appMarkdown]="post.content"></main>
+  <main [appMarkdown]="post.content"></main>
 </article>
 <ng-template #loading>
-  <div class="loading">
+  <div>
     <mat-spinner [diameter]="60" title="Carregando posts"></mat-spinner>
   </div>
 </ng-template>

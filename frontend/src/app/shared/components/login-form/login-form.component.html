@@ -1,22 +1,19 @@
-<form [formGroup]="form" class="form">
-  <h2 class="title">Login</h2>
-  <mat-form-field appearance="outline" class="input">
+<form [formGroup]="form">
+  <h2>Login</h2>
+  <mat-form-field appearance="outline">
     <mat-label>Email</mat-label>
     <input matInput type="email" formControlName="email" />
-    <mat-error class="error">Invalid email</mat-error>
+    <mat-error>Invalid email</mat-error>
   </mat-form-field>
-  <mat-form-field appearance="outline" class="input">
+  <mat-form-field appearance="outline">
     <mat-label>Password</mat-label>
     <input matInput type="password" formControlName="password" />
-    <mat-error class="error">You must provide the password</mat-error>
+    <mat-error>You must provide the password</mat-error>
   </mat-form-field>
-  <div class="buttons">
-    <button mat-flat-button class="button" color="accent" type="reset" (click)="onClose()">
-      Close
-    </button>
+  <div>
+    <button mat-flat-button color="accent" type="reset" (click)="onClose()">Close</button>
     <button
       mat-flat-button
-      class="button"
       color="primary"
       type="submit"
       (click)="onSubmit()"

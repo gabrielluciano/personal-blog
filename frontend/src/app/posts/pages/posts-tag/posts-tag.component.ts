@@ -12,7 +12,6 @@ import { environment as env } from 'src/environments/environment';
 @Component({
   selector: 'app-posts-tag',
   templateUrl: './posts-tag.component.html',
-  styleUrls: ['./posts-tag.component.scss'],
 })
 export class PostsTagComponent implements OnDestroy {
   private destroy$ = new Subject<void>();

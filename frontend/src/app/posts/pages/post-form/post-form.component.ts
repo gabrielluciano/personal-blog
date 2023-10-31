@@ -14,7 +14,6 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
 @Component({
   selector: 'app-post-edit',
   templateUrl: './post-form.component.html',
-  styleUrls: ['./post-form.component.scss'],
 })
 export class PostFormComponent implements OnInit {
   isEdit = false;

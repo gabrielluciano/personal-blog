@@ -1,22 +1,21 @@
-<header class="app-header">
+<header>
   <a routerLink="/">
-    <h2 class="title">gabrielluciano<span>.com</span></h2>
+    <h2>gabrielluciano<span>.com</span></h2>
   </a>
 
-  <div class="buttons">
-    <a href="https://github.com/gabrielluciano" target="_blank" class="link">
-      <img src="assets/github-logo.svg" alt="Github" class="github-logo" />
+  <div>
+    <a href="https://github.com/gabrielluciano" target="_blank">
+      <img src="assets/github-logo.svg" alt="Github" />
     </a>
 
-    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank" class="link">
-      <img src="assets/linkedin-logo.svg" alt="Linkedin" class="linkedin-logo" />
+    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank">
+      <img src="assets/linkedin-logo.svg" alt="Linkedin" />
     </a>
 
     <button
       *ngIf="authenticated$ | async; else loginButton"
       mat-flat-button
       color="primary"
-      class="button"
       type="button"
       (click)="logout()"
     >
@@ -24,12 +23,10 @@
     </button>
 
     <ng-template #loginButton>
-      <button mat-flat-button color="accent" class="button" type="button" (click)="openDialog()">
-        Login
-      </button>
+      <button mat-flat-button color="accent" type="button" (click)="openDialog()">Login</button>
     </ng-template>
 
-    <a routerLink="/posts/new" class="new-post-button" *ngIf="authenticated$ | async">
+    <a routerLink="/posts/new" *ngIf="authenticated$ | async">
       <mat-icon fontIcon="add" options></mat-icon>
     </a>
   </div>

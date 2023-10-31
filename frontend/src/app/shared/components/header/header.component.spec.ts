@@ -45,7 +45,7 @@ describe('HeaderComponent', () => {
   });
 
   it('should call mat dialog open method', fakeAsync(() => {
-    const button = fixture.debugElement.nativeElement.querySelector('.button');
+    const button = fixture.debugElement.nativeElement.querySelector('button');
     button.click();
     tick();
     expect(dialogSpy.open).toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe('HeaderComponent', () => {
     });
     tick();
     fixture.detectChanges();
-    const button = fixture.debugElement.nativeElement.querySelector('.button');
+    const button = fixture.debugElement.nativeElement.querySelector('button');
     button.click();
     tick();
     expect(authServiceSpy.logout).toHaveBeenCalled();

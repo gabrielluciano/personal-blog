@@ -18,7 +18,6 @@ type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.scss'],
 })
 export class PostComponent implements OnInit {
   post!: PostReponse;

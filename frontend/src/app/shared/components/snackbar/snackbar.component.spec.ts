@@ -35,7 +35,7 @@ describe('SnackbarComponent', () => {
   });
 
   it('should call dismissWithAction when close button is clicked', () => {
-    const button = fixture.elementRef.nativeElement.querySelector('.close-button');
+    const button = fixture.elementRef.nativeElement.querySelector('button');
     button.click();
     expect(snackBarRefSpy.dismissWithAction).toHaveBeenCalled();
   });
