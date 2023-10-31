@@ -130,7 +130,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const deleteButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="delete"]'
+      'mat-icon[fonticon="delete"]',
     );
     deleteButton.click();
 
@@ -138,7 +138,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.delete).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig('Post excluído com sucesso', 'success')
+      getSnackBarDefaultConfig('Post excluído com sucesso', 'success'),
     );
   });
 
@@ -158,7 +158,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const deleteButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="delete"]'
+      'mat-icon[fonticon="delete"]',
     );
     deleteButton.click();
 
@@ -166,7 +166,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.delete).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error')
+      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error'),
     );
   });
 
@@ -187,7 +187,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const publishButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="publish"]'
+      'mat-icon[fonticon="publish"]',
     );
     publishButton.click();
 
@@ -195,7 +195,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.publish).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig('Post publicado com sucesso', 'success')
+      getSnackBarDefaultConfig('Post publicado com sucesso', 'success'),
     );
   });
 
@@ -216,7 +216,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const publishButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="publish"]'
+      'mat-icon[fonticon="publish"]',
     );
     publishButton.click();
 
@@ -224,7 +224,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.publish).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error')
+      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error'),
     );
   });
 
@@ -244,7 +244,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const unpublishButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="unpublished"]'
+      'mat-icon[fonticon="unpublished"]',
     );
     unpublishButton.click();
 
@@ -252,7 +252,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.unpublish).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig('Post despublicado com sucesso', 'success')
+      getSnackBarDefaultConfig('Post despublicado com sucesso', 'success'),
     );
   });
 
@@ -272,7 +272,7 @@ describe('PostComponent', () => {
     fixture.detectChanges();
 
     const unpublishButton = fixture.elementRef.nativeElement.querySelector(
-      'mat-icon[fonticon="unpublished"]'
+      'mat-icon[fonticon="unpublished"]',
     );
     unpublishButton.click();
 
@@ -280,7 +280,7 @@ describe('PostComponent', () => {
     expect(postsServiceSpy.unpublish).toHaveBeenCalled();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error')
+      getSnackBarDefaultConfig(errorDetailsMock.message + '', 'error'),
     );
   });
 });

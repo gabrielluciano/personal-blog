@@ -31,7 +31,7 @@ export class PostsHomeComponent {
   constructor(
     private postsService: PostsService,
     private store: Store<AppState>,
-    private metaService: MetaService
+    private metaService: MetaService,
   ) {
     this.metaService.setMetaInfo(this.META_INFO);
     this.editor$ = store.select(selectAuthIsEditor);

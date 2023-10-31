@@ -21,7 +21,7 @@ export class PostsService {
     pageSize: number,
     pageIndex: number,
     tagId: number | null,
-    drafts = false
+    drafts = false,
   ): Observable<Page<PostReponse>> {
     if (!pageSize && pageSize != 0) {
       pageSize = this.DEFAULT_PAGE_SIZE;
@@ -93,7 +93,7 @@ export class PostsService {
     // eslint-disable-next-line
     fn: (...params: any[]) => Observable<T>,
     postId: number,
-    tagsIDs: number[]
+    tagsIDs: number[],
   ) {
     // Call the function fn for each tag id and convert the observers responses to promises
     const promises = tagsIDs.map(async (tagId) => await firstValueFrom(fn(postId, tagId)));

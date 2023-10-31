@@ -28,7 +28,7 @@ export class PostsTagComponent implements OnDestroy {
     private tagsService: TagsService,
     private route: ActivatedRoute,
     private router: Router,
-    private metaService: MetaService
+    private metaService: MetaService,
   ) {
     this.getTagIdFromRouteAndLoadTag();
 

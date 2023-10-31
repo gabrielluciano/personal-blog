@@ -31,7 +31,7 @@ describe('PostsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      `${env.apiUrl}posts?tag=&sort=createdAt,desc&size=5&page=0&drafts=false`
+      `${env.apiUrl}posts?tag=&sort=createdAt,desc&size=5&page=0&drafts=false`,
     );
     expect(req.request.method).toEqual('GET');
     req.flush(postsPageMock);

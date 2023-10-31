@@ -26,7 +26,7 @@ export class LoginFormComponent implements OnInit {
     private store: Store<AppState>,
     private _snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<HeaderComponent>,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
