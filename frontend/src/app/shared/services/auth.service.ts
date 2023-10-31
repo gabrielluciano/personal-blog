@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private jwtHelper: JwtHelperService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   login(email: string, password: string): Observable<string> {
@@ -24,7 +24,7 @@ export class AuthService {
         { email, password },
         {
           responseType: 'text',
-        }
+        },
       )
       .pipe(catchError(handleError));
   }

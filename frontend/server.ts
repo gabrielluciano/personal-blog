@@ -26,7 +26,7 @@ export function app(): express.Express {
     'html',
     ngExpressEngine({
       bootstrap: AppServerModule,
-    })
+    }),
   );
 
   server.set('view engine', 'html');
@@ -41,10 +41,10 @@ export function app(): express.Express {
       setHeaders: function (res) {
         res.set(
           'Cache-control',
-          `max-age=${STATIC_FILES_BROWSER_MAX_AGE}, s-maxage=${STATIC_FILES_SERVER_MAX_AGE}`
+          `max-age=${STATIC_FILES_BROWSER_MAX_AGE}, s-maxage=${STATIC_FILES_SERVER_MAX_AGE}`,
         );
       },
-    })
+    }),
   );
 
   server.use((req, res, next) => {

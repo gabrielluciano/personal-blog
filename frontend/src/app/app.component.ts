@@ -10,7 +10,10 @@ import { AppState } from './shared/state/app.state';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private store: Store<AppState>, private authService: AuthService) {}
+  constructor(
+    private store: Store<AppState>,
+    private authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.setAuthentication();

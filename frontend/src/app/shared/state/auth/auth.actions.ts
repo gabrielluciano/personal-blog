@@ -3,7 +3,7 @@ import { JwtToken } from 'src/app/models/jwtToken';
 
 export const authenticate = createAction(
   '[App Component] Authenticate',
-  props<{ token: JwtToken }>()
+  props<{ token: JwtToken }>(),
 );
 
 export const login = createAction('[LoginForm Component] Login', props<{ token: JwtToken }>());

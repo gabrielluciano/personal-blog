@@ -26,7 +26,10 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 export class MarkdownDirective implements OnInit {
   @Input() appMarkdown = '';
 
-  constructor(private el: ElementRef, private domSanitizer: DomSanitizer) {
+  constructor(
+    private el: ElementRef,
+    private domSanitizer: DomSanitizer,
+  ) {
     this.registerLanguages();
   }
 

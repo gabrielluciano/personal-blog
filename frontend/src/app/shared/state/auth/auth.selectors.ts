@@ -6,7 +6,7 @@ export const selectAuth = (state: AppState) => state.auth;
 
 export const selectAuthIsAuthenticated = createSelector(
   selectAuth,
-  (state: AuthState) => state.isAuthenticated
+  (state: AuthState) => state.isAuthenticated,
 );
 
 export const selectAuthIsEditor = createSelector(selectAuth, (state: AuthState) => state.isEditor);

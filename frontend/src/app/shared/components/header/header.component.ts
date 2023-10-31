@@ -23,7 +23,7 @@ export class HeaderComponent {
     private store: Store<AppState>,
     private authService: AuthService,
     private dialog: MatDialog,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
   ) {
     this.authenticated$ = store.select(selectAuthIsAuthenticated);
   }

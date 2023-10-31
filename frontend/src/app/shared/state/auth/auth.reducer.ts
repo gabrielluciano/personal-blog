@@ -25,5 +25,5 @@ export const authReducer = createReducer(
     isEditor: token.roles.includes('EDITOR'),
     isAdmin: token.roles.includes('ADMIN'),
   })),
-  on(logout, () => initialState)
+  on(logout, () => initialState),
 );

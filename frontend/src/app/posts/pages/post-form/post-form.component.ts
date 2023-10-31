@@ -29,7 +29,7 @@ export class PostFormComponent implements OnInit {
     private route: ActivatedRoute,
     private postsService: PostsService,
     private tagsService: TagsService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -128,10 +128,10 @@ export class PostFormComponent implements OnInit {
   private async updatePostTags(postId: number) {
     const currentIDsOfPostTags: number[] = this.form.value.tags;
     const tagsIDsToAdd = currentIDsOfPostTags.filter(
-      (id) => !this.initialIDsOfPostTags.includes(id)
+      (id) => !this.initialIDsOfPostTags.includes(id),
     );
     const tagsIDsToRemove = this.initialIDsOfPostTags.filter(
-      (id) => !currentIDsOfPostTags.includes(id)
+      (id) => !currentIDsOfPostTags.includes(id),
     );
     await this.postsService.addTags(postId, tagsIDsToAdd);
     await this.postsService.removeTags(postId, tagsIDsToRemove);

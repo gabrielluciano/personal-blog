@@ -11,7 +11,10 @@ export interface MetaInfo {
   providedIn: 'root',
 })
 export class MetaService {
-  constructor(private meta: Meta, private title: Title) {}
+  constructor(
+    private meta: Meta,
+    private title: Title,
+  ) {}
 
   setTitle(title: string) {
     this.title.setTitle(title);

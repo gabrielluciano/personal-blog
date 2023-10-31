@@ -31,7 +31,7 @@ export class PostComponent implements OnInit {
     private store: Store<AppState>,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar,
-    private metaService: MetaService
+    private metaService: MetaService,
   ) {
     this.editor$ = store.select(selectAuthIsEditor);
   }

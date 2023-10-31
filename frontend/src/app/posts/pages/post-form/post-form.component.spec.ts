@@ -125,7 +125,7 @@ describe('PostFormComponent', () => {
     expect(postsServiceSpy.save).toThrowError();
     expect(snackBarSpy.openFromComponent).toHaveBeenCalledWith(
       SnackbarComponent,
-      getSnackBarDefaultConfig(errorMsg, 'error')
+      getSnackBarDefaultConfig(errorMsg, 'error'),
     );
   }));
 });

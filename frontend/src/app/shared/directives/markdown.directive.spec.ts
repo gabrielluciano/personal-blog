@@ -45,7 +45,7 @@ describe('HighlightDirective', () => {
     const mainTag = des[0].nativeElement;
 
     expect(
-      mainTag.querySelectorAll('pre code.language-java')[0].classList.contains('hljs')
+      mainTag.querySelectorAll('pre code.language-java')[0].classList.contains('hljs'),
     ).toBeTruthy();
   });
 });
