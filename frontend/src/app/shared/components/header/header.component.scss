@@ -1,0 +1,23 @@
+$white-filter: invert(100%) sepia(4%) saturate(12%) hue-rotate(165deg) brightness(105%)
+  contrast(96%);
+$linkedin-color-filter: invert(22%) sepia(97%) saturate(2984%) hue-rotate(199deg) brightness(89%)
+  contrast(92%);
+$github-color-filter: invert(46%) sepia(43%) saturate(813%) hue-rotate(80deg) brightness(82%)
+  contrast(87%);
+
+a img {
+  width: 24px;
+  height: 24px;
+
+  filter: $white-filter;
+
+  transition: all ease-in-out 0.2s;
+
+  &.github-logo:hover {
+    filter: $github-color-filter;
+  }
+
+  &.linkedin-logo:hover {
+    filter: $linkedin-color-filter;
+  }
+}

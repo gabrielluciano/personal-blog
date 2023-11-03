@@ -1,0 +1,55 @@
+<div [ngClass]="{ 'hidden': !show }">
+  <nav class="fixed top-0 left-0 w-60 z-40 h-screen bg-neutral-800">
+    <div class="w-full px-2 py-1 flex items-center justify-between bg-neutral-700">
+      <h2>Menu</h2>
+      <button
+        type="button"
+        title="Fechar menu"
+        mat-icon-button
+        matTooltip="Basic"
+        aria-label="Fechar menu"
+        class="flex items-center justify-center"
+        (click)="closeMenu()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <ul>
+      <li>
+        <button
+          *ngIf="authenticated$ | async; else loginButton"
+          class="w-full px-2 py-4 flex items-center justify-start gap-4 hover:bg-neutral-600 transition-colors duration-200"
+          type="button"
+          title="Logout"
+          aria-label="Logout"
+          (click)="logout()"
+        >
+          <mat-icon>logout</mat-icon>
+          <span class="flex items-center justify-center">Logout</span>
+        </button>
+
+        <ng-template #loginButton>
+          <button
+            class="w-full px-2 py-4 flex items-center justify-start gap-4 hover:bg-neutral-600 transition-colors duration-200"
+            type="button"
+            title="Login"
+            aria-label="Login"
+            (click)="openDialog()"
+          >
+            <mat-icon>login</mat-icon>
+            <span class="flex items-center justify-center">Login</span>
+          </button>
+        </ng-template>
+      </li>
+    </ul>
+  </nav>
+  <button
+    type="button"
+    (click)="closeMenu()"
+    (keydown)="closeMenu()"
+    class="cursor-default"
+    title="Fechar menu"
+  >
+    <div class="fixed top-0 left-0 w-screen h-screen z-30 bg-neutral-900 opacity-50"></div>
+  </button>
+</div>

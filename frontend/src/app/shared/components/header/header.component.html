@@ -1,33 +1,42 @@
-<header>
-  <a routerLink="/">
-    <h2>gabrielluciano<span>.com</span></h2>
-  </a>
+<header
+  class="sticky top-0 z-20 w-full bg-neutral-900 h-16 shrink-0 px-4 border-b border-neutral-800"
+>
+  <div class="container h-full mx-auto flex items-center justify-between">
+    <div>
+      <button
+        mat-icon-button
+        matTooltip="Basic"
+        aria-label="Abrir menu"
+        class="flex items-center justify-center"
+        (click)="openMenu()"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
 
-  <div>
-    <a href="https://github.com/gabrielluciano" target="_blank">
-      <img src="assets/github-logo.svg" alt="Github" />
-    </a>
+    <div class="px-4">
+      <a routerLink="/">
+        <h2 class="text-base sm:text-xl md:text-2xl font-bold">
+          gabrielluciano<span class="text-blue-app">.com</span>
+        </h2>
+      </a>
+    </div>
 
-    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank">
-      <img src="assets/linkedin-logo.svg" alt="Linkedin" />
-    </a>
+    <div class="flex flex-row gap-4">
+      <a href="https://github.com/gabrielluciano" target="_blank" class="link" aria-label="Github">
+        <img src="assets/github-logo.svg" alt="Github" class="github-logo" />
+      </a>
 
-    <button
-      *ngIf="authenticated$ | async; else loginButton"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="logout()"
-    >
-      Sair
-    </button>
-
-    <ng-template #loginButton>
-      <button mat-flat-button color="accent" type="button" (click)="openDialog()">Login</button>
-    </ng-template>
-
-    <a routerLink="/posts/new" *ngIf="authenticated$ | async">
-      <mat-icon fontIcon="add" options></mat-icon>
-    </a>
+      <a
+        href="https://www.linkedin.com/in/gabriel-lucianosouza/"
+        target="_blank"
+        class="link"
+        aria-label="Linkedin"
+      >
+        <img src="assets/linkedin-logo.svg" alt="Linkedin" class="linkedin-logo" />
+      </a>
+    </div>
   </div>
 </header>
+
+<app-menu [show]="isMenuOpen" (whenClose)="closeMenu()"></app-menu>
