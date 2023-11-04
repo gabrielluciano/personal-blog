@@ -5,6 +5,13 @@ $linkedin-color-filter: invert(22%) sepia(97%) saturate(2984%) hue-rotate(199deg
 $github-color-filter: invert(46%) sepia(43%) saturate(813%) hue-rotate(80deg) brightness(82%)
   contrast(87%);
 
+:host {
+  position: sticky;
+  top: 0px;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
 a img {
   width: 24px;
   height: 24px;
