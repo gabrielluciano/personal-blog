@@ -34,6 +34,7 @@ export function showSnackBar(snackBar: MatSnackBar, message: string, style: Snac
 @Component({
   selector: 'app-snackbar',
   templateUrl: './snackbar.component.html',
+  styleUrls: ['./snackbar.component.scss'],
 })
 export class SnackbarComponent {
   snackBarRef = inject(MatSnackBarRef);

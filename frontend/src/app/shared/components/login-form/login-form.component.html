@@ -1,18 +1,27 @@
-<form [formGroup]="form">
-  <h2>Login</h2>
+<form [formGroup]="form" class="px-4 sm:px-8 py-12 flex flex-col gap-8 bg-neutral-800">
+  <h2 class="mb-8 text-2xl sm:text-3xl text-white font-bold text-center">Login</h2>
   <mat-form-field appearance="outline">
-    <mat-label>Email</mat-label>
+    <mat-label>E-mail</mat-label>
     <input matInput type="email" formControlName="email" />
-    <mat-error>Invalid email</mat-error>
+    <mat-error class="text-sm sm:text-base">E-mail inválido</mat-error>
   </mat-form-field>
   <mat-form-field appearance="outline">
-    <mat-label>Password</mat-label>
+    <mat-label>Senha</mat-label>
     <input matInput type="password" formControlName="password" />
-    <mat-error>You must provide the password</mat-error>
+    <mat-error class="text-sm sm:text-base">Senha inválida</mat-error>
   </mat-form-field>
-  <div>
-    <button mat-flat-button color="accent" type="reset" (click)="onClose()">Close</button>
+  <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-4">
     <button
+      class="w-full sm:w-auto text-sm font-medium"
+      mat-flat-button
+      color="accent"
+      type="reset"
+      (click)="onClose()"
+    >
+      Fechar
+    </button>
+    <button
+      class="w-full sm:w-auto text-sm font-medium"
       mat-flat-button
       color="primary"
       type="submit"

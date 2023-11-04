@@ -1,0 +1,29 @@
+$red: #c31a22;
+$green: #03832e;
+$yellow: #f5d000;
+$white: #fafafa;
+$black: #1b1b1b;
+
+.error {
+  background-color: $red;
+
+  .message {
+    color: $white;
+  }
+}
+
+.success {
+  background-color: $green;
+
+  .message {
+    color: $white;
+  }
+}
+
+.warn {
+  background-color: $yellow;
+
+  .message {
+    color: $black;
+  }
+}

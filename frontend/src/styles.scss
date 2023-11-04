@@ -14,6 +14,30 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+// Angular Material styles override
+
 mat-icon.mat-icon {
   display: block;
+}
+
+.mdc-notched-outline__notch {
+  border-right: none;
+}
+
+.dialog {
+  padding: 0 16px;
+}
+
+.mdc-snackbar__surface {
+  background-color: inherit !important;
+  padding: 0 !important;
+}
+
+// Reset browser autofill color
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.87);
 }

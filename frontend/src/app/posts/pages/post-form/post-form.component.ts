@@ -59,11 +59,11 @@ export class PostFormComponent implements OnInit {
 
   private createForm() {
     this.form = this.fb.group({
-      title: ['', [Validators.required]],
-      subtitle: ['', [Validators.required]],
+      title: ['', [Validators.required, Validators.maxLength(70)]],
+      subtitle: ['', [Validators.required, Validators.maxLength(160)]],
       slug: ['', [Validators.required, Validators.pattern(VALID_SLUG_PATTERN)]],
-      metaTitle: ['', [Validators.required]],
-      metaDescription: ['', [Validators.required]],
+      metaTitle: ['', [Validators.required, Validators.maxLength(70)]],
+      metaDescription: ['', [Validators.required, Validators.maxLength(160)]],
       imageUrl: ['', [Validators.required]],
       tags: [[], [Validators.required]],
       content: [''],

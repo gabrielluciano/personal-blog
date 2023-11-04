@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 
 import { SnackbarComponent, SnackbarData } from './snackbar.component';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -19,6 +20,7 @@ describe('SnackbarComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
+      imports: [MatIconModule],
       declarations: [SnackbarComponent],
       providers: [
         { provide: MAT_SNACK_BAR_DATA, useValue: snackbarDataMock },
