@@ -18,6 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MarkdownDirective } from './directives/markdown.directive';
+import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { MarkdownDirective } from './directives/markdown.directive';
     SnackbarComponent,
     ConfirmDialogComponent,
     MarkdownDirective,
+    MenuComponent,
   ],
   imports: [
     CommonModule,

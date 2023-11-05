@@ -1,55 +1,59 @@
-<article class="post" *ngIf="post; else loading">
-  <header class="header">
-    <h1 class="title">{{ post.title }}</h1>
-    <h2 class="subtitle">{{ post.subtitle }}</h2>
-    <div class="post-info">
-      <span class="author"
-        >Por <strong>{{ post.author.name }}</strong></span
-      >
-      <span>Criado em {{ post.createdAt | dateFormat }}</span>
+<article *ngIf="post; else loading" class="mt-6 md:mt-12 w-full max-w-3xl mx-auto">
+  <header>
+    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">{{ post.title }}</h1>
+    <h2 class="mt-6 text-sm md:text-base text-zinc-300">{{ post.subtitle }}</h2>
+    <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs md:text-sm text-zinc-300">
+        Por <strong>{{ post.author.name }}</strong>
+      </p>
+      <p class="mt-1 sm:mt-0 text-xs md:text-sm text-zinc-300">
+        Criado em {{ post.createdAt | dateFormat }}
+      </p>
     </div>
-    <div class="tags-crud-container">
-      <div>
-        <ul class="tags" *ngIf="post.tags.length > 0">
+    <div class="flex items-center justify-between mt-6">
+      <div class="flex items-center justify-center">
+        <ul *ngIf="post.tags.length > 0" class="flex gap-3">
           <li *ngFor="let tag of post.tags">
-            <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
+            <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">
+              {{ tag.name }}
+            </app-pill>
           </li>
         </ul>
       </div>
-      <div class="crud" *ngIf="editor$ | async">
+      <div *ngIf="editor$ | async" class="flex items-center justify-between gap-2 cursor-pointer">
         <mat-icon
+          class="hover:text-sky-500 transition-all"
           fontIcon="edit"
           title="Editar post"
           aria-label="Editar post"
-          class="icon edit"
           (click)="openDialog('edit')"
         ></mat-icon>
         <mat-icon
+          class="hover:text-green-600 transition-all"
           fontIcon="publish"
           title="Publicar post"
           aria-label="Publicar post"
-          class="icon publish"
           *ngIf="!post.published"
           (click)="openDialog('publish')"
         ></mat-icon>
         <mat-icon
+          class="hover:text-amber-400 transition-all"
           fontIcon="unpublished"
           title="Despublicar post"
           aria-label="Despublicar post"
-          class="icon unpublish"
           *ngIf="post.published"
           (click)="openDialog('unpublish')"
         ></mat-icon>
         <mat-icon
+          class="hover:text-red-500 transition-all"
           fontIcon="delete"
           title="Excluir post"
           aria-label="Excluir post"
-          class="icon delete"
           (click)="openDialog('delete')"
         ></mat-icon>
       </div>
     </div>
-    <div class="image-container">
+    <div class="relative w-full h-56 sm:h-80 md:h-96 rounded-xl overflow-hidden mt-6">
       <img
         ngSrc="{{ post.imageUrl }}-1000w.webp"
         srcset="
@@ -63,10 +67,13 @@
       />
     </div>
   </header>
-  <main class="content" [appMarkdown]="post.content"></main>
+  <main
+    class="mt-12 mb-12 prose prose-sm md:prose-base prose-code:text-sm prose-code:bg-transparent prose-a:text-blue-app prose-invert max-w-none prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl"
+    [appMarkdown]="post.content"
+  ></main>
 </article>
 <ng-template #loading>
-  <div class="loading">
+  <div class="w-full h-72 flex items-center justify-center">
     <mat-spinner [diameter]="60" title="Carregando posts"></mat-spinner>
   </div>
 </ng-template>

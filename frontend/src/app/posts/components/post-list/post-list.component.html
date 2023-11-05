@@ -1,6 +1,10 @@
-<section>
-  <div class="post-list" *ngIf="postsPage; else loading">
-    <app-post-list-item *ngFor="let post of postsPage.content" [post]="post"></app-post-list-item>
+<section class="w-full mt-20">
+  <div *ngIf="postsPage; else loading">
+    <ul class="max-w-4xl mx-auto flex flex-col gap-8 md:gap-12">
+      <li *ngFor="let post of postsPage.content">
+        <app-post-list-item [post]="post"></app-post-list-item>
+      </li>
+    </ul>
     <app-paginator
       (page)="onPageEvent($event)"
       [length]="postsPage.totalElements"
@@ -10,7 +14,7 @@
     ></app-paginator>
   </div>
   <ng-template #loading>
-    <div class="loading">
+    <div class="w-full h-72 flex items-center justify-center">
       <mat-spinner [diameter]="60" title="Carregando posts"></mat-spinner>
     </div>
   </ng-template>

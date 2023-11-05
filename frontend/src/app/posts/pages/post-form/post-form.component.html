@@ -1,48 +1,56 @@
-<h1 class="title" *ngIf="!isEdit">Criação de Post</h1>
-<h1 class="title" *ngIf="isEdit">Edição de Post</h1>
-<form class="form" [formGroup]="form">
-  <div class="field">
-    <h2 class="field-title">Título</h2>
+<h1 *ngIf="!isEdit" class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
+  <span> Criar <span class="text-blue-app">Post</span> </span>
+</h1>
+<h1 *ngIf="isEdit" class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
+  <span> Editar <span class="text-blue-app">Post</span> </span>
+</h1>
+<form [formGroup]="form" class="w-full max-w-3xl mx-auto">
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Título</h2>
     <mat-form-field appearance="outline">
       <mat-label>Título</mat-label>
       <input matInput type="text" name="title" formControlName="title" />
-      <mat-hint class="hint">Título do post</mat-hint>
-      <mat-error class="error">Título é obrigatório</mat-error>
+      <mat-hint class="text-sm">Título do post</mat-hint>
+      <mat-error class="text-sm">Título não pode ser vazio ou maior que 70 caracteres</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Subtítulo</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Subtítulo</h2>
     <mat-form-field appearance="outline">
       <mat-label>Subtítulo</mat-label>
-      <input matInput type="text" name="subtitle" formControlName="subtitle" />
-      <mat-hint class="hint">Subtítulo do post</mat-hint>
-      <mat-error class="error">Subtítulo é obrigatório</mat-error>
+      <textarea matInput type="text" name="subtitle" formControlName="subtitle"></textarea>
+      <mat-hint class="text-sm">Subtítulo do post</mat-hint>
+      <mat-error class="text-sm"
+        >Subtítulo não pode ser vazio ou maior que 160 caracteres</mat-error
+      >
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Slug</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Slug</h2>
     <mat-form-field appearance="outline">
       <mat-label>Slug</mat-label>
       <input matInput type="text" name="slug" formControlName="slug" />
-      <mat-hint class="hint">Slug do post para uso em URL</mat-hint>
-      <mat-error class="error">Slug inválido</mat-error>
+      <mat-hint class="text-sm">Slug do post para uso em URL</mat-hint>
+      <mat-error class="text-sm">Slug inválido</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Meta título</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Meta título</h2>
     <mat-form-field appearance="outline">
       <mat-label>Meta título</mat-label>
       <input matInput type="text" name="meta title" formControlName="metaTitle" />
-      <mat-hint class="hint">Meta título do post</mat-hint>
-      <mat-error class="error">Meta título é obrigatório</mat-error>
+      <mat-hint class="text-sm">Meta título do post</mat-hint>
+      <mat-error class="text-sm"
+        >Meta título não pode ser vazio ou maior que 70 caracteres</mat-error
+      >
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Meta descrição</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Meta descrição</h2>
     <mat-form-field appearance="outline">
       <mat-label>Meta descrição</mat-label>
       <textarea
@@ -51,35 +59,37 @@
         name="meta description"
         formControlName="metaDescription"
       ></textarea>
-      <mat-hint class="hint">Meta descrição do post</mat-hint>
-      <mat-error class="error">Meta descrição é obrigatória</mat-error>
+      <mat-hint class="text-sm">Meta descrição do post</mat-hint>
+      <mat-error class="text-sm"
+        >Meta descrição não pode ser vazia ou maior que 160 caracteres</mat-error
+      >
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">URL da imagem</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">URL da imagem</h2>
     <mat-form-field appearance="outline">
       <mat-label>URL da imagem</mat-label>
       <input matInput type="text" name="URL" formControlName="imageUrl" />
-      <mat-hint class="hint">URL da imagem do post</mat-hint>
-      <mat-error class="error">URL da imagem é obrigatória</mat-error>
+      <mat-hint class="text-sm">URL da imagem do post</mat-hint>
+      <mat-error class="text-sm">URL da imagem é obrigatória</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Tags</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Tags</h2>
     <mat-form-field appearance="outline">
       <mat-label>Tags</mat-label>
       <mat-select multiple formControlName="tags">
         <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
       </mat-select>
-      <mat-hint class="hint">Tags relativas ao post</mat-hint>
-      <mat-error class="error">Ao menos uma tag deve ser selecionada</mat-error>
+      <mat-hint class="text-sm">Tags relativas ao post</mat-hint>
+      <mat-error class="text-sm">Ao menos uma tag deve ser selecionada</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="field">
-    <h2 class="field-title">Conteúdo</h2>
+  <div class="w-full mt-8 flex flex-col">
+    <h2 class="text-2xl font-bold mb-4">Conteúdo</h2>
     <mat-form-field appearance="outline">
       <mat-label>Conteúdo</mat-label>
       <textarea
@@ -89,11 +99,11 @@
         name="meta description"
         formControlName="content"
       ></textarea>
-      <mat-hint class="hint">O conteúdo do post</mat-hint>
+      <mat-hint class="text-sm">O conteúdo do post</mat-hint>
     </mat-form-field>
   </div>
 
-  <div class="buttons">
+  <div class="mt-8 flex items-center justify-end gap-4">
     <button mat-flat-button color="accent" (click)="redirectToHome()">Cancelar</button>
     <button
       mat-flat-button

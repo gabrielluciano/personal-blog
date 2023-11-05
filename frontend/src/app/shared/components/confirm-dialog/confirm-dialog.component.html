@@ -1,9 +1,9 @@
-<div class="container">
-  <div class="text">
-    <p>{{ data.message }}</p>
+<div class="px-8 py-8 flex flex-col items-center justify-center">
+  <div class="mb-8">
+    <p class="text-white">{{ data.message }}</p>
   </div>
-  <div class="buttons">
-    <button mat-flat-button class="button" color="primary" (click)="onSubmit()">Sim</button>
-    <button mat-flat-button class="button" color="warn" (click)="onCancel()">Não</button>
+  <div class="flex items-center gap-6">
+    <button mat-flat-button color="primary" class="font-semibold" (click)="onSubmit()">Sim</button>
+    <button mat-flat-button color="warn" class="font-semibold" (click)="onCancel()">Não</button>
   </div>
 </div>

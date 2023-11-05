@@ -1,36 +1,40 @@
-<header class="app-header">
-  <a routerLink="/">
-    <h2 class="title">gabrielluciano<span>.com</span></h2>
-  </a>
-
-  <div class="buttons">
-    <a href="https://github.com/gabrielluciano" target="_blank" class="link">
-      <img src="assets/github-logo.svg" alt="Github" class="github-logo" />
-    </a>
-
-    <a href="https://www.linkedin.com/in/gabriel-lucianosouza/" target="_blank" class="link">
-      <img src="assets/linkedin-logo.svg" alt="Linkedin" class="linkedin-logo" />
-    </a>
-
-    <button
-      *ngIf="authenticated$ | async; else loginButton"
-      mat-flat-button
-      color="primary"
-      class="button"
-      type="button"
-      (click)="logout()"
-    >
-      Sair
-    </button>
-
-    <ng-template #loginButton>
-      <button mat-flat-button color="accent" class="button" type="button" (click)="openDialog()">
-        Login
+<header class="w-full bg-neutral-900 h-16 px-4 border-b border-neutral-800">
+  <div class="container h-full mx-auto flex items-center justify-between">
+    <div>
+      <button
+        mat-icon-button
+        matTooltip="Basic"
+        aria-label="Abrir menu"
+        class="flex items-center justify-center"
+        (click)="openMenu()"
+      >
+        <mat-icon>menu</mat-icon>
       </button>
-    </ng-template>
+    </div>
 
-    <a routerLink="/posts/new" class="new-post-button" *ngIf="authenticated$ | async">
-      <mat-icon fontIcon="add" options></mat-icon>
-    </a>
+    <div class="px-4">
+      <a routerLink="/">
+        <h2 class="text-base sm:text-xl md:text-2xl font-bold">
+          gabrielluciano<span class="text-blue-app">.com</span>
+        </h2>
+      </a>
+    </div>
+
+    <div class="flex flex-row gap-4">
+      <a href="https://github.com/gabrielluciano" target="_blank" class="link" aria-label="Github">
+        <img src="assets/github-logo.svg" alt="Github" class="github-logo" />
+      </a>
+
+      <a
+        href="https://www.linkedin.com/in/gabriel-lucianosouza/"
+        target="_blank"
+        class="link"
+        aria-label="Linkedin"
+      >
+        <img src="assets/linkedin-logo.svg" alt="Linkedin" class="linkedin-logo" />
+      </a>
+    </div>
   </div>
 </header>
+
+<app-menu [show]="isMenuOpen" (whenClose)="closeMenu()"></app-menu>

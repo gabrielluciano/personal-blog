@@ -1,105 +1,30 @@
-@import 'mixins';
-@import 'variables';
+$white-filter: invert(100%) sepia(4%) saturate(12%) hue-rotate(165deg) brightness(105%)
+  contrast(96%);
+$linkedin-color-filter: invert(22%) sepia(97%) saturate(2984%) hue-rotate(199deg) brightness(89%)
+  contrast(92%);
+$github-color-filter: invert(46%) sepia(43%) saturate(813%) hue-rotate(80deg) brightness(82%)
+  contrast(87%);
 
 :host {
-  height: 86px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: $tablet) {
-    height: 74px;
-  }
+  position: sticky;
+  top: 0px;
+  flex-shrink: 0;
+  z-index: 20;
 }
 
-.app-header {
-  width: 100%;
-  height: 100%;
-  max-width: 1120px;
+a img {
+  width: 24px;
+  height: 24px;
 
-  padding: 0 16px;
+  filter: $white-filter;
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  transition: all ease-in-out 0.2s;
 
-  .title {
-    @include blog-logo;
-
-    @media (max-width: $laptop) {
-      font-size: 1.75rem;
-    }
-
-    @media (max-width: $tablet) {
-      font-size: 1.5rem;
-    }
+  &.github-logo:hover {
+    filter: $github-color-filter;
   }
 
-  .buttons {
-    height: 100%;
-    display: flex;
-    align-items: center;
-
-    gap: 30px;
-
-    @media (max-width: $tablet) {
-      gap: 24px;
-    }
-
-    .button {
-      @include button;
-
-      @media (max-width: $tablet) {
-        display: none;
-      }
-    }
-
-    .link {
-      display: flex;
-      align-items: center;
-
-      img {
-        filter: var(--white-filter);
-
-        transition: all ease-in-out 0.3s;
-
-        &.github-logo:hover {
-          filter: var(--github-color-filter);
-        }
-
-        &.linkedin-logo:hover {
-          filter: var(--linkedin-color-filter);
-        }
-
-        @media (max-width: $tablet) {
-          width: 24px;
-        }
-      }
-    }
-
-    .new-post-button {
-      width: 34px;
-      height: 34px;
-      border-radius: 17px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background-color: var(--white);
-
-      color: var(--black);
-
-      transition: opacity ease-in 0.3s;
-
-      &:hover {
-        opacity: 0.7;
-      }
-
-      @media (max-width: $tablet) {
-        display: none;
-      }
-    }
+  &.linkedin-logo:hover {
+    filter: $linkedin-color-filter;
   }
 }
