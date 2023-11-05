@@ -6,11 +6,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AppState } from '../../state/app.state';
 import { AuthService } from '../../services/auth.service';
-import { selectAuthIsAuthenticated } from '../../state/auth/auth.selectors';
+import { selectAuthIsAuthenticated, selectAuthIsEditor } from '../../state/auth/auth.selectors';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { logout } from '../../state/auth/auth.actions';
 import { SUCCESS_LOGOUT_MSG } from 'src/app/i18n/pt/msg';
 import { showSnackBar } from '../snackbar/snackbar.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -21,14 +22,17 @@ export class MenuComponent {
   @Input() show: boolean = false;
   @Output() whenClose: EventEmitter<void> = new EventEmitter();
   authenticated$: Observable<boolean>;
+  editor$: Observable<boolean>;
 
   constructor(
     private store: Store<AppState>,
     private authService: AuthService,
     private dialog: MatDialog,
     private _snackBar: MatSnackBar,
+    private router: Router,
   ) {
     this.authenticated$ = store.select(selectAuthIsAuthenticated);
+    this.editor$ = store.select(selectAuthIsEditor);
   }
 
   closeMenu() {
@@ -47,5 +51,10 @@ export class MenuComponent {
     this.authService.logout();
     this.store.dispatch(logout());
     showSnackBar(this._snackBar, SUCCESS_LOGOUT_MSG, 'success');
+  }
+
+  newPost() {
+    this.router.navigate(['/posts/new']);
+    this.closeMenu();
   }
 }

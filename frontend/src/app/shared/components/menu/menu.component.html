@@ -41,6 +41,18 @@
           </button>
         </ng-template>
       </li>
+      <li *ngIf="editor$ | async">
+        <button
+          class="w-full px-2 py-4 flex items-center justify-start gap-4 hover:bg-neutral-600 transition-colors duration-200"
+          type="button"
+          title="Novo post"
+          aria-label="Novo post"
+          (click)="newPost()"
+        >
+          <mat-icon>add_circle</mat-icon>
+          <span class="flex items-center justify-center">Novo Post</span>
+        </button>
+      </li>
     </ul>
   </nav>
   <button
