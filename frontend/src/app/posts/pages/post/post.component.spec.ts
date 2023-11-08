@@ -21,6 +21,7 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 import { NgOptimizedImage } from '@angular/common';
 import { MetaService } from 'src/app/shared/services/meta.service';
+import { environment as env } from 'src/environments/environment';
 
 describe('PostComponent', () => {
   let component: PostComponent;
@@ -91,6 +92,7 @@ describe('PostComponent', () => {
       title: postsMock[0].metaTitle,
       description: postsMock[0].metaDescription,
       imageUrl: postsMock[0].imageUrl + '-500w.png',
+      canonicalUrl: `${env.siteUrl}posts/${postsMock[0].slug}`,
     });
   });
 

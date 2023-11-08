@@ -2,15 +2,24 @@ import { TestBed } from '@angular/core/testing';
 
 import { MetaInfo, MetaService } from './meta.service';
 import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 describe('MetaService', () => {
   let service: MetaService;
   let metaSpy: jasmine.SpyObj<Meta>;
   let titleSpy: jasmine.SpyObj<Title>;
+  let dom: Document;
+  let headSpy: jasmine.SpyObj<HTMLHeadElement>;
+  let canonicalSpy: jasmine.SpyObj<HTMLElement>;
 
   beforeEach(() => {
     metaSpy = jasmine.createSpyObj<Meta>('Meta', ['getTag', 'addTag', 'updateTag']);
     titleSpy = jasmine.createSpyObj<Title>('Title', ['setTitle']);
+    headSpy = jasmine.createSpyObj<HTMLHeadElement>('HTMLHeadElement', [
+      'querySelector',
+      'appendChild',
+    ]);
+    canonicalSpy = jasmine.createSpyObj<HTMLElement>('HTMLElement', ['setAttribute']);
 
     TestBed.configureTestingModule({
       providers: [
@@ -18,6 +27,7 @@ describe('MetaService', () => {
         { provide: Title, useValue: titleSpy },
       ],
     });
+    dom = TestBed.inject(DOCUMENT);
     service = TestBed.inject(MetaService);
   });
 
@@ -100,6 +110,31 @@ describe('MetaService', () => {
     expect(metaSpy.updateTag).toHaveBeenCalledWith({ property: 'og:image', content: newImageUrl });
   });
 
+  it('should set canonical url', () => {
+    const domQuerySelectorSpy = spyOn(dom, 'querySelector').and.returnValue(headSpy);
+    headSpy.querySelector.withArgs('link[rel="canonical"]').and.returnValue(canonicalSpy);
+
+    service.setCanonicalUrl('expected');
+
+    expect(domQuerySelectorSpy).toHaveBeenCalledWith('head');
+    expect(headSpy.querySelector).toHaveBeenCalledWith('link[rel="canonical"]');
+    expect(canonicalSpy.setAttribute).toHaveBeenCalledWith('href', 'expected');
+  });
+
+  it('should create and set canonical url', () => {
+    const domQuerySelectorSpy = spyOn(dom, 'querySelector').and.returnValue(headSpy);
+    headSpy.querySelector.withArgs('link[rel="canonical"]').and.returnValue(null);
+    const domCreateElementSpy = spyOn(dom, 'createElement').and.returnValue(canonicalSpy);
+
+    service.setCanonicalUrl('expected');
+
+    expect(domQuerySelectorSpy).toHaveBeenCalledWith('head');
+    expect(headSpy.querySelector).toHaveBeenCalledWith('link[rel="canonical"]');
+    expect(domCreateElementSpy).toHaveBeenCalledWith('link');
+    expect(canonicalSpy.setAttribute).toHaveBeenCalledWith('rel', 'canonical');
+    expect(canonicalSpy.setAttribute).toHaveBeenCalledWith('href', 'expected');
+  });
+
   it('should create meta tags', () => {
     metaSpy.getTag.and.returnValue(null);
 
@@ -107,6 +142,7 @@ describe('MetaService', () => {
       title: 'New Title!',
       description: 'New Description',
       imageUrl: 'http://example.com/image.jpg',
+      canonicalUrl: 'http://example.com',
     };
     service.setMetaInfo(newMetaInfo);
 
@@ -122,6 +158,7 @@ describe('MetaService', () => {
       title: 'New Title!',
       description: 'New Description',
       imageUrl: 'http://example.com/image.jpg',
+      canonicalUrl: 'http://example.com',
     };
     service.setMetaInfo(newMetaInfo);
 

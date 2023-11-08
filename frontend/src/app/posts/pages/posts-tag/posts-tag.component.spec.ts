@@ -68,6 +68,7 @@ describe('PostsTagComponent', () => {
       title: 'Posts sobre ' + tagsMock[0].name,
       description: tagsMock[0].description,
       imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
+      canonicalUrl: `${env.siteUrl}posts/tag/${tagsMock[0].id}/${tagsMock[0].slug}`,
     });
   });
 

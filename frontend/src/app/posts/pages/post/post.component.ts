@@ -12,6 +12,7 @@ import { MetaService } from 'src/app/shared/services/meta.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
+import { environment as env } from 'src/environments/environment';
 
 type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 
@@ -61,6 +62,7 @@ export class PostComponent implements OnInit {
           title: post.metaTitle,
           description: post.metaDescription,
           imageUrl: post.imageUrl + '-500w.png',
+          canonicalUrl: `${env.siteUrl}posts/${post.slug}`,
         });
       },
       error: (error) => {

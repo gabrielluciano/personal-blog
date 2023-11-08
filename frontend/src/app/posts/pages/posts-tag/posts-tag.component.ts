@@ -56,6 +56,7 @@ export class PostsTagComponent implements OnDestroy {
           title: 'Posts sobre ' + tag.name,
           description: tag.description,
           imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
+          canonicalUrl: `${env.siteUrl}posts/tag/${tag.id}/${tag.slug}`,
         });
       },
       error: (error) => {

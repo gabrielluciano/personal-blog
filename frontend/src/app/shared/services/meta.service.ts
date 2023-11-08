@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 
 export interface MetaInfo {
   title: string;
   description: string;
   imageUrl: string;
+  canonicalUrl: string;
 }
 
 @Injectable({
@@ -14,6 +16,7 @@ export class MetaService {
   constructor(
     private meta: Meta,
     private title: Title,
+    @Inject(DOCUMENT) private dom: Document,
   ) {}
 
   setTitle(title: string) {
@@ -30,10 +33,23 @@ export class MetaService {
     this.createOrUpdateMetaTag('property', 'og:image', url);
   }
 
-  setMetaInfo({ title, description, imageUrl }: MetaInfo) {
+  setCanonicalUrl(url: string) {
+    const head = this.dom.querySelector('head');
+    if (!head) return;
+    let canonical = head.querySelector('link[rel="canonical"]');
+    if (canonical == null) {
+      canonical = this.dom.createElement('link');
+      head.appendChild(canonical);
+    }
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', url);
+  }
+
+  setMetaInfo({ title, description, imageUrl, canonicalUrl }: MetaInfo) {
     this.setTitle(title);
     this.setDescription(description);
     this.setImage(imageUrl);
+    this.setCanonicalUrl(canonicalUrl);
   }
 
   private createOrUpdateMetaTag(attribute: 'property' | 'name', value: string, content: string) {

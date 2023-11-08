@@ -19,6 +19,7 @@ export class PostsHomeComponent {
     description:
       'Bem vindo ao blog gabrielluciano.com. Aqui compartilho um pouco da minha paixão por tecnologia com você',
     imageUrl: env.siteUrl + 'assets/gabrielluciano-img.png',
+    canonicalUrl: env.siteUrl + 'posts',
   };
 
   postsPage!: Page<PostReponse>;
