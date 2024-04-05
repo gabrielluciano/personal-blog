@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MetaService } from 'src/app/shared/services/meta.service';
 import { environment as env } from 'src/environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('PostsTagComponent', () => {
   let component: PostsTagComponent;
@@ -42,6 +43,7 @@ describe('PostsTagComponent', () => {
         ]),
         BrowserAnimationsModule,
         SharedModule,
+        MatProgressSpinnerModule,
       ],
       declarations: [PostsTagComponent, PostListComponent, PostListItemComponent],
       providers: [

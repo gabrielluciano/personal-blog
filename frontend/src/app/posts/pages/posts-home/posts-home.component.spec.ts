@@ -18,6 +18,7 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
 import { MetaService } from 'src/app/shared/services/meta.service';
 import { environment as env } from 'src/environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
@@ -34,7 +35,13 @@ describe('PostsHomeComponent', () => {
     metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, BrowserAnimationsModule, SharedModule, MatSlideToggleModule],
+      imports: [
+        RouterTestingModule,
+        BrowserAnimationsModule,
+        SharedModule,
+        MatSlideToggleModule,
+        MatProgressSpinnerModule,
+      ],
       declarations: [
         PostsHomeComponent,
         HeroComponent,
