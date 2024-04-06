@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MetaInfo, MetaService } from './meta.service';
-import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
+import { MetaInfo, MetaService } from './meta.service';
 
 describe('MetaService', () => {
   let service: MetaService;
@@ -12,7 +12,7 @@ describe('MetaService', () => {
   let headSpy: jasmine.SpyObj<HTMLHeadElement>;
   let canonicalSpy: jasmine.SpyObj<HTMLElement>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     metaSpy = jasmine.createSpyObj<Meta>('Meta', ['getTag', 'addTag', 'updateTag']);
     titleSpy = jasmine.createSpyObj<Title>('Title', ['setTitle']);
     headSpy = jasmine.createSpyObj<HTMLHeadElement>('HTMLHeadElement', [
@@ -21,12 +21,12 @@ describe('MetaService', () => {
     ]);
     canonicalSpy = jasmine.createSpyObj<HTMLElement>('HTMLElement', ['setAttribute']);
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       providers: [
         { provide: Meta, useValue: metaSpy },
         { provide: Title, useValue: titleSpy },
       ],
-    });
+    }).compileComponents();
     dom = TestBed.inject(DOCUMENT);
     service = TestBed.inject(MetaService);
   });

@@ -1,23 +1,19 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { PostFormComponent } from './post-form.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PostsService } from 'src/app/shared/services/posts.service';
-import { TagsService } from 'src/app/shared/services/tags.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { tagsPageMock } from 'src/app/models/tag/tagsMock';
-import { Router } from '@angular/router';
+import { routes } from 'src/app/app.routes';
 import { postsMock } from 'src/app/models/post/postsMock';
+import { tagsPageMock } from 'src/app/models/tag/tagsMock';
 import {
   SnackbarComponent,
   getSnackBarDefaultConfig,
 } from 'src/app/shared/components/snackbar/snackbar.component';
+import { PostsService } from 'src/app/shared/services/posts.service';
+import { TagsService } from 'src/app/shared/services/tags.service';
+import { PostFormComponent } from './post-form.component';
 
 describe('PostFormComponent', () => {
   let component: PostFormComponent;
@@ -28,7 +24,7 @@ describe('PostFormComponent', () => {
   let tagsServiceSpy: jasmine.SpyObj<TagsService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', [
       'save',
       'addTags',
@@ -43,22 +39,16 @@ describe('PostFormComponent', () => {
 
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
 
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        BrowserAnimationsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        ReactiveFormsModule,
-      ],
-      declarations: [PostFormComponent],
+    await TestBed.configureTestingModule({
+      imports: [PostFormComponent],
       providers: [
+        provideRouter(routes),
+        provideAnimations(),
         { provide: PostsService, useValue: postsServiceSpy },
         { provide: TagsService, useValue: tagsServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(PostFormComponent);
     router = TestBed.inject(Router);
     component = fixture.componentInstance;

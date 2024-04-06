@@ -6,12 +6,12 @@ import { PLATFORM_ID } from '@angular/core';
 describe('StorageService', () => {
   let service: StorageService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       providers: [{ provide: PLATFORM_ID, useFactory: () => 'browser' }],
-    });
+    }).compileComponents();
   });
 
   it('should be created', () => {

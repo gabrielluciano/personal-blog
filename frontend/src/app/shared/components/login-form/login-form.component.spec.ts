@@ -1,21 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LoginFormComponent } from './login-form.component';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthService } from '../../services/auth.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
-import { HeaderComponent } from '../header/header.component';
-import { ErrorDetails } from 'src/app/models/errorDetails';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { AppState } from '../../state/app.state';
-import { initialState } from '../../state/auth/auth.reducer';
-import { login } from '../../state/auth/auth.actions';
+import { of, throwError } from 'rxjs';
+import { ErrorDetails } from 'src/app/models/errorDetails';
 import { JwtToken } from 'src/app/models/jwtToken';
+import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
+import { AppState } from '../../state/app.state';
+import { login } from '../../state/auth/auth.actions';
+import { initialState } from '../../state/auth/auth.reducer';
+import { HeaderComponent } from '../header/header.component';
+import { LoginFormComponent } from './login-form.component';
 
 describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
@@ -33,7 +31,7 @@ describe('LoginFormComponent', () => {
     message: 'Ops we had an error!',
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
 
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<HeaderComponent>>('MatDialogRef', ['close']);
@@ -41,17 +39,17 @@ describe('LoginFormComponent', () => {
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
     storageServiceSpy = jasmine.createSpyObj<StorageService>('StorageService', ['setItem']);
 
-    TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, MatDialogModule, MatInputModule, ReactiveFormsModule],
-      declarations: [LoginFormComponent],
+    await TestBed.configureTestingModule({
+      imports: [LoginFormComponent],
       providers: [
+        provideAnimations(),
         provideMockStore({ initialState: initialAppState }),
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: StorageService, useValue: storageServiceSpy },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(LoginFormComponent);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);

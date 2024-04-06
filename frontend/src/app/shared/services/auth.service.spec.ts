@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthService } from './auth.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { JwtToken } from 'src/app/models/jwtToken';
 import { environment as env } from 'src/environments/environment';
+import { AuthService } from './auth.service';
 import { StorageService } from './storage.service';
 
 describe('AuthService', () => {
@@ -17,20 +18,21 @@ describe('AuthService', () => {
   let storageServiceSpy: jasmine.SpyObj<StorageService>;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jwtHelperSpy = jasmine.createSpyObj<JwtHelperService>('JwtHelperService', [
       'isTokenExpired',
       'decodeToken',
     ]);
     storageServiceSpy = jasmine.createSpyObj<StorageService>('StorageService', ['removeItem']);
 
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+    await TestBed.configureTestingModule({
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: JwtHelperService, useValue: jwtHelperSpy },
         { provide: StorageService, useValue: storageServiceSpy },
       ],
-    });
+    }).compileComponents();
     service = TestBed.inject(AuthService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });

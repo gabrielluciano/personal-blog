@@ -1,14 +1,19 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
+import { MatIcon } from '@angular/material/icon';
+import { provideRouter } from '@angular/router';
+import { routes } from 'src/app/app.routes';
+import { MenuComponent } from '../menu/menu.component';
 import { HeaderComponent } from './header.component';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-menu',
   template: '<button id="close-button" (click)="closeMenu()">close</button>',
+  standalone: true,
+  imports: [MatIcon],
 })
-class MockAppMenuComponent {
+class MockMenuComponent {
   @Input() show: boolean = true;
   @Output() whenClose: EventEmitter<void> = new EventEmitter();
 
@@ -21,11 +26,16 @@ describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [MatIconModule],
-      declarations: [HeaderComponent, MockAppMenuComponent],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HeaderComponent],
+      providers: [provideRouter(routes)],
+    })
+      .overrideComponent(HeaderComponent, {
+        remove: { imports: [MenuComponent] },
+        add: { imports: [MockMenuComponent] },
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

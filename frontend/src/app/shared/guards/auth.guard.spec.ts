@@ -1,10 +1,11 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { editorGuard } from './auth.guard';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AppState } from '../state/app.state';
 import { initialState } from '../state/auth/auth.reducer';
+import { editorGuard } from './auth.guard';
 
 describe('editorGuard', () => {
   let store: MockStore<AppState>;
@@ -13,11 +14,14 @@ describe('editorGuard', () => {
 
   const executeGuard = () => TestBed.runInInjectionContext(() => editorGuard());
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      providers: [provideMockStore({ initialState: initialAppState })],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideMockStore({ initialState: initialAppState }),
+      ],
+    }).compileComponents();
 
     store = TestBed.inject(MockStore);
     router = TestBed.inject(Router);

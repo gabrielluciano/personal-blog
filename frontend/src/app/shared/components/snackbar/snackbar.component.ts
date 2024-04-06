@@ -1,9 +1,15 @@
+import { NgClass } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import {
-  MatSnackBarRef,
   MAT_SNACK_BAR_DATA,
-  MatSnackBarConfig,
   MatSnackBar,
+  MatSnackBarAction,
+  MatSnackBarActions,
+  MatSnackBarConfig,
+  MatSnackBarLabel,
+  MatSnackBarRef,
 } from '@angular/material/snack-bar';
 
 const DURATION_IN_SECONDS = 10;
@@ -35,6 +41,15 @@ export function showSnackBar(snackBar: MatSnackBar, message: string, style: Snac
   selector: 'app-snackbar',
   templateUrl: './snackbar.component.html',
   styleUrls: ['./snackbar.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    MatSnackBarLabel,
+    MatSnackBarActions,
+    MatIconButton,
+    MatSnackBarAction,
+    MatIcon,
+  ],
 })
 export class SnackbarComponent {
   snackBarRef = inject(MatSnackBarRef);

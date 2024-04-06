@@ -1,5 +1,8 @@
+import { AsyncPipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -13,12 +16,27 @@ import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
 import { environment as env } from 'src/environments/environment';
+import { PillComponent } from '../../../shared/components/pill/pill.component';
+import { MarkdownDirective } from '../../../shared/directives/markdown.directive';
+import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 
 type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    PillComponent,
+    MatIcon,
+    NgOptimizedImage,
+    MarkdownDirective,
+    MatProgressSpinner,
+    AsyncPipe,
+    DateFormatPipe,
+  ],
 })
 export class PostComponent implements OnInit {
   post!: PostReponse;

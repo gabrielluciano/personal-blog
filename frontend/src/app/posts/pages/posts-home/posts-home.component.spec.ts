@@ -1,24 +1,17 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { PostsHomeComponent } from './posts-home.component';
-import { HeroComponent } from '../../../shared/components/hero/hero.component';
-import { PostListComponent } from '../../components/post-list/post-list.component';
-import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
-import { PillComponent } from 'src/app/shared/components/pill/pill.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { PostsService } from 'src/app/shared/services/posts.service';
-import { of } from 'rxjs';
-import { postsPageMock } from '../../../models/post/postsMock';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DateFormatPipe } from 'src/app/shared/pipes/date-format.pipe';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
+import { routes } from 'src/app/app.routes';
+import { MetaService } from 'src/app/shared/services/meta.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
-import { MetaService } from 'src/app/shared/services/meta.service';
 import { environment as env } from 'src/environments/environment';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { postsPageMock } from '../../../models/post/postsMock';
+import { PostsHomeComponent } from './posts-home.component';
 
 describe('PostsHomeComponent', () => {
   let component: PostsHomeComponent;
@@ -28,34 +21,23 @@ describe('PostsHomeComponent', () => {
   let store: MockStore<AppState>;
   const initialAppState: AppState = { auth: initialState };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', {
       list: of(postsPageMock),
     });
     metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
 
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        BrowserAnimationsModule,
-        SharedModule,
-        MatSlideToggleModule,
-        MatProgressSpinnerModule,
-      ],
-      declarations: [
-        PostsHomeComponent,
-        HeroComponent,
-        PostListComponent,
-        PostListItemComponent,
-        PillComponent,
-        DateFormatPipe,
-      ],
+    await TestBed.configureTestingModule({
+      imports: [PostsHomeComponent],
       providers: [
+        provideRouter(routes),
+        provideAnimations(),
         provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
         { provide: MetaService, useValue: metaServiceSpy },
       ],
-    });
+    }).compileComponents();
+
     fixture = TestBed.createComponent(PostsHomeComponent);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);

@@ -8,10 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
     "lint": "ng lint",
-    "dev:ssr": "ng run frontend:serve-ssr",
-    "serve:ssr": "node dist/frontend/server/main.js",
-    "build:ssr": "ng build && ng run frontend:server",
-    "prerender": "ng run frontend:prerender"
+    "serve:ssr:frontend": "node dist/frontend/server/server.mjs"
   },
   "private": true,
   "dependencies": {

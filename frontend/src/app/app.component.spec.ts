@@ -1,16 +1,16 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
-import { SharedModule } from './shared/shared.module';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { importProvidersFrom } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { environment as env } from 'src/environments/environment';
+import { AppComponent } from './app.component';
+import { routes } from './app.routes';
+import { JwtToken } from './models/jwtToken';
 import { AuthService } from './shared/services/auth.service';
 import { AppState } from './shared/state/app.state';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { initialState } from './shared/state/auth/auth.reducer';
-import { JwtToken } from './models/jwtToken';
 import { authenticate } from './shared/state/auth/auth.actions';
+import { initialState } from './shared/state/auth/auth.reducer';
 
 function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -23,27 +23,26 @@ describe('AppComponent', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   const initialAppState: AppState = { auth: initialState };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['getDecodedToken']);
 
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
-        SharedModule,
-        JwtModule.forRoot({
-          config: {
-            tokenGetter,
-            allowedDomains: env.angularJwtAllowedDomains,
-          },
-        }),
-      ],
-      declarations: [AppComponent],
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
       providers: [
+        provideRouter(routes),
         provideMockStore({ initialState: initialAppState }),
         { provide: AuthService, useValue: authServiceSpy },
+        importProvidersFrom(
+          JwtModule.forRoot({
+            config: {
+              tokenGetter,
+              allowedDomains: env.angularJwtAllowedDomains,
+            },
+          }),
+        ),
       ],
-    });
+    }).compileComponents();
+
     fixture = TestBed.createComponent(AppComponent);
     app = fixture.componentInstance;
     store = TestBed.inject(MockStore);

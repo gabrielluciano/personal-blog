@@ -2,20 +2,17 @@ import { TestBed } from '@angular/core/testing';
 
 import { of, throwError } from 'rxjs';
 
-import { PostsTagComponent } from './posts-tag.component';
-import { TagsService } from 'src/app/shared/services/tags.service';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { Router, provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { routes } from 'src/app/app.routes';
+import { MetaService } from 'src/app/shared/services/meta.service';
 import { PostsService } from 'src/app/shared/services/posts.service';
+import { TagsService } from 'src/app/shared/services/tags.service';
+import { environment as env } from 'src/environments/environment';
 import { postsPageMock } from '../../../models/post/postsMock';
 import { tagsMock } from '../../../models/tag/tagsMock';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
-import { PostListComponent } from '../../components/post-list/post-list.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { PostListItemComponent } from '../../components/post-list-item/post-list-item.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
-import { MetaService } from 'src/app/shared/services/meta.service';
-import { environment as env } from 'src/environments/environment';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PostsTagComponent } from './posts-tag.component';
 
 describe('PostsTagComponent', () => {
   let component: PostsTagComponent;
@@ -36,22 +33,16 @@ describe('PostsTagComponent', () => {
     tagsServiceSpy = jasmine.createSpyObj<TagsService>('TagsService', ['findById']);
     metaServiceSpy = jasmine.createSpyObj<MetaService>('MetaService', ['setMetaInfo']);
 
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([
-          { path: 'posts/tag/:tagId/:tagSlug', component: PostsTagComponent },
-        ]),
-        BrowserAnimationsModule,
-        SharedModule,
-        MatProgressSpinnerModule,
-      ],
-      declarations: [PostsTagComponent, PostListComponent, PostListItemComponent],
+    await TestBed.configureTestingModule({
+      imports: [PostsTagComponent],
       providers: [
+        provideRouter(routes),
+        provideAnimations(),
         { provide: PostsService, useValue: postsServiceSpy },
         { provide: TagsService, useValue: tagsServiceSpy },
         { provide: MetaService, useValue: metaServiceSpy },
       ],
-    });
+    }).compileComponents();
     router = TestBed.inject(Router);
   });
 

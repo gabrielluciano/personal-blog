@@ -1,5 +1,11 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -14,6 +20,20 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
 @Component({
   selector: 'app-post-edit',
   templateUrl: './post-form.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatHint,
+    MatError,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatButton,
+  ],
 })
 export class PostFormComponent implements OnInit {
   isEdit = false;

@@ -1,21 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { PostsService } from './posts.service';
-import { postsMock, postsPageMock } from 'src/app/models/post/postsMock';
+import { provideHttpClient } from '@angular/common/http';
 import { PostCreateRequest } from 'src/app/models/post/postCreateRequest';
 import { PostUpdateRequest } from 'src/app/models/post/postUpdateRequest';
+import { postsMock, postsPageMock } from 'src/app/models/post/postsMock';
 import { environment as env } from 'src/environments/environment';
+import { PostsService } from './posts.service';
 
 describe('PostsService', () => {
   let service: PostsService;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
     service = TestBed.inject(PostsService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });

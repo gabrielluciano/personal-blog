@@ -1,20 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { HeaderComponent } from '../header/header.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { showSnackBar } from '../snackbar/snackbar.component';
-import { SUCCESS_LOGIN_MSG } from 'src/app/i18n/pt/msg';
-import { Store } from '@ngrx/store';
-import { login } from '../../state/auth/auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AppState } from '../../state/app.state';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { SUCCESS_LOGIN_MSG } from 'src/app/i18n/pt/msg';
+import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
+import { AppState } from '../../state/app.state';
+import { login } from '../../state/auth/auth.actions';
+import { HeaderComponent } from '../header/header.component';
+import { showSnackBar } from '../snackbar/snackbar.component';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton],
 })
 export class LoginFormComponent implements OnInit {
   form!: FormGroup;

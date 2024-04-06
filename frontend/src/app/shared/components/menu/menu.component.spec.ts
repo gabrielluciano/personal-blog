@@ -1,15 +1,14 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatIconModule } from '@angular/material/icon';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import { MenuComponent } from './menu.component';
 import { AuthService } from '../../services/auth.service';
 import { AppState } from '../../state/app.state';
-import { initialState } from '../../state/auth/auth.reducer';
 import { logout } from '../../state/auth/auth.actions';
+import { initialState } from '../../state/auth/auth.reducer';
+import { MenuComponent } from './menu.component';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -20,21 +19,20 @@ describe('MenuComponent', () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   const initialAppState: AppState = { auth: initialState };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['logout']);
     dialogSpy = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
 
-    TestBed.configureTestingModule({
-      imports: [MatIconModule],
-      declarations: [MenuComponent],
+    await TestBed.configureTestingModule({
+      imports: [MenuComponent],
       providers: [
         provideMockStore({ initialState: initialAppState }),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(MenuComponent);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);

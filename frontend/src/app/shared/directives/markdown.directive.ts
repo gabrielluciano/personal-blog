@@ -1,27 +1,28 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { marked } from 'marked';
 import hljs from 'highlight.js/lib/core';
+import { marked } from 'marked';
 
-import plaintext from 'highlight.js/lib/languages/plaintext';
-import xml from 'highlight.js/lib/languages/xml';
+import bash from 'highlight.js/lib/languages/bash';
 import css from 'highlight.js/lib/languages/css';
-import scss from 'highlight.js/lib/languages/scss';
+import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import java from 'highlight.js/lib/languages/java';
 import javascript from 'highlight.js/lib/languages/javascript';
-import python from 'highlight.js/lib/languages/python';
-import typescript from 'highlight.js/lib/languages/typescript';
-import sql from 'highlight.js/lib/languages/sql';
-import pgsql from 'highlight.js/lib/languages/pgsql';
-import shell from 'highlight.js/lib/languages/shell';
-import bash from 'highlight.js/lib/languages/bash';
-import powershell from 'highlight.js/lib/languages/powershell';
 import json from 'highlight.js/lib/languages/json';
+import pgsql from 'highlight.js/lib/languages/pgsql';
+import plaintext from 'highlight.js/lib/languages/plaintext';
+import powershell from 'highlight.js/lib/languages/powershell';
+import python from 'highlight.js/lib/languages/python';
+import scss from 'highlight.js/lib/languages/scss';
+import shell from 'highlight.js/lib/languages/shell';
+import sql from 'highlight.js/lib/languages/sql';
+import typescript from 'highlight.js/lib/languages/typescript';
+import xml from 'highlight.js/lib/languages/xml';
 import yaml from 'highlight.js/lib/languages/yaml';
-import dockerfile from 'highlight.js/lib/languages/dockerfile';
 
 @Directive({
   selector: '[appMarkdown]',
+  standalone: true,
 })
 export class MarkdownDirective implements OnInit {
   @Input() appMarkdown = '';
