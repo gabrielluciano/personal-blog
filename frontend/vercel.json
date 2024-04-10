@@ -2,12 +2,12 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/index.js"
+      "destination": "/api/index.mjs"
     }
   ],
   "functions": {
-    "api/index.js": {
-      "includeFiles": "dist/frontend/browser/**"
+    "api/index.mjs": {
+      "includeFiles": "dist/frontend/**"
     }
   }
 }
