@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PostReponse } from 'src/app/models/post/postResponse';
@@ -9,7 +8,7 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
   selector: 'app-post-list-item',
   templateUrl: './post-list-item.component.html',
   standalone: true,
-  imports: [NgIf, RouterLink, NgFor, PillComponent, DateFormatPipe],
+  imports: [RouterLink, PillComponent, DateFormatPipe],
 })
 export class PostListItemComponent {
   @Input() post!: PostReponse;

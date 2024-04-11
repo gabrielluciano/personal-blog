@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Store } from '@ngrx/store';
@@ -17,7 +17,7 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
   selector: 'app-posts-home',
   templateUrl: './posts-home.component.html',
   standalone: true,
-  imports: [HeroComponent, NgIf, MatSlideToggle, PostListComponent, AsyncPipe],
+  imports: [HeroComponent, MatSlideToggle, PostListComponent, AsyncPipe],
 })
 export class PostsHomeComponent {
   readonly META_INFO: MetaInfo = {

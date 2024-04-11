@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -27,8 +27,6 @@ type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
   templateUrl: './post.component.html',
   standalone: true,
   imports: [
-    NgIf,
-    NgFor,
     PillComponent,
     MatIcon,
     NgOptimizedImage,

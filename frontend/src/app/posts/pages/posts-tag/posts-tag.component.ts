@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, OnDestroy, WritableSignal, effect, signal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -15,7 +14,7 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
   selector: 'app-posts-tag',
   templateUrl: './posts-tag.component.html',
   standalone: true,
-  imports: [NgIf, PostListComponent],
+  imports: [PostListComponent],
 })
 export class PostsTagComponent implements OnDestroy {
   private destroy$ = new Subject<void>();

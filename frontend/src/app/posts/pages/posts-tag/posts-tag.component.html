@@ -1,8 +1,10 @@
-<h1 *ngIf="tag" class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
-  <span>
-    Posts sobre <span class="text-blue-app">{{ tag.name }}</span>
-  </span>
-</h1>
+@if (tag) {
+  <h1 class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
+    <span>
+      Posts sobre <span class="text-blue-app">{{ tag.name }}</span>
+    </span>
+  </h1>
+}
 <app-post-list
   [postsPage]="postsPage"
   [pageSize]="pageSize"

@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Input, WritableSignal } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -11,7 +10,7 @@ import { PostListItemComponent } from '../post-list-item/post-list-item.componen
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
   standalone: true,
-  imports: [NgIf, NgFor, PostListItemComponent, PaginatorComponent, MatProgressSpinner],
+  imports: [PostListItemComponent, PaginatorComponent, MatProgressSpinner],
 })
 export class PostListComponent {
   @Input() postsPage!: Page<PostReponse>;

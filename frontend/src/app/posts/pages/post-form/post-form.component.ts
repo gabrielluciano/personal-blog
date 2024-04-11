@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -22,7 +21,6 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
   templateUrl: './post-form.component.html',
   standalone: true,
   imports: [
-    NgIf,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
@@ -30,7 +28,6 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
     MatHint,
     MatError,
     MatSelect,
-    NgFor,
     MatOption,
     MatButton,
   ],

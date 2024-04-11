@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ import { showSnackBar } from '../snackbar/snackbar.component';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   standalone: true,
-  imports: [NgClass, MatIconButton, MatIcon, NgIf, AsyncPipe],
+  imports: [NgClass, MatIconButton, MatIcon, AsyncPipe],
 })
 export class MenuComponent {
   @Input() show: boolean = false;
