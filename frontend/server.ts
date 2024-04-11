@@ -4,6 +4,7 @@ import express from 'express';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import bootstrap from './src/main.server';
+import sitemap from 'src/sitemap';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -17,8 +18,9 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
+  // Sitemap endpoint
+  server.get('/sitemap.xml', sitemap);
+
   // Serve static files from /browser
   server.get(
     '*.*',
