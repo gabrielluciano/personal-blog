@@ -5,6 +5,7 @@ import { ptBR } from 'date-fns/locale';
 
 @Pipe({
   name: 'dateFormat',
+  standalone: true,
 })
 export class DateFormatPipe implements PipeTransform {
   readonly DATE_PATTERN = "dd 'de' MMMM 'de' yyyy 'às' HH:mm";

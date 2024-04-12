@@ -1,17 +1,23 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { PostsService } from 'src/app/shared/services/posts.service';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
-import { Store } from '@ngrx/store';
+import { MetaInfo, MetaService } from 'src/app/shared/services/meta.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectAuthIsEditor } from 'src/app/shared/state/auth/auth.selectors';
-import { MetaInfo, MetaService } from 'src/app/shared/services/meta.service';
 import { environment as env } from 'src/environments/environment';
+import { HeroComponent } from '../../../shared/components/hero/hero.component';
+import { PostListComponent } from '../../components/post-list/post-list.component';
 
 @Component({
   selector: 'app-posts-home',
   templateUrl: './posts-home.component.html',
+  standalone: true,
+  imports: [HeroComponent, MatSlideToggle, PostListComponent, AsyncPipe],
 })
 export class PostsHomeComponent {
   readonly META_INFO: MetaInfo = {

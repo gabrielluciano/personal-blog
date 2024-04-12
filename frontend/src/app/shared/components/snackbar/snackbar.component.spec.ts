@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
 
-import { SnackbarComponent, SnackbarData } from './snackbar.component';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
+import { SnackbarComponent, SnackbarData } from './snackbar.component';
 
 describe('SnackbarComponent', () => {
   let component: SnackbarComponent;
@@ -14,19 +13,18 @@ describe('SnackbarComponent', () => {
     style: 'error',
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     snackBarRefSpy = jasmine.createSpyObj<MatSnackBarRef<SnackbarComponent>>('MatSnackBarRef', [
       'dismissWithAction',
     ]);
 
-    TestBed.configureTestingModule({
-      imports: [MatIconModule],
-      declarations: [SnackbarComponent],
+    await TestBed.configureTestingModule({
+      imports: [SnackbarComponent],
       providers: [
         { provide: MAT_SNACK_BAR_DATA, useValue: snackbarDataMock },
         { provide: MatSnackBarRef, useValue: snackBarRefSpy },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(SnackbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

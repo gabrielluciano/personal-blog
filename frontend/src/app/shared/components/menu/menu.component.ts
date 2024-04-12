@@ -1,22 +1,27 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
-import { AppState } from '../../state/app.state';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { SUCCESS_LOGOUT_MSG } from 'src/app/i18n/pt/msg';
 import { AuthService } from '../../services/auth.service';
+import { AppState } from '../../state/app.state';
+import { logout } from '../../state/auth/auth.actions';
 import { selectAuthIsAuthenticated, selectAuthIsEditor } from '../../state/auth/auth.selectors';
 import { LoginFormComponent } from '../login-form/login-form.component';
-import { logout } from '../../state/auth/auth.actions';
-import { SUCCESS_LOGOUT_MSG } from 'src/app/i18n/pt/msg';
 import { showSnackBar } from '../snackbar/snackbar.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
+  standalone: true,
+  imports: [NgClass, MatIconButton, MatIcon, AsyncPipe],
 })
 export class MenuComponent {
   @Input() show: boolean = false;

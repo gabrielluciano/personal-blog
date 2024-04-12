@@ -1,60 +1,48 @@
-import 'zone.js/node';
-
 import { APP_BASE_HREF } from '@angular/common';
-import { ngExpressEngine } from '@nguniversal/express-engine';
-import * as express from 'express';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { AppServerModule } from './src/main.server';
-
-const STATIC_FILES_BROWSER_MAX_AGE = 365 * 24 * 3600; // d * h * s
-const STATIC_FILES_SERVER_MAX_AGE = 30 * 24 * 3600; // d * h * s
-
-const PAGE_BROWSER_MAX_AGE = 0; // s
-const PAGE_SERVER_MAX_AGE = 1.5 * 3600; // h * s
+import { CommonEngine } from '@angular/ssr';
+import express from 'express';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import bootstrap from './src/main.server';
+import sitemap from 'src/sitemap';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const distFolder = join(__dirname, '../browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html'))
-    ? 'index.original.html'
-    : 'index';
+  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+  const browserDistFolder = resolve(serverDistFolder, '../browser');
+  const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
-  server.engine(
-    'html',
-    ngExpressEngine({
-      bootstrap: AppServerModule,
-    }),
-  );
+  const commonEngine = new CommonEngine();
 
   server.set('view engine', 'html');
-  server.set('views', distFolder);
+  server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
+  // Sitemap endpoint
+  server.get('/sitemap.xml', sitemap);
+
   // Serve static files from /browser
   server.get(
     '*.*',
-    express.static(distFolder, {
-      setHeaders: function (res) {
-        res.set(
-          'Cache-control',
-          `max-age=${STATIC_FILES_BROWSER_MAX_AGE}, s-maxage=${STATIC_FILES_SERVER_MAX_AGE}`,
-        );
-      },
+    express.static(browserDistFolder, {
+      maxAge: '1y',
     }),
   );
 
-  server.use((req, res, next) => {
-    res.set('Cache-control', `max-age=${PAGE_BROWSER_MAX_AGE}, s-maxage=${PAGE_SERVER_MAX_AGE}`);
-    next();
-  });
+  // All regular routes use the Angular engine
+  server.get('*', (req, res, next) => {
+    const { protocol, originalUrl, baseUrl, headers } = req;
 
-  // All regular routes use the Universal engine
-  server.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+    commonEngine
+      .render({
+        bootstrap,
+        documentFilePath: indexHtml,
+        url: `${protocol}://${headers.host}${originalUrl}`,
+        publicPath: browserDistFolder,
+        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+      })
+      .then((html) => res.send(html))
+      .catch((err) => next(err));
   });
 
   return server;
@@ -70,14 +58,4 @@ function run(): void {
   });
 }
 
-// Webpack will replace 'require' with '__webpack_require__'
-// '__non_webpack_require__' is a proxy to Node 'require'
-// The below code is to ensure that the server is run only when not requiring the bundle.
-declare const __non_webpack_require__: NodeRequire;
-const mainModule = __non_webpack_require__.main;
-const moduleFilename = (mainModule && mainModule.filename) || '';
-if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
-  run();
-}
-
-export * from './src/main.server';
+run();

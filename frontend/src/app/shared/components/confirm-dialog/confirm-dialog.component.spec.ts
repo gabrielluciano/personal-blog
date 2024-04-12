@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
   let component: ConfirmDialogComponent;
@@ -10,18 +10,18 @@ describe('ConfirmDialogComponent', () => {
 
   const matDialogDataMock: { message: string } = { message: 'Some message' };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<ConfirmDialogComponent>>('MatDialogRef', [
       'close',
     ]);
 
-    TestBed.configureTestingModule({
-      declarations: [ConfirmDialogComponent],
+    await TestBed.configureTestingModule({
+      imports: [ConfirmDialogComponent],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MAT_DIALOG_DATA, useValue: matDialogDataMock },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(ConfirmDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

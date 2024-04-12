@@ -1,9 +1,12 @@
-<h1 *ngIf="!isEdit" class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
-  <span> Criar <span class="text-blue-app">Post</span> </span>
-</h1>
-<h1 *ngIf="isEdit" class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
-  <span> Editar <span class="text-blue-app">Post</span> </span>
-</h1>
+@if (isEdit) {
+  <h1 class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
+    <span> Editar <span class="text-blue-app">Post</span> </span>
+  </h1>
+} @else {
+  <h1 class="w-full mt-12 flex items-center justify-center text-3xl font-bold">
+    <span> Criar <span class="text-blue-app">Post</span> </span>
+  </h1>
+}
 <form [formGroup]="form" class="w-full max-w-3xl mx-auto">
   <div class="w-full mt-8 flex flex-col">
     <h2 class="text-2xl font-bold mb-4">Título</h2>
@@ -81,7 +84,9 @@
     <mat-form-field appearance="outline">
       <mat-label>Tags</mat-label>
       <mat-select multiple formControlName="tags">
-        <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
+        @for (tag of tags; track tag.id) {
+          <mat-option [value]="tag.id">{{ tag.name }}</mat-option>
+        }
       </mat-select>
       <mat-hint class="text-sm">Tags relativas ao post</mat-hint>
       <mat-error class="text-sm">Ao menos uma tag deve ser selecionada</mat-error>

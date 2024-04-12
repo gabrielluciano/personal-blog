@@ -1,18 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TagsService } from './tags.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { tagsMock, tagsPageMock } from 'src/app/models/tag/tagsMock';
 import { environment as env } from 'src/environments/environment';
+import { TagsService } from './tags.service';
 
 describe('TagsService', () => {
   let service: TagsService;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
     service = TestBed.inject(TagsService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });

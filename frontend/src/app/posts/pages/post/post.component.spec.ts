@@ -1,27 +1,24 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { PostComponent } from './post.component';
-import { PostsService } from 'src/app/shared/services/posts.service';
-import { of, throwError } from 'rxjs';
-import { postsMock } from 'src/app/models/post/postsMock';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { provideRouter } from '@angular/router';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of, throwError } from 'rxjs';
+import { routes } from 'src/app/app.routes';
+import { ErrorDetails } from 'src/app/models/errorDetails';
+import { postsMock } from 'src/app/models/post/postsMock';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import {
   SnackbarComponent,
   getSnackBarDefaultConfig,
 } from 'src/app/shared/components/snackbar/snackbar.component';
-import { ErrorDetails } from 'src/app/models/errorDetails';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MetaService } from 'src/app/shared/services/meta.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { initialState } from 'src/app/shared/state/auth/auth.reducer';
-import { NgOptimizedImage } from '@angular/common';
-import { MetaService } from 'src/app/shared/services/meta.service';
 import { environment as env } from 'src/environments/environment';
+import { PostComponent } from './post.component';
 
 describe('PostComponent', () => {
   let component: PostComponent;
@@ -38,7 +35,7 @@ describe('PostComponent', () => {
     message: 'Ops we had an error!',
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     postsServiceSpy = jasmine.createSpyObj<PostsService>('PostsService', [
       'findBySlug',
       'delete',
@@ -54,23 +51,17 @@ describe('PostComponent', () => {
     ]);
     snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['openFromComponent']);
 
-    TestBed.configureTestingModule({
-      imports: [
-        BrowserAnimationsModule,
-        RouterTestingModule,
-        SharedModule,
-        MatIconModule,
-        NgOptimizedImage,
-      ],
-      declarations: [PostComponent],
+    await TestBed.configureTestingModule({
+      imports: [PostComponent],
       providers: [
+        provideRouter(routes),
         provideMockStore({ initialState: initialAppState }),
         { provide: PostsService, useValue: postsServiceSpy },
         { provide: MetaService, useValue: metaServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(PostComponent);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);

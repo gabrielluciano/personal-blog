@@ -1,7 +1,7 @@
 import { Component, DebugElement } from '@angular/core';
-import { MarkdownDirective } from './markdown.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { MarkdownDirective } from './markdown.directive';
 
 @Component({
   template: `
@@ -9,6 +9,8 @@ import { By } from '@angular/platform-browser';
       <main [appMarkdown]="markdown"></main>
     </div>
   `,
+  standalone: true,
+  imports: [MarkdownDirective],
 })
 class TestComponent {
   markdown =
@@ -21,7 +23,7 @@ describe('HighlightDirective', () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [MarkdownDirective, TestComponent],
+      imports: [MarkdownDirective, TestComponent],
     }).createComponent(TestComponent);
 
     des = fixture.debugElement.queryAll(By.directive(MarkdownDirective));

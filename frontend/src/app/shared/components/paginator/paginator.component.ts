@@ -6,6 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
   selector: 'app-paginator',
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.scss'],
+  standalone: true,
+  imports: [MatPaginator],
 })
 export class PaginatorComponent extends MatPaginator implements OnInit {
   readonly MOBILE_BREAKPOINT = 480;

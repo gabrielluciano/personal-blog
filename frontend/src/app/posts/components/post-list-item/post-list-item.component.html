@@ -1,51 +1,58 @@
-<article
-  *ngIf="post"
-  class="h-24 md:h-28 w-full grid grid-cols-postlist-sm md:grid-cols-postlist-md gap-3 sm:gap-6"
->
-  <div>
-    <a
-      routerLink="/posts/{{ post.slug }}"
-      title="Link para o post"
-      class="relative block w-full h-full rounded-lg overflow-hidden"
-    >
-      <img
-        src="{{ post.imageUrl }}-500w.webp"
-        alt="Imagem do post"
-        class="w-full h-full object-cover"
-      />
-    </a>
-  </div>
-  <div class="flex flex-col justify-between">
-    <header>
-      <a routerLink="/posts/{{ post.slug }}">
-        <h2
-          class="text-sm/4 sm:text-base/5 md:text-lg/6 lg:text-xl/6 font-semibold line-clamp-3 hover:underline"
-        >
-          {{ post.title }}
-        </h2>
-      </a>
-    </header>
-    <main>
-      <a routerLink="/posts/{{ post.slug }}">
-        <p class="text-xs lg:text-sm line-clamp-1 md:line-clamp-2 hover:underline">
-          {{ post.subtitle }}
-        </p>
-      </a>
-    </main>
-    <footer class="flex flex-row justify-between items-center">
-      <span
-        class="text-mini sm:text-xs font-extralight"
-        *ngIf="post.publishedAt; else updateDate"
-        >{{ post.publishedAt | dateFormat }}</span
+@if (post) {
+  <article
+    class="h-24 md:h-28 w-full grid grid-cols-postlist-sm md:grid-cols-postlist-md gap-3 sm:gap-6"
+  >
+    <div>
+      <a
+        routerLink="/posts/{{ post.slug }}"
+        title="Link para o post"
+        class="relative block w-full h-full rounded-lg overflow-hidden"
       >
-      <ul class="hidden sm:flex gap-3" *ngIf="post.tags">
-        <li *ngFor="let tag of post.tags">
-          <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">{{ tag.name }}</app-pill>
-        </li>
-      </ul>
-    </footer>
-  </div>
-</article>
-<ng-template #updateDate>
-  <span>{{ post.updatedAt | dateFormat }}</span>
-</ng-template>
+        <img
+          src="{{ post.imageUrl }}-500w.webp"
+          alt="Imagem do post"
+          class="w-full h-full object-cover"
+        />
+      </a>
+    </div>
+    <div class="flex flex-col justify-between">
+      <header>
+        <a routerLink="/posts/{{ post.slug }}">
+          <h2
+            class="text-sm/4 sm:text-base/5 md:text-lg/6 lg:text-xl/6 font-semibold line-clamp-3 hover:underline"
+          >
+            {{ post.title }}
+          </h2>
+        </a>
+      </header>
+      <main>
+        <a routerLink="/posts/{{ post.slug }}">
+          <p class="text-xs lg:text-sm line-clamp-1 md:line-clamp-2 hover:underline">
+            {{ post.subtitle }}
+          </p>
+        </a>
+      </main>
+      <footer class="flex flex-row justify-between items-center">
+        @if (post.publishedAt) {
+          <span class="text-mini sm:text-xs font-extralight">
+            {{ post.publishedAt | dateFormat }}
+          </span>
+        } @else {
+          <span>{{ post.updatedAt | dateFormat }}</span>
+        }
+
+        @if (post.tags) {
+          <ul class="hidden sm:flex gap-3">
+            @for (tag of post.tags; track tag.id) {
+              <li>
+                <app-pill path="/posts/tag/{{ tag.id }}/{{ tag.slug }}">
+                  {{ tag.name }}
+                </app-pill>
+              </li>
+            }
+          </ul>
+        }
+      </footer>
+    </div>
+  </article>
+}

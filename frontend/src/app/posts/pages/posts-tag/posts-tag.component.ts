@@ -1,17 +1,20 @@
-import { Component, signal, effect, WritableSignal, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, WritableSignal, effect, signal } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { Page } from 'src/app/models/page';
 import { PostReponse } from 'src/app/models/post/postResponse';
-import { PostsService } from 'src/app/shared/services/posts.service';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { TagsService } from 'src/app/shared/services/tags.service';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
-import { Subject, takeUntil } from 'rxjs';
 import { MetaService } from 'src/app/shared/services/meta.service';
+import { PostsService } from 'src/app/shared/services/posts.service';
+import { TagsService } from 'src/app/shared/services/tags.service';
 import { environment as env } from 'src/environments/environment';
+import { PostListComponent } from '../../components/post-list/post-list.component';
 
 @Component({
   selector: 'app-posts-tag',
   templateUrl: './posts-tag.component.html',
+  standalone: true,
+  imports: [PostListComponent],
 })
 export class PostsTagComponent implements OnDestroy {
   private destroy$ = new Subject<void>();

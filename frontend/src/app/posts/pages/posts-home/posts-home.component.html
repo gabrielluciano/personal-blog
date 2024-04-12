@@ -1,14 +1,15 @@
 <app-hero></app-hero>
 <div>
-  <mat-slide-toggle
-    class="px-2 py-1 fixed right-4 bottom-4 bg-neutral-900 rounded-full border border-neutral-800 text-xs md:text-sm"
-    color="primary"
-    [checked]="drafts()"
-    (change)="onSlideChange()"
-    *ngIf="editor$ | async"
-  >
-    Drafts
-  </mat-slide-toggle>
+  @if (editor$ | async) {
+    <mat-slide-toggle
+      class="px-2 py-1 fixed right-4 bottom-4 bg-neutral-900 rounded-full border border-neutral-800 text-xs md:text-sm"
+      color="primary"
+      [checked]="drafts()"
+      (change)="onSlideChange()"
+    >
+      Drafts
+    </mat-slide-toggle>
+  }
   <app-post-list
     [postsPage]="postsPage"
     [pageSize]="pageSize"

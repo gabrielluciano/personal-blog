@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideRouter } from '@angular/router';
+import { routes } from 'src/app/app.routes';
 import { PillComponent } from './pill.component';
-import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PillComponent', () => {
   let component: PillComponent;
   let fixture: ComponentFixture<PillComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [PillComponent],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PillComponent],
+      providers: [provideRouter(routes)],
+    }).compileComponents();
     fixture = TestBed.createComponent(PillComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
