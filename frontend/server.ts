@@ -25,13 +25,16 @@ export function app(): express.Express {
   server.get(
     '*.*',
     express.static(browserDistFolder, {
-      maxAge: '1y',
+      setHeaders: function (res) {
+        res.header('Cache-Control', 's-maxage=2592000');
+      },
     }),
   );
 
   // All regular routes use the Angular engine
   server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
+    res.header('Cache-Control', 's-maxage=43200');
 
     commonEngine
       .render({
