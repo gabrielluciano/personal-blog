@@ -1,4 +1,3 @@
-version: '3.8'
 name: personalblog_database
 
 services:
@@ -17,3 +16,4 @@ services:
 
 volumes:
   personalblog_data:
+
