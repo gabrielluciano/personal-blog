@@ -9,6 +9,7 @@ import { environment } from './environments/environment';
 export default async function (_req: express.Request, res: express.Response) {
   res.header('Content-Type', 'application/xml');
   res.header('Content-Encoding', 'gzip');
+  res.header('Cache-Control', 's-maxage=259200');
 
   try {
     const sitemapStream = new SitemapStream({ hostname: environment.siteUrl });
