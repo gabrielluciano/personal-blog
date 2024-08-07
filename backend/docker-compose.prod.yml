@@ -2,8 +2,7 @@ name: personalblog_backend
 
 services:
   api:
-    image: gabrielluciano/personalblog-api
-    build: .
+    image: gabrielluciano/personalblog-api:latest
     restart: on-failure
     depends_on:
       - database
@@ -15,7 +14,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: '0.3GB'
+          cpus: 0.2
+          memory: '600MB'
 
   database:
     image: postgres:15.4
@@ -32,7 +32,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: '0.15GB'
+          cpus: 0.1
+          memory: '300MB'
 
   proxy:
     image: nginx:1.25.2
@@ -48,7 +49,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: '0.07GB'
+          cpus: 0.1
+          memory: '100MB'
 
 volumes:
   personalblog_data:
