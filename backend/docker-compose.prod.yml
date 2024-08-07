@@ -2,8 +2,7 @@ name: personalblog_backend
 
 services:
   api:
-    image: gabrielluciano/personalblog-api
-    build: .
+    image: gabrielluciano/personalblog-api:latest
     restart: on-failure
     depends_on:
       - database
