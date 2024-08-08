@@ -6,6 +6,8 @@ services:
     restart: on-failure
     depends_on:
       - database
+    networks:
+      - personalblog
     environment:
       API_SECRET: "${PB_API_SECRET}"
       IMAGE_SERVICE_URL: "${PB_IMAGE_SERVICE_URL}"
@@ -16,11 +18,13 @@ services:
       resources:
         limits:
           cpus: 0.2
-          memory: '600MB'
+          memory: "600MB"
 
   database:
     image: postgres:15.4
     restart: on-failure
+    networks:
+      - personalblog
     environment:
       POSTGRES_DB: "${PB_DB_NAME}"
       POSTGRES_USER: "${PB_DB_USER}"
@@ -29,18 +33,20 @@ services:
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
       - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
       - personalblog_data:/var/lib/postgresql/data
-    command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     deploy:
       resources:
         limits:
           cpus: 0.1
-          memory: '300MB'
+          memory: "300MB"
 
   proxy:
     image: nginx:1.25.2
     restart: on-failure
     depends_on:
       - api
+    networks:
+      - personalblog
     ports:
       - "80:80"
       - "443:443"
@@ -51,7 +57,12 @@ services:
       resources:
         limits:
           cpus: 0.1
-          memory: '100MB'
+          memory: "100MB"
 
 volumes:
   personalblog_data:
+
+networks:
+  personalblog:
+    name: personalblog_network
+    driver: bridge
