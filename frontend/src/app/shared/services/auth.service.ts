@@ -50,7 +50,8 @@ export class AuthService {
         return false;
       }
       return true;
-    } catch (error) {
+      // eslint-disable-next-line
+    } catch (_) {
       return false;
     }
   }

@@ -20,6 +20,7 @@ function tryToParseStringAsObject(error: HttpErrorResponse) {
   let errorObject: Partial<ErrorDetails>;
   try {
     errorObject = JSON.parse(error.error);
+    // eslint-disable-next-line
   } catch (_) {
     errorObject = createErrorDetails(error);
   }

@@ -3,5 +3,5 @@ export interface JwtToken {
   email: string;
   iat: number;
   exp: number;
-  roles: Array<'ADMIN' | 'EDITOR' | 'USER'>;
+  roles: ('ADMIN' | 'EDITOR' | 'USER')[];
 }

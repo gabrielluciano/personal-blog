@@ -14,8 +14,8 @@ import { HeaderComponent } from './header.component';
   imports: [MatIcon],
 })
 class MockMenuComponent {
-  @Input() show: boolean = true;
-  @Output() whenClose: EventEmitter<void> = new EventEmitter();
+  @Input() show = true;
+  @Output() whenClose: EventEmitter<void> = new EventEmitter<void>();
 
   closeMenu() {
     this.whenClose.emit();

@@ -24,8 +24,8 @@ import { showSnackBar } from '../snackbar/snackbar.component';
   imports: [NgClass, MatIconButton, MatIcon, AsyncPipe],
 })
 export class MenuComponent {
-  @Input() show: boolean = false;
-  @Output() whenClose: EventEmitter<void> = new EventEmitter();
+  @Input() show = false;
+  @Output() whenClose: EventEmitter<void> = new EventEmitter<void>();
   authenticated$: Observable<boolean>;
   editor$: Observable<boolean>;
 
