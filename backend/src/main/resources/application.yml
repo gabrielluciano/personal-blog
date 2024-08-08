@@ -7,6 +7,10 @@ spring:
           time_zone: UTC
     hibernate:
       ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 server:
   error:
@@ -18,3 +22,7 @@ logging:
     org:
       hibernate:
         SQL: INFO
+
+image:
+  service:
+    url: ${IMAGE_SERVICE_URL}

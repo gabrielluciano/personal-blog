@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(antMatcher(HttpMethod.GET, "/posts/**")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.GET, "/tags/**")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/image/**")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.POST, "/signup")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.POST, "/login")).permitAll()
                         .requestMatchers(antMatcher("/users/**")).hasRole(Role.ADMIN.name())

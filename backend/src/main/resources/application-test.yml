@@ -11,3 +11,7 @@ spring:
 
 api:
   secret: secret
+
+image:
+  service:
+    url: http://localhost:3002
