@@ -3,7 +3,7 @@ name: personalblog_database
 services:
   db:
     image: postgres:15.4
-    container_name: personalblog
+    container_name: pb_database
     restart: on-failure
     environment:
       POSTGRES_USER: postgres
@@ -14,5 +14,17 @@ services:
     volumes:
       - personalblog_data:/var/lib/postgresql/data
 
+  images-api:
+    image: gabrielluciano/images-api:latest
+    container_name: pb_images-api
+    restart: on-failure
+    environment:
+      API_PORT: 3002
+    ports:
+      - "3002:3002"
+    volumes:
+      - personalblog_images:/var/lib/postgresql/data
+
 volumes:
   personalblog_data:
+  personalblog_images:
