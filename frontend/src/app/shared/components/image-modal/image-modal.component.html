@@ -1,0 +1,74 @@
+<div class="px-8 py-8 flex flex-col items-center justify-center">
+  <div class="mb-8">
+    <p class="text-white">Salvar imagem</p>
+  </div>
+  <div>
+    <div>
+      <label for="name" class="block mb-2 text-base font-medium text-white"> Image name </label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        [(ngModel)]="name"
+        placeholder="Name"
+        required
+        class="min-w-96 h-12 bg-white mb-4 px-2 rounded-sm"
+      />
+    </div>
+    <div>
+      <label for="image" class="block mb-2 text-base font-medium text-white"> Image </label>
+      <input
+        type="file"
+        name="image"
+        id="image"
+        (change)="onFileChange($event)"
+        accept="image/*"
+        class="min-w-96 mb-2 rounded-sm bg-white text-black"
+      />
+    </div>
+    <div>
+      <label for="alt" class="block mb-2 text-base font-medium text-white"> Alt </label>
+      <input
+        type="text"
+        name="alt"
+        id="alt"
+        [(ngModel)]="alt"
+        placeholder="Alt"
+        required
+        class="min-w-96 h-12 bg-white mb-4 px-2 rounded-sm"
+      />
+    </div>
+    <div>
+      <label for="title" class="block mb-2 text-base font-medium text-white"> Title </label>
+      <input
+        type="text"
+        name="title"
+        id="title"
+        [(ngModel)]="title"
+        placeholder="Title"
+        required
+        class="min-w-96 h-12 bg-white mb-4 px-2 rounded-sm"
+      />
+    </div>
+    <div>
+      <label for="caption" class="block mb-2 text-base font-medium text-white"> Caption </label>
+      <input
+        type="text"
+        name="caption"
+        id="caption"
+        [(ngModel)]="caption"
+        placeholder="Caption"
+        required
+        class="min-w-96 h-12 bg-white mb-8 px-2 rounded-sm"
+      />
+    </div>
+  </div>
+  <div class="flex items-center gap-6">
+    <button mat-flat-button color="accent" class="font-semibold" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button mat-flat-button color="primary" class="font-semibold" (click)="onSubmit()">
+      Salvar
+    </button>
+  </div>
+</div>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -11,10 +12,16 @@ import { firstValueFrom } from 'rxjs';
 import msg from 'src/app/i18n/pt/msg';
 import { ErrorDetails } from 'src/app/models/errorDetails';
 import { TagResponse } from 'src/app/models/tag/tagResponse';
+import {
+  ImageModalComponent,
+  ImageModalResult,
+} from 'src/app/shared/components/image-modal/image-modal.component';
 import { showSnackBar } from 'src/app/shared/components/snackbar/snackbar.component';
+import { TextEditorComponent } from 'src/app/shared/components/text-editor/text-editor.component';
 import { PostsService } from 'src/app/shared/services/posts.service';
 import { TagsService } from 'src/app/shared/services/tags.service';
 import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
+import { environment as env } from 'src/environments/environment';
 
 @Component({
   selector: 'app-post-edit',
@@ -30,9 +37,12 @@ import { VALID_SLUG_PATTERN } from 'src/app/shared/util/regexPatterns';
     MatSelect,
     MatOption,
     MatButton,
+    TextEditorComponent,
   ],
 })
 export class PostFormComponent implements OnInit {
+  @ViewChild('editor') textEditorComponent!: TextEditorComponent;
+
   isEdit = false;
   postId: null | number = null;
   initialIDsOfPostTags: number[] = [];
@@ -46,6 +56,7 @@ export class PostFormComponent implements OnInit {
     private postsService: PostsService,
     private tagsService: TagsService,
     private _snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +76,24 @@ export class PostFormComponent implements OnInit {
     } catch (error: any) {
       this.handleSumissionError(error);
     }
+  }
+
+  onContentChange(content: string) {
+    this.form.get('content')?.setValue(content);
+  }
+
+  onInsertImage() {
+    const dialogRef = this.dialog.open(ImageModalComponent, {
+      panelClass: 'dialog',
+      data: { includeMetada: false },
+    });
+
+    dialogRef.afterClosed().subscribe((result: ImageModalResult) => {
+      if (!result.isCancel && result.metadata) {
+        const imageUrl = env.apiUrl + 'image/' + result.metadata.image.name;
+        this.form.get('imageUrl')?.setValue(imageUrl);
+      }
+    });
   }
 
   private getAllTags() {
@@ -102,6 +131,7 @@ export class PostFormComponent implements OnInit {
         this.form.controls['imageUrl'].setValue(post.imageUrl);
         this.form.controls['tags'].setValue(this.initialIDsOfPostTags);
         this.form.controls['content'].setValue(post.content);
+        this.textEditorComponent.setContent(post.content);
       },
       error: (error) => {
         showSnackBar(this._snackBar, error.message, 'error');

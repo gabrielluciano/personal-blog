@@ -63,12 +63,13 @@
       </div>
       <div class="relative w-full h-56 sm:h-80 md:h-96 rounded-xl overflow-hidden mt-6">
         <img
-          ngSrc="{{ post.imageUrl }}-1000w.webp"
+          src="{{ post.imageUrl }}-1024.webp"
           srcset="
-          {{ post.imageUrl }}-500w.webp   500w,
-          {{ post.imageUrl }}-800w.webp   800w,
-          {{ post.imageUrl }}-1000w.webp 1000w
-        "
+          {{ post.imageUrl }}-1024w.webp   1024w,
+          {{ post.imageUrl }}-768w.webp   768w,
+          {{ post.imageUrl }}-480w.webp   480w,
+          {{ post.imageUrl }}-300w.webp   300w"
+          sizes="(max-width: 300px) 270px, (max-width: 480px) 450px, (max-width: 768px) 740px, 1024px"
           alt="Imagem do post"
           fill
           priority
@@ -76,7 +77,7 @@
       </div>
     </header>
     <main
-      class="mt-12 mb-12 prose prose-sm md:prose-base prose-code:text-sm prose-code:bg-transparent prose-a:text-blue-app prose-invert max-w-none prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl"
+      class="mt-12 mb-12 prose prose-sm md:prose-base prose-figcaption:text-center prose-code:text-sm prose-code:bg-transparent prose-a:text-blue-app prose-invert max-w-none prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl"
       [appMarkdown]="post.content"
     ></main>
   </article>

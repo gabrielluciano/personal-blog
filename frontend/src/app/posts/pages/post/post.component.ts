@@ -1,4 +1,4 @@
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -29,7 +29,6 @@ type CrudOperation = 'edit' | 'delete' | 'publish' | 'unpublish';
   imports: [
     PillComponent,
     MatIcon,
-    NgOptimizedImage,
     MarkdownDirective,
     MatProgressSpinner,
     AsyncPipe,
