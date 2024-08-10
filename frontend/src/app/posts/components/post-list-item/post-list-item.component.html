@@ -2,16 +2,16 @@
   <article
     class="h-24 md:h-28 w-full grid grid-cols-postlist-sm md:grid-cols-postlist-md gap-3 sm:gap-6"
   >
-    <div>
+    <div class="w-full h-full">
       <a
         routerLink="/posts/{{ post.slug }}"
         title="Link para o post"
         class="relative block w-full h-full rounded-lg overflow-hidden"
       >
         <img
-          src="{{ post.imageUrl }}-500w.webp"
+          src="{{ post.imageUrl }}-300w.webp"
           alt="Imagem do post"
-          class="w-full h-full object-cover"
+          class="w-full md:h-28 h-24 object-cover"
         />
       </a>
     </div>
