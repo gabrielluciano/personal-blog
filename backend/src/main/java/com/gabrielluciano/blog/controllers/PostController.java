@@ -11,22 +11,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("posts")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("posts")
+    @GetMapping
     @PreAuthorize("#drafts == false or hasRole('EDITOR')")
     public ResponseEntity<Page<PostResponse>> list(Pageable pageable,
                                                    @RequestParam(required = false) String title,
@@ -35,52 +29,52 @@ public class PostController {
         return ResponseEntity.ok(postService.list(pageable, title, tagId, drafts));
     }
 
-    @GetMapping("posts/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<PostResponse> findById(@PathVariable long id) {
         return ResponseEntity.ok(postService.findById(id));
     }
 
-    @GetMapping("posts/slug/{slug}")
+    @GetMapping("slug/{slug}")
     public ResponseEntity<PostResponse> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(postService.findBySlug(slug));
     }
 
-    @PostMapping("posts")
+    @PostMapping
     public ResponseEntity<PostResponse> save(@RequestBody @Valid PostCreateRequest postCreateRequest) {
         return new ResponseEntity<>(postService.save(postCreateRequest), HttpStatus.CREATED);
     }
 
-    @PutMapping("posts/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Void> update(@RequestBody @Valid PostUpdateRequest postUpdateRequest, @PathVariable long id) {
         postService.update(postUpdateRequest, id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("posts/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("posts/{postId}/tags/{tagId}")
+    @PutMapping("{postId}/tags/{tagId}")
     public ResponseEntity<Void> addTag(@PathVariable long postId, @PathVariable long tagId) {
         postService.addTag(postId, tagId);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("posts/{postId}/tags/{tagId}")
+    @DeleteMapping("{postId}/tags/{tagId}")
     public ResponseEntity<Void> removeTag(@PathVariable long postId, @PathVariable long tagId) {
         postService.removeTag(postId, tagId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("posts/{id}/publish")
+    @PutMapping("{id}/publish")
     public ResponseEntity<Void> publishById(@PathVariable long id) {
         postService.publishById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("posts/{id}/unpublish")
+    @PutMapping("{id}/unpublish")
     public ResponseEntity<Void> unpublishById(@PathVariable long id) {
         postService.unpublishById(id);
         return ResponseEntity.noContent().build();
