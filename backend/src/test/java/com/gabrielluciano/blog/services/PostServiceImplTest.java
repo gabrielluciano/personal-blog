@@ -169,31 +169,6 @@ class PostServiceImplTest {
     }
 
     @Test
-    @DisplayName("findById returns post response when successful")
-    void findById_ReturnsPostResponse_WhenSuccessful() {
-        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();
-
-        PostResponse postResponse = postService.findById(expectedPostResponse.getId());
-
-        assertThat(postResponse)
-                .isNotNull()
-                .isEqualTo(expectedPostResponse);
-    }
-
-    @Test
-    @DisplayName("findById throws ResourceNotFoundException when post is not found")
-    void findById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
-        long postId = 1;
-
-        BDDMockito.when(postRepository.findById(ArgumentMatchers.anyLong()))
-                .thenReturn(Optional.empty());
-
-        assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> postService.findById(postId))
-                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
-    }
-
-    @Test
     @DisplayName("findBySlug returns post response when successful")
     void findBySlug_ReturnsPostResponse_WhenSuccessful() {
         PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();

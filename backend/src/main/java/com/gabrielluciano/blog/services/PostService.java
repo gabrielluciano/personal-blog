@@ -10,8 +10,6 @@ public interface PostService {
 
     Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts);
 
-    PostResponse findById(long id);
-
     PostResponse findBySlug(String slug);
 
     PostResponse save(PostCreateRequest postCreateRequest);

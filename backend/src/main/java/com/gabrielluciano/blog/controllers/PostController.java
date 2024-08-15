@@ -29,11 +29,6 @@ public class PostController {
         return ResponseEntity.ok(postService.list(pageable, title, tagId, drafts));
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<PostResponse> findById(@PathVariable long id) {
-        return ResponseEntity.ok(postService.findById(id));
-    }
-
     @GetMapping("slug/{slug}")
     public ResponseEntity<PostResponse> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(postService.findBySlug(slug));

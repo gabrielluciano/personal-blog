@@ -66,9 +66,6 @@ class PostControllerTest {
                         ArgumentMatchers.anyLong(), ArgumentMatchers.eq(false)))
                 .thenReturn(publishedPostResponsePageWithTag);
 
-        BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
-                .thenReturn(PostResponseCreator.createPublishedPostResponse());
-
         BDDMockito.when(postService.findBySlug(ArgumentMatchers.anyString()))
                         .thenReturn(PostResponseCreator.createPublishedPostResponse());
 
@@ -202,35 +199,6 @@ class PostControllerTest {
                 .isNotNull()
                 .isNotEmpty()
                 .contains(tagResponse);
-    }
-
-    @Test
-    @DisplayName("findById returns post response when successful")
-    void findById_ReturnsPostResponse_WhenSuccessful() {
-        PostResponse expectedPostResponse = PostResponseCreator.createPublishedPostResponse();
-
-        ResponseEntity<PostResponse> responseEntity = postController.findById(expectedPostResponse.getId());
-
-        assertThat(responseEntity).isNotNull();
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        assertThat(responseEntity.getBody())
-                .isNotNull()
-                .isEqualTo(expectedPostResponse);
-    }
-
-    @Test
-    @DisplayName("findById throws ResourceNotFoundException when post is not found")
-    void findById_ThrowsResourceNotFoundException_WhenPostIsNotFound() {
-        long postId = 1;
-
-        BDDMockito.when(postService.findById(ArgumentMatchers.anyLong()))
-                .thenThrow(new ResourceNotFoundException(Post.class, postId));
-
-        Assertions.assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> postController.findById(postId))
-                .withMessageContaining("Could not find resource of type Post with identifier: " + postId);
     }
 
     @Test

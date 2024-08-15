@@ -34,14 +34,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponse> list(Pageable pageable, String title, Long tagId, boolean drafts) {
-        Page<Post> posts = getPostPage(pageable, title, tagId, drafts);
-        return postPageToPostResponsePage(posts);
-    }
-
-    @Override
-    public PostResponse findById(long id) {
-        Post post = findByIdOrThrowResourceNotFoundException(id);
-        return PostMapper.INSTANCE.postToPostResponse(post);
+        return getPostPage(pageable, title, tagId, drafts)
+                .map(PostMapper.INSTANCE::postToPostResponse);
     }
 
     @Override
@@ -147,10 +141,6 @@ public class PostServiceImpl implements PostService {
         } else {
             return postRepository.findAllByPublishedIsTrue(pageable);
         }
-    }
-
-    private Page<PostResponse> postPageToPostResponsePage(Page<Post> posts) {
-        return posts.map(PostMapper.INSTANCE::postToPostResponse);
     }
 
     private void throwConstraintViolationExceptionIfTitleOrSlugAlreadyExists(String title, String slug) {

@@ -278,66 +278,6 @@ class PostControllerIT {
     }
 
     @Test
-    @DisplayName("findById returns post response when successful")
-    void findById_ReturnsPostResponse_WhenSuccessful() {
-        Post savedPost = postRepository.save(PostCreator.createPublishedPostToBeSaved());
-
-        ResponseEntity<PostResponse> responseEntity = restTemplate
-                .getForEntity("/posts/{id}", PostResponse.class, savedPost.getId());
-
-        assertThat(responseEntity).isNotNull();
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        assertThat(responseEntity.getBody()).isNotNull();
-
-        assertThat(responseEntity.getBody().getId())
-                .isEqualTo(savedPost.getId());
-
-        assertThat(responseEntity.getBody().getTitle())
-                .isEqualTo(savedPost.getTitle());
-    }
-
-    @Test
-    @DisplayName("findById returns error details and status 404 Not Found when post is not found")
-    void findById_ReturnsErrorDetailsAndStatus404NotFound_WhenPostIsNotFound() {
-        long postId = 1;
-
-        ResponseEntity<ErrorDetails> responseEntity = restTemplate
-                .getForEntity("/posts/{id}", ErrorDetails.class, postId);
-
-        assertThat(responseEntity).isNotNull();
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
-        assertThat(responseEntity.getBody())
-                .isNotNull()
-                .isInstanceOf(ErrorDetails.class);
-
-        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/" + postId);
-
-        assertThat(responseEntity.getBody().getMessage())
-                .isEqualTo("Could not find resource of type Post with identifier: " + postId);
-    }
-
-    @Test
-    @DisplayName("findById returns error details and status 400 Bad Request when id is not valid")
-    void findById_ReturnsErrorDetailsAndStatus400BadRequest_WhenIdIsNotValid() {
-        ResponseEntity<ErrorDetails> responseEntity = restTemplate
-                .getForEntity("/posts/invalidID", ErrorDetails.class);
-
-        assertThat(responseEntity).isNotNull();
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
-        assertThat(responseEntity.getBody())
-                .isNotNull()
-                .isInstanceOf(ErrorDetails.class);
-
-        assertThat(responseEntity.getBody().getPath()).isEqualTo("/posts/invalidID");
-    }
-
-    @Test
     @DisplayName("findBySlug returns published post response when and user is not authenticated")
     void findBySlug_ReturnsPublishedPostResponse_WhenSuccessfulAndUserIsNotAuthenticated() {
         String expectedSlug = "some-post";
@@ -853,13 +793,14 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody()).isNull();
 
-        ResponseEntity<ErrorDetails> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
-                ErrorDetails.class, savedPost.getId());
+        ResponseEntity<ErrorDetails> findBySlugResponseEntity = restTemplate.exchange("/posts/slug/{slug}?drafts=true",
+                HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), ErrorDetails.class, savedPost.getSlug());
 
-        assertThat(findByIdResponseEntity).isNotNull();
+        assertThat(findBySlugResponseEntity).isNotNull();
 
-        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(findBySlugResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
 
     @Test
     @DisplayName("deleteById returns error details and status 404 Not Found when post is not found")
@@ -943,8 +884,8 @@ class PostControllerIT {
 
         assertThat(voidResponseEntity.getBody()).isNull();
 
-        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/{id}",
-                PostResponse.class, savedPost.getId());
+        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/slug/{slug}",
+                PostResponse.class, savedPost.getSlug());
 
         assertThat(postResponseEntity).isNotNull();
 
@@ -1080,8 +1021,8 @@ class PostControllerIT {
 
         assertThat(voidResponseEntity.getBody()).isNull();
 
-        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/{id}",
-                PostResponse.class, savedPost.getId());
+        ResponseEntity<PostResponse> postResponseEntity = restTemplate.getForEntity("/posts/slug/{slug}",
+                PostResponse.class, savedPost.getSlug());
 
         assertThat(postResponseEntity).isNotNull();
 
@@ -1212,24 +1153,24 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody()).isNull();
 
-        ResponseEntity<PostResponse> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
-                PostResponse.class, savedPost.getId());
+        ResponseEntity<PostResponse> findBySlugResponseEntity = restTemplate.getForEntity("/posts/slug/{slug}",
+                PostResponse.class, savedPost.getSlug());
 
-        assertThat(findByIdResponseEntity).isNotNull();
+        assertThat(findBySlugResponseEntity).isNotNull();
 
-        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(findBySlugResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(findByIdResponseEntity.getBody()).isNotNull();
+        assertThat(findBySlugResponseEntity.getBody()).isNotNull();
 
-        assertThat(findByIdResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
+        assertThat(findBySlugResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
 
         assertThat(savedPost.getPublished()).isFalse();
 
-        assertThat(findByIdResponseEntity.getBody().getPublished()).isTrue();
+        assertThat(findBySlugResponseEntity.getBody().getPublished()).isTrue();
 
-        assertThat(findByIdResponseEntity.getBody().getPublishedAt())
+        assertThat(findBySlugResponseEntity.getBody().getPublishedAt())
                 .isNotNull()
-                .isAfter(findByIdResponseEntity.getBody().getCreatedAt());
+                .isAfter(findBySlugResponseEntity.getBody().getCreatedAt());
     }
 
     @Test
@@ -1309,22 +1250,22 @@ class PostControllerIT {
 
         assertThat(responseEntity.getBody()).isNull();
 
-        ResponseEntity<PostResponse> findByIdResponseEntity = restTemplate.getForEntity("/posts/{id}",
-                PostResponse.class, savedPost.getId());
+        ResponseEntity<PostResponse> findBySlugResponseEntity = restTemplate.exchange("/posts/slug/{slug}?drafts=true",
+                HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithRoleEditorJwt), PostResponse.class, savedPost.getSlug());
 
-        assertThat(findByIdResponseEntity).isNotNull();
+        assertThat(findBySlugResponseEntity).isNotNull();
 
-        assertThat(findByIdResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(findBySlugResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(findByIdResponseEntity.getBody()).isNotNull();
+        assertThat(findBySlugResponseEntity.getBody()).isNotNull();
 
-        assertThat(findByIdResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
+        assertThat(findBySlugResponseEntity.getBody().getTitle()).isEqualTo(savedPost.getTitle());
 
         assertThat(savedPost.getPublished()).isTrue();
 
-        assertThat(findByIdResponseEntity.getBody().getPublished()).isFalse();
+        assertThat(findBySlugResponseEntity.getBody().getPublished()).isFalse();
 
-        assertThat(findByIdResponseEntity.getBody().getPublishedAt()).isNull();
+        assertThat(findBySlugResponseEntity.getBody().getPublishedAt()).isNull();
     }
 
     @Test
